@@ -1,0 +1,9 @@
+services:
+  front-ofertando:
+    build:
+      context: .
+    container_name: front-ofertando-app
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
