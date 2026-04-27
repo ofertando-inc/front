@@ -26,4 +26,4 @@ test-results
 
 /.vscode
 .codex
-/.ux_model/*
+.ux_model/
