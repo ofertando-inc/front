@@ -31,7 +31,13 @@
 	}: Props = $props();
 </script>
 
-<form class="space-y-5" on:submit|preventDefault={onSubmit}>
+<form
+	class="space-y-5"
+	onsubmit={(event) => {
+		event.preventDefault();
+		void onSubmit();
+	}}
+>
 	<div class="space-y-2">
 		<h1 class="text-3xl font-semibold text-slate-900">{title}</h1>
 		<p class="text-sm leading-6 text-slate-600">{description}</p>
