@@ -60,7 +60,7 @@
 
 		try {
 			await authStore.register(values.email, values.username, values.password);
-			await goto(resolveRoute('/profile', {}));
+			await goto(resolveRoute('/profile'));
 		} catch (err) {
 			error =
 				err instanceof ApiError

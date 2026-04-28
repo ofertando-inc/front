@@ -14,7 +14,7 @@
 		if (!browser) return;
 
 		if (!$authStore.accessToken) {
-			await goto(resolveRoute('/login', {}));
+			await goto(resolveRoute('/login'));
 			return;
 		}
 
@@ -22,7 +22,7 @@
 			await authStore.loadCurrentUser();
 		} catch (err) {
 			error = err instanceof Error ? err.message : $translationStore.auth.sessionExpired;
-			await goto(resolveRoute('/login', {}));
+			await goto(resolveRoute('/login'));
 			return;
 		} finally {
 			loading = false;

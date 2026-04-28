@@ -27,7 +27,7 @@
 
 		try {
 			await authStore.login(values.email, values.password);
-			await goto(resolveRoute('/profile', {}));
+			await goto(resolveRoute('/profile'));
 		} catch (err) {
 			error =
 				err instanceof ApiError
