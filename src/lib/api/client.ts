@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { env } from '$env/dynamic/public';
 
 interface RequestOptions extends RequestInit {
 	token?: string;
@@ -17,11 +17,11 @@ export class ApiError extends Error {
 }
 
 function getApiUrl(path: string) {
-	if (!PUBLIC_API_URL) {
+	if (!env.PUBLIC_API_URL) {
 		throw new Error('PUBLIC_API_URL is not defined');
 	}
 
-	return `${PUBLIC_API_URL}${path}`;
+	return `${env.PUBLIC_API_URL}${path}`;
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
