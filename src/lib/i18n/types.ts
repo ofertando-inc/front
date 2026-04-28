@@ -28,10 +28,14 @@ export interface TranslationMessages {
 		invalidCredentials: string;
 		duplicateEmail: string;
 		duplicateUsername: string;
+		invalidEmail: string;
+		usernameRequired: string;
+		passwordTooShort: string;
+		validationError: string;
 		genericLoginError: string;
 		genericRegisterError: string;
+		serverError: string;
 		profileTitle: string;
-		profileDescription: string;
 		notAuthenticated: string;
 		sessionExpired: string;
 	};

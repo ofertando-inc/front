@@ -4,6 +4,6 @@ services:
       context: .
     container_name: front-ofertando-app
     ports:
-      - '3000:3000'
+      - '${PORT:-5173}:3000'
     env_file:
       - .env

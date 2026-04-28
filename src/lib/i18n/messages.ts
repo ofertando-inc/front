@@ -27,10 +27,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			invalidCredentials: 'Correo o contrasena incorrectos. Verifica tus datos e intentalo de nuevo.',
 			duplicateEmail: 'Ese correo ya esta registrado. Usa otro o inicia sesion.',
 			duplicateUsername: 'Ese nombre de usuario ya existe. Elige uno diferente.',
+			invalidEmail: 'Ingresa un correo electronico valido.',
+			usernameRequired: 'Ingresa un nombre de usuario.',
+			passwordTooShort: 'La contrasena debe tener al menos 8 caracteres.',
+			validationError: 'Revisa los campos del formulario e intentalo de nuevo.',
 			genericLoginError: 'No pudimos iniciar sesion en este momento.',
 			genericRegisterError: 'No pudimos crear tu cuenta en este momento.',
+			serverError: 'El servidor no esta disponible en este momento. Intentalo mas tarde.',
 			profileTitle: 'Mi perfil',
-			profileDescription: 'Este modulo consulta el backend real para mostrar tu usuario actual.',
 			notAuthenticated: 'Debes iniciar sesion para acceder a esta pagina.',
 			sessionExpired: 'Tu sesion ya no es valida.'
 		}
@@ -61,10 +65,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			invalidCredentials: 'Incorrect email or password. Please check your credentials and try again.',
 			duplicateEmail: 'That email is already registered. Use another one or sign in.',
 			duplicateUsername: 'That username already exists. Choose a different one.',
+			invalidEmail: 'Enter a valid email address.',
+			usernameRequired: 'Enter a username.',
+			passwordTooShort: 'Password must be at least 8 characters long.',
+			validationError: 'Check the form fields and try again.',
 			genericLoginError: 'We could not log you in right now.',
 			genericRegisterError: 'We could not create your account right now.',
+			serverError: 'The server is unavailable right now. Please try again later.',
 			profileTitle: 'My profile',
-			profileDescription: 'This module calls the real backend to show your current user.',
 			notAuthenticated: 'You must log in to access this page.',
 			sessionExpired: 'Your session is no longer valid.'
 		}
@@ -95,10 +103,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			invalidCredentials: 'E-mail ou mot de passe incorrect. Verifiez vos informations et reessayez.',
 			duplicateEmail: 'Cet e-mail est deja enregistre. Utilisez-en un autre ou connectez-vous.',
 			duplicateUsername: "Ce nom d'utilisateur existe deja. Choisissez-en un autre.",
+			invalidEmail: 'Saisissez une adresse e-mail valide.',
+			usernameRequired: "Saisissez un nom d'utilisateur.",
+			passwordTooShort: 'Le mot de passe doit contenir au moins 8 caracteres.',
+			validationError: 'Verifiez les champs du formulaire et reessayez.',
 			genericLoginError: "Nous n'avons pas pu vous connecter pour le moment.",
 			genericRegisterError: "Nous n'avons pas pu creer votre compte pour le moment.",
+			serverError: "Le serveur n'est pas disponible pour le moment. Reessayez plus tard.",
 			profileTitle: 'Mon profil',
-			profileDescription: 'Ce module interroge le backend reel pour afficher votre utilisateur actuel.',
 			notAuthenticated: 'Vous devez vous connecter pour acceder a cette page.',
 			sessionExpired: "Votre session n'est plus valide."
 		}
