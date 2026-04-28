@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { resolveRoute } from '$app/paths';
 	import { onMount } from 'svelte';
 	import { Card } from 'flowbite-svelte';
 	import { authStore } from '$lib/stores/auth';
@@ -13,7 +14,7 @@
 		if (!browser) return;
 
 		if (!$authStore.accessToken) {
-			await goto('/login');
+			await goto(resolveRoute('/login', {}));
 			return;
 		}
 
@@ -21,7 +22,7 @@
 			await authStore.loadCurrentUser();
 		} catch (err) {
 			error = err instanceof Error ? err.message : $translationStore.auth.sessionExpired;
-			await goto('/login');
+			await goto(resolveRoute('/login', {}));
 			return;
 		} finally {
 			loading = false;

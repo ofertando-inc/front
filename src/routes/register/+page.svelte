@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolveRoute } from '$app/paths';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
 	import { authStore } from '$lib/stores/auth';
@@ -40,7 +41,9 @@
 			return $translationStore.auth.usernameRequired;
 		}
 
-		if (messages.some((message) => message.includes('password must be longer than or equal to 8'))) {
+		if (
+			messages.some((message) => message.includes('password must be longer than or equal to 8'))
+		) {
 			return $translationStore.auth.passwordTooShort;
 		}
 
@@ -57,7 +60,7 @@
 
 		try {
 			await authStore.register(values.email, values.username, values.password);
-			await goto('/profile');
+			await goto(resolveRoute('/profile', {}));
 		} catch (err) {
 			error =
 				err instanceof ApiError
