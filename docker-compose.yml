@@ -2,6 +2,8 @@ services:
   front-ofertando:
     build:
       context: .
+      args:
+        PUBLIC_API_URL: ${PUBLIC_API_URL}
     container_name: front-ofertando-app
     ports:
       - '${PORT:-5173}:3000'
