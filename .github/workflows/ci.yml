@@ -46,4 +46,4 @@ jobs:
         run: npm run build
 
       - name: Build Docker image
-        run: docker build .
+        run: docker build --build-arg PUBLIC_API_URL="${PUBLIC_API_URL}" .
