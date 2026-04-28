@@ -14,14 +14,38 @@
 	let loading = $state(false);
 
 	function getRegisterErrorMessage(apiError: ApiError) {
-		const message = apiError.message.toLowerCase();
+		const messages = apiError.message
+			.split('\n')
+			.map((message) => message.toLowerCase())
+			.filter(Boolean);
+		const joinedMessage = messages.join(' ');
 
-		if (message.includes('email')) {
+		if (apiError.status >= 500) {
+			return $translationStore.auth.serverError;
+		}
+
+		if (joinedMessage.includes('email is already registered')) {
 			return $translationStore.auth.duplicateEmail;
 		}
 
-		if (message.includes('username')) {
+		if (joinedMessage.includes('username is already registered')) {
 			return $translationStore.auth.duplicateUsername;
+		}
+
+		if (messages.some((message) => message.includes('email must be an email'))) {
+			return $translationStore.auth.invalidEmail;
+		}
+
+		if (messages.some((message) => message.includes('username should not be empty'))) {
+			return $translationStore.auth.usernameRequired;
+		}
+
+		if (messages.some((message) => message.includes('password must be longer than or equal to 8'))) {
+			return $translationStore.auth.passwordTooShort;
+		}
+
+		if (apiError.status === 400) {
+			return $translationStore.auth.validationError;
 		}
 
 		return $translationStore.auth.genericRegisterError;
@@ -53,7 +77,6 @@
 	<section
 		class="rounded-4x1 bg-linear-to-br from-orange-500 to-amber-400 p-8 text-white shadow-2xl shadow-orange-200/50"
 	>
-		<p class="text-sm tracking-[0.2em] text-orange-100 uppercase">Auth</p>
 		<h1 class="mt-4 text-4xl font-semibold">{$translationStore.auth.registerTitle}</h1>
 		<p class="mt-4 max-w-md text-sm leading-7 text-orange-50/90">
 			{$translationStore.auth.registerDescription}

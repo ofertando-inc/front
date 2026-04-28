@@ -41,12 +41,15 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 	const payload = isJson ? await response.json() : null;
 
 	if (!response.ok) {
-		const message =
+		const messagePayload =
 			typeof payload === 'object' && payload !== null && 'message' in payload
-				? String(payload.message)
+				? payload.message
 				: 'Request failed';
+		const messages = Array.isArray(messagePayload)
+			? messagePayload.map(String)
+			: [String(messagePayload)];
 
-		throw new ApiError(message, response.status, payload);
+		throw new ApiError(messages.join('\n'), response.status, payload);
 	}
 
 	return payload as T;

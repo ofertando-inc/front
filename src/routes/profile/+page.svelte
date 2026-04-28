@@ -44,7 +44,6 @@
 			<h1 class="mt-3 text-4xl font-semibold text-slate-900">
 				{$translationStore.auth.profileTitle}
 			</h1>
-			<p class="mt-3 text-sm text-slate-600">{$translationStore.auth.profileDescription}</p>
 			{#if error}
 				<p class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
 					{error}
