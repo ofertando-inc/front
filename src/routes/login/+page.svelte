@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { resolveRoute } from '$app/paths';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
 	import { authStore } from '$lib/stores/auth';
@@ -26,7 +27,7 @@
 
 		try {
 			await authStore.login(values.email, values.password);
-			await goto('/profile');
+			await goto(resolveRoute('/profile'));
 		} catch (err) {
 			error =
 				err instanceof ApiError

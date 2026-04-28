@@ -24,7 +24,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			password: 'Contrasena',
 			submitLogin: 'Entrar',
 			submitRegister: 'Registrarme',
-			invalidCredentials: 'Correo o contrasena incorrectos. Verifica tus datos e intentalo de nuevo.',
+			invalidCredentials:
+				'Correo o contrasena incorrectos. Verifica tus datos e intentalo de nuevo.',
 			duplicateEmail: 'Ese correo ya esta registrado. Usa otro o inicia sesion.',
 			duplicateUsername: 'Ese nombre de usuario ya existe. Elige uno diferente.',
 			invalidEmail: 'Ingresa un correo electronico valido.',
@@ -62,7 +63,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			password: 'Password',
 			submitLogin: 'Log in',
 			submitRegister: 'Sign up',
-			invalidCredentials: 'Incorrect email or password. Please check your credentials and try again.',
+			invalidCredentials:
+				'Incorrect email or password. Please check your credentials and try again.',
 			duplicateEmail: 'That email is already registered. Use another one or sign in.',
 			duplicateUsername: 'That username already exists. Choose a different one.',
 			invalidEmail: 'Enter a valid email address.',
@@ -100,7 +102,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			password: 'Mot de passe',
 			submitLogin: 'Se connecter',
 			submitRegister: "S'inscrire",
-			invalidCredentials: 'E-mail ou mot de passe incorrect. Verifiez vos informations et reessayez.',
+			invalidCredentials:
+				'E-mail ou mot de passe incorrect. Verifiez vos informations et reessayez.',
 			duplicateEmail: 'Cet e-mail est deja enregistre. Utilisez-en un autre ou connectez-vous.',
 			duplicateUsername: "Ce nom d'utilisateur existe deja. Choisissez-en un autre.",
 			invalidEmail: 'Saisissez une adresse e-mail valide.',
