@@ -34,17 +34,21 @@
 </svelte:head>
 
 {#if loading}
-	<div class="rounded-[2rem] bg-white p-10 text-center shadow-lg shadow-orange-100/60">
+	<div class="rounded-4x1 bg-white p-10 text-center shadow-lg shadow-orange-100/60">
 		{$translationStore.common.loading}
 	</div>
 {:else if $authStore.user}
 	<section class="space-y-8">
-		<div class="rounded-[2rem] bg-white p-8 shadow-xl shadow-orange-100/60">
-			<p class="text-sm uppercase tracking-[0.2em] text-orange-500">Profile</p>
-			<h1 class="mt-3 text-4xl font-semibold text-slate-900">{$translationStore.auth.profileTitle}</h1>
+		<div class="rounded-4x1 bg-white p-8 shadow-xl shadow-orange-100/60">
+			<p class="text-sm tracking-[0.2em] text-orange-500 uppercase">Profile</p>
+			<h1 class="mt-3 text-4xl font-semibold text-slate-900">
+				{$translationStore.auth.profileTitle}
+			</h1>
 			<p class="mt-3 text-sm text-slate-600">{$translationStore.auth.profileDescription}</p>
 			{#if error}
-				<p class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+				<p class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+					{error}
+				</p>
 			{/if}
 		</div>
 

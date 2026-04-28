@@ -29,7 +29,9 @@
 			await goto('/profile');
 		} catch (err) {
 			error =
-				err instanceof ApiError ? getLoginErrorMessage(err) : $translationStore.auth.genericLoginError;
+				err instanceof ApiError
+					? getLoginErrorMessage(err)
+					: $translationStore.auth.genericLoginError;
 		} finally {
 			loading = false;
 		}
@@ -41,15 +43,15 @@
 </svelte:head>
 
 <div class="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-	<section class="rounded-[2rem] bg-slate-950 p-8 text-white shadow-2xl shadow-orange-200/50">
-		<p class="text-sm uppercase tracking-[0.2em] text-orange-200">Auth</p>
+	<section class="rounded-4x1 bg-slate-950 p-8 text-white shadow-2xl shadow-orange-200/50">
+		<p class="text-sm tracking-[0.2em] text-orange-200 uppercase">Auth</p>
 		<h1 class="mt-4 text-4xl font-semibold">{$translationStore.auth.loginTitle}</h1>
 		<p class="mt-4 max-w-md text-sm leading-7 text-slate-300">
 			{$translationStore.auth.loginDescription}
 		</p>
 	</section>
 
-	<section class="rounded-[2rem] bg-white p-8 shadow-xl shadow-orange-100/60">
+	<section class="rounded-4x1 bg-white p-8 shadow-xl shadow-orange-100/60">
 		<AuthForm
 			title={$translationStore.auth.loginTitle}
 			description={$translationStore.auth.loginDescription}
@@ -59,7 +61,7 @@
 					name: 'email',
 					label: $translationStore.auth.email,
 					type: 'email',
-					placeholder: 'maria@example.com'
+					placeholder: 'mail@example.com'
 				},
 				{
 					name: 'password',

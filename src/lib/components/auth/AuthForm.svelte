@@ -43,7 +43,7 @@
 		<p class="text-sm leading-6 text-slate-600">{description}</p>
 	</div>
 
-	{#each fields as field}
+	{#each fields as field (field.name)}
 		<div class="space-y-2">
 			<Label for={field.name}>{field.label}</Label>
 			<Input
@@ -57,7 +57,9 @@
 	{/each}
 
 	{#if error}
-		<p class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+		<p class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+			{error}
+		</p>
 	{/if}
 
 	<Button type="submit" class="w-full" disabled={loading}>
