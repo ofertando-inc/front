@@ -3,7 +3,7 @@ import { getCurrentUser, login as loginRequest, register as registerRequest } fr
 import type { AuthResponse, User } from '$lib/types/auth';
 import { writable } from 'svelte/store';
 
-const TOKEN_KEY = 'ofertando.accessToken';
+export const AUTH_TOKEN_KEY = 'ofertando.accessToken';
 
 interface AuthState {
 	accessToken: string | null;
@@ -29,12 +29,12 @@ function normalizeAuthError(error: unknown, fallback: string) {
 	return fallback;
 }
 
-function createAuthStore() {
+export function createAuthStore() {
 	const { subscribe, set, update } = writable<AuthState>(initialState);
 
 	function applyAuth(response: AuthResponse) {
 		if (browser) {
-			localStorage.setItem(TOKEN_KEY, response.accessToken);
+			localStorage.setItem(AUTH_TOKEN_KEY, response.accessToken);
 		}
 
 		set({
@@ -51,7 +51,7 @@ function createAuthStore() {
 		initialize() {
 			if (!browser) return;
 
-			const token = localStorage.getItem(TOKEN_KEY);
+			const token = localStorage.getItem(AUTH_TOKEN_KEY);
 			if (!token) return;
 
 			update((state) => ({
@@ -94,7 +94,7 @@ function createAuthStore() {
 		},
 		logout() {
 			if (browser) {
-				localStorage.removeItem(TOKEN_KEY);
+				localStorage.removeItem(AUTH_TOKEN_KEY);
 			}
 
 			set(initialState);
@@ -132,7 +132,7 @@ function createAuthStore() {
 				return user;
 			} catch (error) {
 				if (browser) {
-					localStorage.removeItem(TOKEN_KEY);
+					localStorage.removeItem(AUTH_TOKEN_KEY);
 				}
 
 				set({
