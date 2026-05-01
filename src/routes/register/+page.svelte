@@ -3,6 +3,7 @@
 	import { resolveRoute } from '$app/paths';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
+	import { getRegisterErrorMessage } from '$lib/auth/registerErrors';
 	import { authStore } from '$lib/stores/auth';
 	import { translationStore } from '$lib/i18n';
 
@@ -14,46 +15,6 @@
 	let error = $state<string | null>(null);
 	let loading = $state(false);
 
-	function getRegisterErrorMessage(apiError: ApiError) {
-		const messages = apiError.message
-			.split('\n')
-			.map((message) => message.toLowerCase())
-			.filter(Boolean);
-		const joinedMessage = messages.join(' ');
-
-		if (apiError.status >= 500) {
-			return $translationStore.auth.serverError;
-		}
-
-		if (joinedMessage.includes('email is already registered')) {
-			return $translationStore.auth.duplicateEmail;
-		}
-
-		if (joinedMessage.includes('username is already registered')) {
-			return $translationStore.auth.duplicateUsername;
-		}
-
-		if (messages.some((message) => message.includes('email must be an email'))) {
-			return $translationStore.auth.invalidEmail;
-		}
-
-		if (messages.some((message) => message.includes('username should not be empty'))) {
-			return $translationStore.auth.usernameRequired;
-		}
-
-		if (
-			messages.some((message) => message.includes('password must be longer than or equal to 8'))
-		) {
-			return $translationStore.auth.passwordTooShort;
-		}
-
-		if (apiError.status === 400) {
-			return $translationStore.auth.validationError;
-		}
-
-		return $translationStore.auth.genericRegisterError;
-	}
-
 	async function handleSubmit() {
 		error = null;
 		loading = true;
@@ -64,7 +25,7 @@
 		} catch (err) {
 			error =
 				err instanceof ApiError
-					? getRegisterErrorMessage(err)
+					? getRegisterErrorMessage(err, $translationStore.auth)
 					: $translationStore.auth.genericRegisterError;
 		} finally {
 			loading = false;
