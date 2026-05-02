@@ -31,16 +31,16 @@
 	}
 </script>
 
-<Navbar class="sticky top-0 z-50 border-b border-gray-200 bg-white px-4 py-3">
+<Navbar class="sticky top-0 z-50 border-b border-gray-200 bg-white px-2 py-2 sm:px-4 sm:py-3">
 	{#snippet children({ hidden, toggle })}
 		<NavBrand href={resolve('/')} class="gap-2">
 			<div
-				class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-500 text-white transition-colors hover:bg-primary-600"
+				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-500 text-white transition-colors hover:bg-primary-600 sm:h-10 sm:w-10"
 			>
-				<TagSolid class="h-6 w-6 -rotate-90" />
+				<TagSolid class="h-5 w-5 -rotate-90 sm:h-6 sm:w-6" />
 			</div>
 			<span
-				class="bg-linear-to-r from-primary-600 to-primary-500 bg-clip-text text-2xl font-bold text-transparent"
+				class="bg-linear-to-r from-primary-600 to-primary-500 bg-clip-text text-xl font-bold text-transparent sm:text-2xl"
 			>
 				{$translationStore.common.appName}
 			</span>
@@ -62,9 +62,6 @@
 			</div>
 
 			{#if $authStore.isAuthenticated && $authStore.user}
-				<Button href={resolve('/profile')} color="light" class="hidden rounded-full sm:inline-flex"
-					>{$translationStore.common.profile}</Button
-				>
 				<Avatar id="user-menu" class="cursor-pointer" cornerStyle="rounded" />
 				<Dropdown triggeredBy="#user-menu">
 					<div class="px-4 py-3 text-sm">
@@ -83,7 +80,7 @@
 				<Button href={resolve('/login')} color="light" class="hidden rounded-full sm:inline-flex"
 					>{$translationStore.common.login}</Button
 				>
-				<Button href={resolve('/register')} class="rounded-full"
+				<Button href={resolve('/register')} class="hidden rounded-full sm:inline-flex"
 					>{$translationStore.common.register}</Button
 				>
 			{/if}
@@ -109,7 +106,7 @@
 			</NavUl>
 		</div>
 
-		<NavUl {hidden} activeUrl={page.url.pathname} class="mt-4 gap-2 md:hidden">
+		<NavUl {hidden} activeUrl={page.url.pathname} class="mt-3 gap-2 md:hidden">
 			<li class="mb-3 list-none">
 				<Input
 					type="search"
@@ -121,9 +118,42 @@
 					{/snippet}
 				</Input>
 			</li>
+			<li class="list-none px-3 pb-2">
+				<Select onchange={handleLocaleChange} value={$localeStore}>
+					{#each SUPPORTED_LOCALES as locale (locale)}
+						<option value={locale}>
+							{locale === 'es'
+								? $translationStore.common.spanish
+								: locale === 'en'
+									? $translationStore.common.english
+									: $translationStore.common.french}
+						</option>
+					{/each}
+				</Select>
+			</li>
 			<NavLi href={resolve('/')}>{$translationStore.common.home}</NavLi>
-			{#if !$authStore.isAuthenticated}
-				<NavLi href={resolve('/login')}>{$translationStore.common.login}</NavLi>
+			{#if $authStore.isAuthenticated}
+				<NavLi href={resolve('/profile')}>{$translationStore.common.profile}</NavLi>
+				<li class="list-none px-3 pt-2">
+					<Button color="light" class="w-full justify-center rounded-full" onclick={handleLogout}>
+						{$translationStore.common.logout}
+					</Button>
+				</li>
+			{:else}
+				<li class="list-none px-3 pt-2">
+					<div class="grid grid-cols-2 gap-2">
+						<Button
+							href={resolve('/login')}
+							color="light"
+							class="w-full justify-center rounded-full"
+						>
+							{$translationStore.common.login}
+						</Button>
+						<Button href={resolve('/register')} class="w-full justify-center rounded-full">
+							{$translationStore.common.register}
+						</Button>
+					</div>
+				</li>
 			{/if}
 		</NavUl>
 	{/snippet}
