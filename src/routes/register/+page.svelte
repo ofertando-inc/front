@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolveRoute } from '$app/paths';
+	import { onMount } from 'svelte';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
 	import { getRegisterErrorMessage } from '$lib/auth/registerErrors';
@@ -14,6 +15,17 @@
 	});
 	let error = $state<string | null>(null);
 	let loading = $state(false);
+
+	onMount(async () => {
+		if (!$authStore.accessToken) return;
+
+		try {
+			await authStore.loadCurrentUser();
+			await goto(resolveRoute('/profile'));
+		} catch {
+			// Invalid stored sessions are cleared by the auth store.
+		}
+	});
 
 	async function handleSubmit() {
 		error = null;
