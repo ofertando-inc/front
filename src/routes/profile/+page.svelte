@@ -3,12 +3,23 @@
 	import { goto } from '$app/navigation';
 	import { resolveRoute } from '$app/paths';
 	import { onMount } from 'svelte';
-	import { Card } from 'flowbite-svelte';
+	import { Avatar, Card, TabItem, Tabs } from 'flowbite-svelte';
+	import { FireSolid, MessageDotsOutline, TagSolid } from 'flowbite-svelte-icons';
 	import { authStore } from '$lib/stores/auth';
-	import { translationStore } from '$lib/i18n';
+	import { localeStore, translationStore } from '$lib/i18n';
 
 	let loading = $state(true);
 	let error = $state<string | null>(null);
+	let selectedTab = $state('offers');
+
+	let memberDate = $derived(
+		$authStore.user
+			? new Intl.DateTimeFormat($localeStore, {
+					month: 'long',
+					year: 'numeric'
+				}).format(new Date($authStore.user.createdAt))
+			: ''
+	);
 
 	onMount(async () => {
 		if (!browser) return;
@@ -35,36 +46,135 @@
 </svelte:head>
 
 {#if loading}
-	<div class="rounded-4x1 bg-white p-10 text-center shadow-lg shadow-orange-100/60">
+	<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
 		{$translationStore.common.loading}
-	</div>
+	</Card>
 {:else if $authStore.user}
-	<section class="space-y-8">
-		<div class="rounded-4x1 bg-white p-8 shadow-xl shadow-orange-100/60">
-			<p class="text-sm tracking-[0.2em] text-orange-500 uppercase">Profile</p>
-			<h1 class="mt-3 text-4xl font-semibold text-slate-900">
-				{$translationStore.auth.profileTitle}
-			</h1>
+	<section class="mx-auto max-w-7xl space-y-8 py-4 sm:py-8">
+		<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
 			{#if error}
 				<p class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
 					{error}
 				</p>
 			{/if}
-		</div>
 
-		<div class="grid gap-6 lg:grid-cols-3">
-			<Card class="border-0 shadow-lg shadow-orange-100/60">
-				<p class="text-sm text-slate-500">Email</p>
-				<p class="mt-2 text-lg font-medium text-slate-900">{$authStore.user.email}</p>
-			</Card>
-			<Card class="border-0 shadow-lg shadow-orange-100/60">
-				<p class="text-sm text-slate-500">Username</p>
-				<p class="mt-2 text-lg font-medium text-slate-900">{$authStore.user.username}</p>
-			</Card>
-			<Card class="border-0 shadow-lg shadow-orange-100/60">
-				<p class="text-sm text-slate-500">Role</p>
-				<p class="mt-2 text-lg font-medium text-slate-900">{$authStore.user.role}</p>
-			</Card>
+			<div class="flex flex-col items-center gap-6 md:flex-row md:items-start">
+				<Avatar
+					size="xl"
+					cornerStyle="circular"
+					class="shrink-0 bg-primary-100 text-primary-600 ring-4 ring-primary-50"
+				/>
+
+				<div class="min-w-0 flex-1 text-center md:text-left">
+					<h1 class="text-3xl font-bold wrap-break-word text-gray-900">
+						{$authStore.user.username}
+					</h1>
+					<p
+						class="mt-1 flex flex-col items-center gap-1 text-gray-500 sm:flex-row sm:justify-center sm:gap-2 md:justify-start"
+					>
+						<span class="wrap-break-word">@{$authStore.user.username}</span>
+						<span class="hidden text-gray-300 sm:inline">·</span>
+						<span class="whitespace-nowrap">
+							{$translationStore.profile.memberSince}
+							{memberDate}
+						</span>
+					</p>
+					<p class="mt-1 text-sm break-all text-gray-500 sm:truncate">{$authStore.user.email}</p>
+
+					<div
+						class="mt-4 flex flex-col justify-center gap-2 sm:flex-row sm:flex-wrap md:justify-start"
+					>
+						<span
+							class="inline-flex justify-center rounded-full bg-green-50 px-3 py-1 text-xs font-medium text-green-700 ring-1 ring-green-200"
+						>
+							{$translationStore.profile.status}: {$authStore.user.status}
+						</span>
+						<span
+							class="inline-flex justify-center rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-700 ring-1 ring-gray-200"
+						>
+							{$translationStore.profile.role}: {$authStore.user.role}
+						</span>
+					</div>
+
+					<div
+						class="mx-auto mt-6 grid w-full max-w-md grid-cols-3 gap-3 sm:gap-6 md:mx-0 md:max-w-lg"
+					>
+						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
+							<span class="block text-2xl font-bold text-gray-900">0</span>
+							<span class="text-sm text-gray-500">{$translationStore.profile.offers}</span>
+						</div>
+						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
+							<span class="block text-2xl font-bold text-gray-900">0</span>
+							<span class="text-sm text-gray-500">{$translationStore.profile.comments}</span>
+						</div>
+						<div class="rounded-xl bg-primary-50 px-3 py-3 text-center">
+							<span class="block text-2xl font-bold text-primary-600">0°</span>
+							<span class="text-sm text-gray-500">{$translationStore.profile.reputation}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</Card>
+
+		<div class="overflow-hidden rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
+			<Tabs
+				bind:selected={selectedTab}
+				tabStyle="underline"
+				divider={false}
+				class="overflow-x-auto"
+				contentClass="pt-6"
+			>
+				<TabItem key="offers" open>
+					{#snippet titleSlot()}
+						<span class="flex items-center gap-2 whitespace-nowrap">
+							<TagSolid class="h-4 w-4" />
+							{$translationStore.profile.myOffers}
+						</span>
+					{/snippet}
+
+					<Card
+						size="xl"
+						class="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center shadow-none"
+					>
+						<p class="font-medium text-gray-700">{$translationStore.profile.noOffers}</p>
+						<p class="mt-2 text-sm text-gray-500">{$translationStore.profile.comingSoon}</p>
+					</Card>
+				</TabItem>
+
+				<TabItem key="comments">
+					{#snippet titleSlot()}
+						<span class="flex items-center gap-2 whitespace-nowrap">
+							<MessageDotsOutline class="h-4 w-4" />
+							{$translationStore.profile.myComments}
+						</span>
+					{/snippet}
+
+					<Card
+						size="xl"
+						class="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center shadow-none"
+					>
+						<p class="font-medium text-gray-700">{$translationStore.profile.noComments}</p>
+						<p class="mt-2 text-sm text-gray-500">{$translationStore.profile.comingSoon}</p>
+					</Card>
+				</TabItem>
+
+				<TabItem key="votes">
+					{#snippet titleSlot()}
+						<span class="flex items-center gap-2 whitespace-nowrap">
+							<FireSolid class="h-4 w-4" />
+							{$translationStore.profile.myVotes}
+						</span>
+					{/snippet}
+
+					<Card
+						size="xl"
+						class="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center shadow-none"
+					>
+						<p class="font-medium text-gray-700">{$translationStore.profile.noVotes}</p>
+						<p class="mt-2 text-sm text-gray-500">{$translationStore.profile.comingSoon}</p>
+					</Card>
+				</TabItem>
+			</Tabs>
 		</div>
 	</section>
 {/if}
