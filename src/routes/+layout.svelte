@@ -11,6 +11,7 @@
 	onMount(() => {
 		localeStore.initialize();
 		authStore.initialize();
+		void authStore.loadCurrentUser();
 	});
 </script>
 
