@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import { authStore } from '$lib/stores/auth';
@@ -17,8 +18,9 @@
 		Select
 	} from 'flowbite-svelte';
 
-	function handleLogout() {
+	async function handleLogout() {
 		authStore.logout();
+		await goto(resolve('/'));
 	}
 
 	function handleLocaleChange(event: Event) {
