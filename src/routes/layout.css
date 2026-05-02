@@ -20,18 +20,29 @@
 @source '../../node_modules/flowbite-svelte-icons/dist';
 
 :root {
-	color: #0f172a;
-	background:
-		radial-gradient(circle at top left, rgba(251, 146, 60, 0.18), transparent 28%),
-		linear-gradient(180deg, #fff7ed 0%, #fffaf5 20%, #f8fafc 55%, #f8fafc 100%);
+	color: #111827;
+	background: #f9fafb;
 }
 
 body {
 	min-height: 100vh;
+	background: #f9fafb;
 }
 
 .page-shell {
 	margin: 0 auto;
-	width: min(100%, 1120px);
+	width: min(100%, 1280px);
 	padding: 1.5rem 1rem 4rem;
+}
+
+@media (min-width: 640px) {
+	.page-shell {
+		padding-inline: 1.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.page-shell {
+		padding-inline: 2rem;
+	}
 }

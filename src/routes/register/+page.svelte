@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { resolveRoute } from '$app/paths';
 	import { onMount } from 'svelte';
+	import { Card } from 'flowbite-svelte';
+	import { TagSolid } from 'flowbite-svelte-icons';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
 	import { getRegisterErrorMessage } from '$lib/auth/registerErrors';
@@ -59,17 +61,8 @@
 	<title>{$translationStore.auth.registerTitle}</title>
 </svelte:head>
 
-<div class="mx-auto grid max-w-5xl gap-8 lg:grid-cols-[0.95fr_1.05fr]">
-	<section
-		class="rounded-4x1 bg-linear-to-br from-orange-500 to-amber-400 p-8 text-white shadow-2xl shadow-orange-200/50"
-	>
-		<h1 class="mt-4 text-4xl font-semibold">{$translationStore.auth.registerTitle}</h1>
-		<p class="mt-4 max-w-md text-sm leading-7 text-orange-50/90">
-			{$translationStore.auth.registerDescription}
-		</p>
-	</section>
-
-	<section class="rounded-4x1 bg-white p-8 shadow-xl shadow-orange-100/60">
+<div class="flex min-h-[calc(100vh-9rem)] items-center justify-center py-8 sm:py-12">
+	<Card class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
 		<AuthForm
 			title={$translationStore.auth.registerTitle}
 			description={$translationStore.auth.registerDescription}
@@ -97,7 +90,26 @@
 			{values}
 			{error}
 			{loading}
+			centered
 			onSubmit={handleSubmit}
-		/>
-	</section>
+		>
+			{#snippet top()}
+				<div
+					class="mx-auto mb-1 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-500 text-white"
+				>
+					<TagSolid class="h-7 w-7 -rotate-90" />
+				</div>
+			{/snippet}
+
+			{#snippet alternate()}
+				<span>{$translationStore.auth.alreadyHaveAccount}</span>
+				<a
+					href={resolveRoute('/login')}
+					class="ml-1 font-medium text-primary-600 hover:text-primary-500"
+				>
+					{$translationStore.auth.loginHere}
+				</a>
+			{/snippet}
+		</AuthForm>
+	</Card>
 </div>

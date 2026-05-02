@@ -8,6 +8,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			spanish: 'Español',
 			english: 'Inglés',
 			french: 'Francés',
+			home: 'Inicio',
+			searchPlaceholder: 'Buscar ofertas, tiendas, ciudades...',
 			login: 'Entrar',
 			register: 'Crear cuenta',
 			profile: 'Mi perfil',
@@ -19,6 +21,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loginDescription: 'Usa tu correo registrado para continuar.',
 			registerTitle: 'Crear cuenta',
 			registerDescription: 'Completa tus datos para empezar.',
+			noAccount: '¿No tienes cuenta?',
+			registerHere: 'Regístrate aquí',
+			alreadyHaveAccount: '¿Ya tienes cuenta?',
+			loginHere: 'Inicia sesión',
 			email: 'Correo electrónico',
 			username: 'Nombre de usuario',
 			password: 'Contraseña',
@@ -38,6 +44,22 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profileTitle: 'Mi perfil',
 			notAuthenticated: 'Debes iniciar sesión para acceder a esta página.',
 			sessionExpired: 'Tu sesión ya no es válida.'
+		},
+		profile: {
+			memberSince: 'Miembro desde',
+			status: 'Estado',
+			role: 'Rol',
+			offers: 'Ofertas',
+			comments: 'Comentarios',
+			reputation: 'Reputación',
+			votes: 'Votos',
+			myOffers: 'Mis ofertas',
+			myComments: 'Mis comentarios',
+			myVotes: 'Mis votos',
+			noOffers: 'Aún no has publicado ofertas.',
+			noComments: 'Aún no has comentado ninguna oferta.',
+			noVotes: 'Historial de votos no disponible.',
+			comingSoon: 'Disponible cuando conectemos los datos de actividad.'
 		}
 	},
 	en: {
@@ -47,6 +69,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			spanish: 'Spanish',
 			english: 'English',
 			french: 'French',
+			home: 'Home',
+			searchPlaceholder: 'Search deals, stores, cities...',
 			login: 'Log in',
 			register: 'Create account',
 			profile: 'My profile',
@@ -58,6 +82,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loginDescription: 'Use your registered email to continue.',
 			registerTitle: 'Create account',
 			registerDescription: 'Complete your details to get started.',
+			noAccount: "Don't have an account?",
+			registerHere: 'Register here',
+			alreadyHaveAccount: 'Already have an account?',
+			loginHere: 'Log in',
 			email: 'Email',
 			username: 'Username',
 			password: 'Password',
@@ -77,6 +105,22 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profileTitle: 'My profile',
 			notAuthenticated: 'You must log in to access this page.',
 			sessionExpired: 'Your session is no longer valid.'
+		},
+		profile: {
+			memberSince: 'Member since',
+			status: 'Status',
+			role: 'Role',
+			offers: 'Offers',
+			comments: 'Comments',
+			reputation: 'Reputation',
+			votes: 'Votes',
+			myOffers: 'My offers',
+			myComments: 'My comments',
+			myVotes: 'My votes',
+			noOffers: 'You have not published any offers yet.',
+			noComments: 'You have not commented on any offer yet.',
+			noVotes: 'Vote history is not available yet.',
+			comingSoon: 'Available when activity data is connected.'
 		}
 	},
 	fr: {
@@ -86,6 +130,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			spanish: 'Espagnol',
 			english: 'Anglais',
 			french: 'Français',
+			home: 'Accueil',
+			searchPlaceholder: 'Rechercher des offres, magasins, villes...',
 			login: 'Se connecter',
 			register: 'Créer un compte',
 			profile: 'Mon profil',
@@ -97,6 +143,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loginDescription: 'Utilisez votre e-mail enregistré pour continuer.',
 			registerTitle: 'Créer un compte',
 			registerDescription: 'Complétez vos informations pour commencer.',
+			noAccount: "Vous n'avez pas de compte ?",
+			registerHere: 'Inscrivez-vous ici',
+			alreadyHaveAccount: 'Vous avez déjà un compte ?',
+			loginHere: 'Connectez-vous',
 			email: 'E-mail',
 			username: "Nom d'utilisateur",
 			password: 'Mot de passe',
@@ -116,6 +166,22 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profileTitle: 'Mon profil',
 			notAuthenticated: 'Vous devez vous connecter pour accéder à cette page.',
 			sessionExpired: "Votre session n'est plus valide."
+		},
+		profile: {
+			memberSince: 'Membre depuis',
+			status: 'Statut',
+			role: 'Rôle',
+			offers: 'Offres',
+			comments: 'Commentaires',
+			reputation: 'Réputation',
+			votes: 'Votes',
+			myOffers: 'Mes offres',
+			myComments: 'Mes commentaires',
+			myVotes: 'Mes votes',
+			noOffers: "Vous n'avez pas encore publié d'offres.",
+			noComments: "Vous n'avez encore commenté aucune offre.",
+			noVotes: "L'historique des votes n'est pas encore disponible.",
+			comingSoon: "Disponible lorsque les données d'activité seront connectées."
 		}
 	}
 };

@@ -9,6 +9,8 @@ export interface TranslationMessages {
 		spanish: string;
 		english: string;
 		french: string;
+		home: string;
+		searchPlaceholder: string;
 		login: string;
 		register: string;
 		profile: string;
@@ -20,6 +22,10 @@ export interface TranslationMessages {
 		loginDescription: string;
 		registerTitle: string;
 		registerDescription: string;
+		noAccount: string;
+		registerHere: string;
+		alreadyHaveAccount: string;
+		loginHere: string;
 		email: string;
 		username: string;
 		password: string;
@@ -38,5 +44,21 @@ export interface TranslationMessages {
 		profileTitle: string;
 		notAuthenticated: string;
 		sessionExpired: string;
+	};
+	profile: {
+		memberSince: string;
+		status: string;
+		role: string;
+		offers: string;
+		comments: string;
+		reputation: string;
+		votes: string;
+		myOffers: string;
+		myComments: string;
+		myVotes: string;
+		noOffers: string;
+		noComments: string;
+		noVotes: string;
+		comingSoon: string;
 	};
 }
