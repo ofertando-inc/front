@@ -13,8 +13,16 @@
 		username: '',
 		password: ''
 	});
-	let error = $state<string | null>(null);
+	let registerError = $state<ApiError | null>(null);
+	let hasUnexpectedError = $state(false);
 	let loading = $state(false);
+	let error = $derived(
+		registerError
+			? getRegisterErrorMessage(registerError, $translationStore.auth)
+			: hasUnexpectedError
+				? $translationStore.auth.genericRegisterError
+				: null
+	);
 
 	onMount(async () => {
 		if (!$authStore.accessToken) return;
@@ -28,17 +36,19 @@
 	});
 
 	async function handleSubmit() {
-		error = null;
+		registerError = null;
+		hasUnexpectedError = false;
 		loading = true;
 
 		try {
 			await authStore.register(values.email, values.username, values.password);
 			await goto(resolveRoute('/profile'));
 		} catch (err) {
-			error =
-				err instanceof ApiError
-					? getRegisterErrorMessage(err, $translationStore.auth)
-					: $translationStore.auth.genericRegisterError;
+			if (err instanceof ApiError) {
+				registerError = err;
+			} else {
+				hasUnexpectedError = true;
+			}
 		} finally {
 			loading = false;
 		}
