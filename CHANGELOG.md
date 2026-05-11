@@ -41,6 +41,7 @@
 - Added a `deploy-prod` GitHub Actions workflow triggered by `workflow_dispatch` with a `tag` input, gated by the `production` GitHub Environment (manual reviewer approval), that re-tags `:dev-<sha>` to `:prod` and `:prod-<tag>` and triggers a Dokploy production redeploy
 - Fixed the Docker healthcheck to honor the `PORT` environment variable so it does not break when the container is started on a non-default port, and dropped the stale `EXPOSE 3000` directive that no longer reflects the runtime port
 - Updated `docker/build-push-action` from `v6` to `v7` in the dev deploy workflow to run on the Node 24 runtime and silence the GitHub Actions Node 20 deprecation warning
+- Fixed the Docker healthcheck so it targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
