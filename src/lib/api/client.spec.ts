@@ -1,8 +1,13 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError, apiRequest } from '$lib/api/client';
+
+beforeEach(() => {
+	vi.stubEnv('PUBLIC_API_URL', 'http://test.local');
+});
 
 afterEach(() => {
 	vi.unstubAllGlobals();
+	vi.unstubAllEnvs();
 });
 
 function jsonResponse(body: unknown, status: number) {

@@ -1,4 +1,4 @@
-import { PUBLIC_API_URL } from '$env/static/public';
+import { browser } from '$app/environment';
 
 interface RequestOptions extends RequestInit {
 	token?: string;
@@ -32,12 +32,24 @@ function parseRetryAfter(value: string | null): number | null {
 	return null;
 }
 
-function getApiUrl(path: string) {
-	if (!PUBLIC_API_URL) {
-		throw new Error('PUBLIC_API_URL is not defined');
+function getApiBaseUrl(): string {
+	if (browser) {
+		const url = window.APP_CONFIG?.API_URL;
+		if (!url) {
+			throw new Error('window.APP_CONFIG.API_URL is not defined');
+		}
+		return url;
 	}
 
-	return `${PUBLIC_API_URL}${path}`;
+	const url = process.env.PUBLIC_API_URL;
+	if (!url) {
+		throw new Error('PUBLIC_API_URL is not defined');
+	}
+	return url;
+}
+
+function getApiUrl(path: string) {
+	return `${getApiBaseUrl()}${path}`;
 }
 
 function extractErrorKey(payload: unknown): string | null {
