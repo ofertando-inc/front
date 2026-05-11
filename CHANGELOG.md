@@ -30,6 +30,16 @@
 - Added `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both
 - Updated the auth store to stop storing a redundant `error` field; pages own error translation via `resolveAuthError` and the i18n catalog
 - Removed the dead error banner from the profile page; failures during current-user loading now redirect silently to `/login` and the page no longer carries a never-rendered error state
+- Updated the API client to read the backend URL from `window.APP_CONFIG.API_URL` at runtime (with a `process.env.PUBLIC_API_URL` fallback for SSR and tests), unlocking image-promotion across environments
+- Added `static/config.js` as the local-development placeholder shipped to the browser; the Docker entrypoint overwrites the file at container boot with the value of the `PUBLIC_API_URL` environment variable
+- Updated the Dockerfile to align with the backend pattern: explicit `production` target, non-root `node` user, container healthcheck on the home page, and a dedicated `docker/entrypoint.sh` that injects the runtime config and starts the node server
+- Updated `.env.example` to document the runtime variables consumed by the container (`NODE_ENV`, `PORT`, `FRONTEND_PORT`, `PUBLIC_API_URL`)
+- Added per-environment Docker Compose files (`docker-compose.dev.yml`, `docker-compose.staging.yml`, `docker-compose.prod.yml`) aligned with the backend convention: image pinned per environment (`ghcr.io/ofertando-inc/front:<env>`), attached to the external `dokploy-network`, runtime env vars supplied by the Dokploy service configuration
+- Updated the CI workflow to align with the backend: trigger on `v*` tag pushes (required for the staging release flow), explicit `permissions: contents: read`, job renamed `ci` / `Validate Frontend`, dropped the `PUBLIC_API_URL` env and the build-arg from `docker build` now that the URL is consumed at runtime
+- Added a `deploy-dev` GitHub Actions workflow that builds the image, pushes it to GHCR (`ghcr.io/ofertando-inc/front:dev` plus a `:dev-<sha>` tag for image promotion), and triggers a Dokploy redeploy on every push to `dev`
+- Added a `deploy-staging` GitHub Actions workflow that promotes the `:dev-<sha>` image to `:staging` and `:staging-<tag>` via `docker buildx imagetools create` (no rebuild), then triggers a Dokploy staging redeploy on every `v*` tag push
+- Added a `deploy-prod` GitHub Actions workflow triggered by `workflow_dispatch` with a `tag` input, gated by the `production` GitHub Environment (manual reviewer approval), that re-tags `:dev-<sha>` to `:prod` and `:prod-<tag>` and triggers a Dokploy production redeploy
+- Fixed the Docker healthcheck to honor the `PORT` environment variable so it does not break when the container is started on a non-default port, and dropped the stale `EXPOSE 3000` directive that no longer reflects the runtime port
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
