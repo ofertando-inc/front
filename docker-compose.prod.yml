@@ -1,0 +1,18 @@
+services:
+  front:
+    image: ghcr.io/ofertando-inc/front:prod
+    container_name: front-ofertando-prod
+    pull_policy: always
+    restart: unless-stopped
+    ports:
+      - '${FRONTEND_PORT:-5173}:${PORT:-3000}'
+    networks:
+      - dokploy-network
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      PORT: ${PORT:-3000}
+      PUBLIC_API_URL: ${PUBLIC_API_URL}
+
+networks:
+  dokploy-network:
+    external: true

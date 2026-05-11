@@ -34,6 +34,7 @@
 - Added `static/config.js` as the local-development placeholder shipped to the browser; the Docker entrypoint overwrites the file at container boot with the value of the `PUBLIC_API_URL` environment variable
 - Updated the Dockerfile to align with the backend pattern: explicit `production` target, non-root `node` user, container healthcheck on the home page, and a dedicated `docker/entrypoint.sh` that injects the runtime config and starts the node server
 - Updated `.env.example` to document the runtime variables consumed by the container (`NODE_ENV`, `PORT`, `FRONTEND_PORT`, `PUBLIC_API_URL`)
+- Added per-environment Docker Compose files (`docker-compose.dev.yml`, `docker-compose.staging.yml`, `docker-compose.prod.yml`) aligned with the backend convention: image pinned per environment (`ghcr.io/ofertando-inc/front:<env>`), attached to the external `dokploy-network`, runtime env vars supplied by the Dokploy service configuration
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
