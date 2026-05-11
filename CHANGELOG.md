@@ -21,6 +21,11 @@
 - Added a per-field validation dictionary mapping `(field, constraint)` tuples to localized text, including the system `whitelistValidation` constraint
 - Added `getErrorMessage` and `getFieldErrorMap` helpers to translate the structured `{ key, statusCode, details }` backend error contract
 - Updated the API client and `ApiError` to parse the structured `{ key, statusCode, details }` backend error contract instead of the legacy `message` field
+- Added a `resolveAuthError` helper that turns an `ApiError` into a banner message and per-field errors, routing `user.email_taken` and `user.username_taken` to the matching input
+- Added unit tests for the auth error resolver covering invalid credentials, taken email and username, validation details, and unknown-key fallbacks
+- Updated the shared `AuthForm` to accept a `fieldErrors` map and render the offending input in red with a localized message below it
+- Updated the login and register pages to consume `resolveAuthError`, replacing the legacy English-string matching with key-based handling
+- Replaced the `registerErrors` helper with the key-based `authErrors` resolver shared between login and register
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the register error message mapping

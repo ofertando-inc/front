@@ -5,8 +5,7 @@
 	import { Card } from 'flowbite-svelte';
 	import { TagSolid } from 'flowbite-svelte-icons';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
-	import { ApiError } from '$lib/api/client';
-	import { getRegisterErrorMessage } from '$lib/auth/registerErrors';
+	import { resolveAuthError } from '$lib/auth/authErrors';
 	import { authStore } from '$lib/stores/auth';
 	import { translationStore } from '$lib/i18n';
 
@@ -15,16 +14,14 @@
 		username: '',
 		password: ''
 	});
-	let registerError = $state<ApiError | null>(null);
-	let hasUnexpectedError = $state(false);
+	let registerError = $state<unknown>(null);
 	let loading = $state(false);
-	let error = $derived(
-		registerError
-			? getRegisterErrorMessage(registerError, $translationStore.auth)
-			: hasUnexpectedError
-				? $translationStore.auth.genericRegisterError
-				: null
+
+	let resolvedError = $derived(
+		registerError ? resolveAuthError(registerError, $translationStore, 'register') : null
 	);
+	let bannerMessage = $derived(resolvedError?.bannerMessage ?? null);
+	let fieldErrors = $derived(resolvedError?.fieldErrors ?? {});
 
 	onMount(async () => {
 		if (!$authStore.accessToken) return;
@@ -39,18 +36,13 @@
 
 	async function handleSubmit() {
 		registerError = null;
-		hasUnexpectedError = false;
 		loading = true;
 
 		try {
 			await authStore.register(values.email, values.username, values.password);
 			await goto(resolveRoute('/profile'));
 		} catch (err) {
-			if (err instanceof ApiError) {
-				registerError = err;
-			} else {
-				hasUnexpectedError = true;
-			}
+			registerError = err;
 		} finally {
 			loading = false;
 		}
@@ -88,7 +80,8 @@
 				}
 			]}
 			{values}
-			{error}
+			error={bannerMessage}
+			{fieldErrors}
 			{loading}
 			centered
 			onSubmit={handleSubmit}
