@@ -30,6 +30,10 @@
 - Added `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both
 - Updated the auth store to stop storing a redundant `error` field; pages own error translation via `resolveAuthError` and the i18n catalog
 - Removed the dead error banner from the profile page; failures during current-user loading now redirect silently to `/login` and the page no longer carries a never-rendered error state
+- Updated the API client to read the backend URL from `window.APP_CONFIG.API_URL` at runtime (with a `process.env.PUBLIC_API_URL` fallback for SSR and tests), unlocking image-promotion across environments
+- Added `static/config.js` as the local-development placeholder shipped to the browser; the Docker entrypoint overwrites the file at container boot with the value of the `PUBLIC_API_URL` environment variable
+- Updated the Dockerfile to align with the backend pattern: explicit `production` target, non-root `node` user, container healthcheck on the home page, and a dedicated `docker/entrypoint.sh` that injects the runtime config and starts the node server
+- Updated `.env.example` to document the runtime variables consumed by the container (`NODE_ENV`, `PORT`, `FRONTEND_PORT`, `PUBLIC_API_URL`)
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
