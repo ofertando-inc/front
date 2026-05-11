@@ -28,9 +28,10 @@
 - Replaced the `registerErrors` helper with the key-based `authErrors` resolver shared between login and register
 - Added a rate-limit cooldown on the login and register forms: on a 429 `error.too_many_requests` the submit button is disabled, the banner shows a localized countdown, and the wait honors the backend `Retry-After` header (falling back to 60 seconds)
 - Added `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both
+- Updated the auth store to stop storing a redundant `error` field; pages own error translation via `resolveAuthError` and the i18n catalog
+- Removed the dead error banner from the profile page; failures during current-user loading now redirect silently to `/login` and the page no longer carries a never-rendered error state
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
-- Added unit tests for the register error message mapping
 - Added unit tests for the error key catalog and the validation message helpers
 - Added a Playwright auth smoke e2e test exercising the login flow end-to-end
 - Added a Dockerfile and `docker-compose.yml` for the local frontend
