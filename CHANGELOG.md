@@ -37,6 +37,7 @@
 - Added per-environment Docker Compose files (`docker-compose.dev.yml`, `docker-compose.staging.yml`, `docker-compose.prod.yml`) aligned with the backend convention: image pinned per environment (`ghcr.io/ofertando-inc/front:<env>`), attached to the external `dokploy-network`, runtime env vars supplied by the Dokploy service configuration
 - Updated the CI workflow to align with the backend: trigger on `v*` tag pushes (required for the staging release flow), explicit `permissions: contents: read`, job renamed `ci` / `Validate Frontend`, dropped the `PUBLIC_API_URL` env and the build-arg from `docker build` now that the URL is consumed at runtime
 - Added a `deploy-dev` GitHub Actions workflow that builds the image, pushes it to GHCR (`ghcr.io/ofertando-inc/front:dev` plus a `:dev-<sha>` tag for image promotion), and triggers a Dokploy redeploy on every push to `dev`
+- Added a `deploy-staging` GitHub Actions workflow that promotes the `:dev-<sha>` image to `:staging` and `:staging-<tag>` via `docker buildx imagetools create` (no rebuild), then triggers a Dokploy staging redeploy on every `v*` tag push
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
