@@ -1,0 +1,43 @@
+# Changelog
+
+## 0.1.0
+
+- Added a SvelteKit + TypeScript application scaffold with Tailwind v4, Flowbite Svelte, Vitest, and Playwright
+- Added a typed i18n store supporting Spanish, English, and French with locale persistence in `localStorage`
+- Added Spanish as the default UI locale with proper accents across every translated string
+- Added domain types (`User`, `AuthResponse`, `UserRole`, `UserStatus`) aligned with the backend contract
+- Added a fetch-based API client with typed `ApiError`, JSON helpers, and `PUBLIC_API_URL` resolution
+- Added an auth Svelte store handling login, register, logout, current-user loading, and token persistence in `localStorage` with SSR-safe initialization
+- Added an `AppHeader` Flowbite navbar with brand, language switcher, responsive search input, and an auth-aware user menu
+- Added a shared `AuthForm` component composing the Flowbite `Input`, `Label`, and `Button` primitives
+- Added a `/login` page connected to the live dev backend with loading and error states
+- Added a `/register` page connected to the live dev backend with duplicate email, duplicate username, and validation error handling
+- Added a `/profile` page protected on the client side that displays the authenticated user and placeholder activity tabs
+- Added auth session restore on page refresh
+- Added redirect of already-authenticated visitors away from `/login` and `/register`
+- Added redirect to the home page after logout
+- Added an error key catalog synced with the backend `error-keys.ts` covering the `auth.*`, `user.*`, `validation.*`, `db.*`, and `error.*` namespaces
+- Added localized error messages in Spanish, English, and French for every known error key, with a generic fallback for unknown keys
+- Added a per-field validation dictionary mapping `(field, constraint)` tuples to localized text, including the system `whitelistValidation` constraint
+- Added `getErrorMessage` and `getFieldErrorMap` helpers to translate the structured `{ key, statusCode, details }` backend error contract
+- Added unit tests for the API client error handling
+- Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
+- Added unit tests for the register error message mapping
+- Added unit tests for the error key catalog and the validation message helpers
+- Added a Playwright auth smoke e2e test exercising the login flow end-to-end
+- Added a Dockerfile and `docker-compose.yml` for the local frontend
+- Added a GitHub Actions CI workflow that runs formatting, lint, type-check, unit tests, e2e tests, and build on every PR
+- Configured Tailwind CSS v4 with a warm primary orange palette and the Flowbite plugin
+- Configured ESLint, Prettier, `prettier-plugin-svelte`, and `prettier-plugin-tailwindcss` for the project
+- Configured `PUBLIC_API_URL` injection at Docker build time so deployed images resolve the backend URL
+- Configured the deployed image to fall back to a static backend URL when no environment override is provided
+- Replaced the SvelteKit starter homepage with an auth-focused landing
+- Updated register error messages to react live to locale changes
+- Updated the header layout for better responsiveness across breakpoints
+- Updated the auth and profile pages to align with the UX model reference
+- Updated the profile page to display the member-since date using the full localized month
+- Fixed Docker port conflicts via an environment-driven port mapping
+- Fixed dropdown items showing stray list markers
+- Fixed `resolveRoute` calls to satisfy SvelteKit type checks
+- Fixed build pipeline reliability for the SvelteKit + Flowbite combination
+- Fixed frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`
