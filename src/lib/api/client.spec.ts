@@ -117,4 +117,44 @@ describe('apiRequest', () => {
 		expect(error.key).toBeNull();
 		expect(error.status).toBe(500);
 	});
+
+	it('reads Retry-After seconds from the response headers', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(
+				new Response(JSON.stringify({ key: 'error.too_many_requests', statusCode: 429 }), {
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '42'
+					}
+				})
+			)
+		);
+
+		const error = await captureApiError(() => apiRequest('/auth/login'));
+
+		expect(error.key).toBe('error.too_many_requests');
+		expect(error.status).toBe(429);
+		expect(error.retryAfterSeconds).toBe(42);
+	});
+
+	it('falls back to a null retryAfterSeconds when the header is missing or invalid', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(
+				new Response(JSON.stringify({ key: 'error.too_many_requests', statusCode: 429 }), {
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': 'Wed, 21 Oct 2026 07:28:00 GMT'
+					}
+				})
+			)
+		);
+
+		const error = await captureApiError(() => apiRequest('/auth/login'));
+
+		expect(error.retryAfterSeconds).toBeNull();
+	});
 });

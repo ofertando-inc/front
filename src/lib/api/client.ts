@@ -8,14 +8,28 @@ export class ApiError extends Error {
 	readonly key: string | null;
 	readonly status: number;
 	readonly details: unknown;
+	readonly retryAfterSeconds: number | null;
 
-	constructor(key: string | null, status: number, details?: unknown) {
+	constructor(
+		key: string | null,
+		status: number,
+		details?: unknown,
+		retryAfterSeconds: number | null = null
+	) {
 		super(key ?? 'API request failed');
 		this.name = 'ApiError';
 		this.key = key;
 		this.status = status;
 		this.details = details;
+		this.retryAfterSeconds = retryAfterSeconds;
 	}
+}
+
+function parseRetryAfter(value: string | null): number | null {
+	if (!value) return null;
+	const seconds = Number.parseInt(value, 10);
+	if (Number.isFinite(seconds) && seconds >= 0) return seconds;
+	return null;
 }
 
 function getApiUrl(path: string) {
@@ -62,7 +76,12 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 	const payload = isJson ? await response.json() : null;
 
 	if (!response.ok) {
-		throw new ApiError(extractErrorKey(payload), response.status, extractErrorDetails(payload));
+		throw new ApiError(
+			extractErrorKey(payload),
+			response.status,
+			extractErrorDetails(payload),
+			parseRetryAfter(response.headers.get('Retry-After'))
+		);
 	}
 
 	return payload as T;

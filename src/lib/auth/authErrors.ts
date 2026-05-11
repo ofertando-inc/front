@@ -55,3 +55,9 @@ export function resolveAuthError(
 function genericFallback(t: TranslationMessages, context: AuthContext) {
 	return context === 'login' ? t.auth.genericLoginError : t.auth.genericRegisterError;
 }
+
+export const DEFAULT_RATE_LIMIT_COOLDOWN_SECONDS = 60;
+
+export function formatRateLimitedMessage(seconds: number, t: TranslationMessages): string {
+	return t.auth.rateLimitedCountdown.replace('{seconds}', String(Math.max(0, seconds)));
+}

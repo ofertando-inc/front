@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError } from '$lib/api/client';
 import { messages } from '$lib/i18n/messages';
-import { resolveAuthError } from '$lib/auth/authErrors';
+import { formatRateLimitedMessage, resolveAuthError } from '$lib/auth/authErrors';
 
 const t = messages.es;
 
@@ -98,5 +98,17 @@ describe('resolveAuthError', () => {
 			bannerMessage: t.auth.genericRegisterError,
 			fieldErrors: {}
 		});
+	});
+});
+
+describe('formatRateLimitedMessage', () => {
+	it('interpolates the seconds count into the localized template', () => {
+		expect(formatRateLimitedMessage(42, t)).toBe(
+			'Demasiados intentos. Vuelve a intentarlo en 42s.'
+		);
+	});
+
+	it('clamps negative seconds to zero', () => {
+		expect(formatRateLimitedMessage(-3, t)).toBe('Demasiados intentos. Vuelve a intentarlo en 0s.');
 	});
 });

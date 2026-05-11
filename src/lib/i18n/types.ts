@@ -67,6 +67,7 @@ export interface TranslationMessages {
 		profileTitle: string;
 		notAuthenticated: string;
 		sessionExpired: string;
+		rateLimitedCountdown: string;
 	};
 	profile: {
 		memberSince: string;

@@ -43,7 +43,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.',
 			profileTitle: 'Mi perfil',
 			notAuthenticated: 'Debes iniciar sesión para acceder a esta página.',
-			sessionExpired: 'Tu sesión ya no es válida.'
+			sessionExpired: 'Tu sesión ya no es válida.',
+			rateLimitedCountdown: 'Demasiados intentos. Vuelve a intentarlo en {seconds}s.'
 		},
 		profile: {
 			memberSince: 'Miembro desde',
@@ -142,7 +143,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			serverError: 'The server is unavailable right now. Please try again later.',
 			profileTitle: 'My profile',
 			notAuthenticated: 'You must log in to access this page.',
-			sessionExpired: 'Your session is no longer valid.'
+			sessionExpired: 'Your session is no longer valid.',
+			rateLimitedCountdown: 'Too many attempts. Try again in {seconds}s.'
 		},
 		profile: {
 			memberSince: 'Member since',
@@ -240,7 +242,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard.",
 			profileTitle: 'Mon profil',
 			notAuthenticated: 'Vous devez vous connecter pour accéder à cette page.',
-			sessionExpired: "Votre session n'est plus valide."
+			sessionExpired: "Votre session n'est plus valide.",
+			rateLimitedCountdown: 'Trop de tentatives. Réessayez dans {seconds}s.'
 		},
 		profile: {
 			memberSince: 'Membre depuis',

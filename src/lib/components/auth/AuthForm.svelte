@@ -18,6 +18,7 @@
 		error?: string | null;
 		fieldErrors?: Record<string, string>;
 		loading?: boolean;
+		disabled?: boolean;
 		centered?: boolean;
 		top?: Snippet;
 		alternate?: Snippet;
@@ -33,6 +34,7 @@
 		error = null,
 		fieldErrors = {},
 		loading = false,
+		disabled = false,
 		centered = false,
 		top,
 		alternate,
@@ -92,7 +94,7 @@
 		</p>
 	{/if}
 
-	<Button type="submit" class="w-full rounded-xl py-3" disabled={loading}>
+	<Button type="submit" class="w-full rounded-xl py-3" disabled={loading || disabled}>
 		{#if loading}{submitLabel}...{:else}{submitLabel}{/if}
 	</Button>
 </form>

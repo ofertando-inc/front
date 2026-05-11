@@ -26,6 +26,8 @@
 - Updated the shared `AuthForm` to accept a `fieldErrors` map and render the offending input in red with a localized message below it
 - Updated the login and register pages to consume `resolveAuthError`, replacing the legacy English-string matching with key-based handling
 - Replaced the `registerErrors` helper with the key-based `authErrors` resolver shared between login and register
+- Added a rate-limit cooldown on the login and register forms: on a 429 `error.too_many_requests` the submit button is disabled, the banner shows a localized countdown, and the wait honors the backend `Retry-After` header (falling back to 60 seconds)
+- Added `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the register error message mapping
