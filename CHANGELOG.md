@@ -20,6 +20,7 @@
 - Added localized error messages in Spanish, English, and French for every known error key, with a generic fallback for unknown keys
 - Added a per-field validation dictionary mapping `(field, constraint)` tuples to localized text, including the system `whitelistValidation` constraint
 - Added `getErrorMessage` and `getFieldErrorMap` helpers to translate the structured `{ key, statusCode, details }` backend error contract
+- Updated the API client and `ApiError` to parse the structured `{ key, statusCode, details }` backend error contract instead of the legacy `message` field
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the register error message mapping
