@@ -5,15 +5,31 @@ interface RequestOptions extends RequestInit {
 }
 
 export class ApiError extends Error {
-	status: number;
-	details: unknown;
+	readonly key: string | null;
+	readonly status: number;
+	readonly details: unknown;
+	readonly retryAfterSeconds: number | null;
 
-	constructor(message: string, status: number, details?: unknown) {
-		super(message);
+	constructor(
+		key: string | null,
+		status: number,
+		details?: unknown,
+		retryAfterSeconds: number | null = null
+	) {
+		super(key ?? 'API request failed');
 		this.name = 'ApiError';
+		this.key = key;
 		this.status = status;
 		this.details = details;
+		this.retryAfterSeconds = retryAfterSeconds;
 	}
+}
+
+function parseRetryAfter(value: string | null): number | null {
+	if (!value) return null;
+	const seconds = Number.parseInt(value, 10);
+	if (Number.isFinite(seconds) && seconds >= 0) return seconds;
+	return null;
 }
 
 function getApiUrl(path: string) {
@@ -22,6 +38,25 @@ function getApiUrl(path: string) {
 	}
 
 	return `${PUBLIC_API_URL}${path}`;
+}
+
+function extractErrorKey(payload: unknown): string | null {
+	if (payload && typeof payload === 'object' && 'key' in payload) {
+		const key = (payload as { key: unknown }).key;
+		if (typeof key === 'string' && key.length > 0) {
+			return key;
+		}
+	}
+
+	return null;
+}
+
+function extractErrorDetails(payload: unknown): unknown {
+	if (payload && typeof payload === 'object' && 'details' in payload) {
+		return (payload as { details: unknown }).details;
+	}
+
+	return undefined;
 }
 
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
@@ -41,15 +76,12 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 	const payload = isJson ? await response.json() : null;
 
 	if (!response.ok) {
-		const messagePayload =
-			typeof payload === 'object' && payload !== null && 'message' in payload
-				? payload.message
-				: 'Request failed';
-		const messages = Array.isArray(messagePayload)
-			? messagePayload.map(String)
-			: [String(messagePayload)];
-
-		throw new ApiError(messages.join('\n'), response.status, payload);
+		throw new ApiError(
+			extractErrorKey(payload),
+			response.status,
+			extractErrorDetails(payload),
+			parseRetryAfter(response.headers.get('Retry-After'))
+		);
 	}
 
 	return payload as T;

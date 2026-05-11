@@ -1,12 +1,18 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { resolveRoute } from '$app/paths';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Card } from 'flowbite-svelte';
 	import { TagSolid } from 'flowbite-svelte-icons';
 	import AuthForm from '$lib/components/auth/AuthForm.svelte';
 	import { ApiError } from '$lib/api/client';
-	import { getRegisterErrorMessage } from '$lib/auth/registerErrors';
+	import {
+		DEFAULT_RATE_LIMIT_COOLDOWN_SECONDS,
+		formatRateLimitedMessage,
+		resolveAuthError
+	} from '$lib/auth/authErrors';
+	import { createCooldown } from '$lib/auth/cooldown.svelte';
+	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { authStore } from '$lib/stores/auth';
 	import { translationStore } from '$lib/i18n';
 
@@ -15,16 +21,19 @@
 		username: '',
 		password: ''
 	});
-	let registerError = $state<ApiError | null>(null);
-	let hasUnexpectedError = $state(false);
+	let registerError = $state<unknown>(null);
 	let loading = $state(false);
-	let error = $derived(
-		registerError
-			? getRegisterErrorMessage(registerError, $translationStore.auth)
-			: hasUnexpectedError
-				? $translationStore.auth.genericRegisterError
-				: null
+	const cooldown = createCooldown();
+
+	let resolvedError = $derived(
+		registerError ? resolveAuthError(registerError, $translationStore, 'register') : null
 	);
+	let bannerMessage = $derived(
+		cooldown.active
+			? formatRateLimitedMessage(cooldown.seconds, $translationStore)
+			: (resolvedError?.bannerMessage ?? null)
+	);
+	let fieldErrors = $derived(resolvedError?.fieldErrors ?? {});
 
 	onMount(async () => {
 		if (!$authStore.accessToken) return;
@@ -37,19 +46,21 @@
 		}
 	});
 
+	onDestroy(() => cooldown.stop());
+
 	async function handleSubmit() {
+		if (cooldown.active) return;
+
 		registerError = null;
-		hasUnexpectedError = false;
 		loading = true;
 
 		try {
 			await authStore.register(values.email, values.username, values.password);
 			await goto(resolveRoute('/profile'));
 		} catch (err) {
-			if (err instanceof ApiError) {
-				registerError = err;
-			} else {
-				hasUnexpectedError = true;
+			registerError = err;
+			if (err instanceof ApiError && err.key === ErrorKey.ErrorTooManyRequests) {
+				cooldown.start(err.retryAfterSeconds ?? DEFAULT_RATE_LIMIT_COOLDOWN_SECONDS);
 			}
 		} finally {
 			loading = false;
@@ -88,8 +99,10 @@
 				}
 			]}
 			{values}
-			{error}
+			error={bannerMessage}
+			{fieldErrors}
 			{loading}
+			disabled={cooldown.active}
 			centered
 			onSubmit={handleSubmit}
 		>

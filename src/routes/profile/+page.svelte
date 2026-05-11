@@ -9,7 +9,6 @@
 	import { localeStore, translationStore } from '$lib/i18n';
 
 	let loading = $state(true);
-	let error = $state<string | null>(null);
 	let selectedTab = $state('offers');
 
 	let memberDate = $derived(
@@ -31,8 +30,7 @@
 
 		try {
 			await authStore.loadCurrentUser();
-		} catch (err) {
-			error = err instanceof Error ? err.message : $translationStore.auth.sessionExpired;
+		} catch {
 			await goto(resolveRoute('/login'));
 			return;
 		} finally {
@@ -52,12 +50,6 @@
 {:else if $authStore.user}
 	<section class="mx-auto max-w-7xl space-y-8 py-4 sm:py-8">
 		<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
-			{#if error}
-				<p class="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-					{error}
-				</p>
-			{/if}
-
 			<div class="flex flex-col items-center gap-6 md:flex-row md:items-start">
 				<Avatar
 					size="xl"

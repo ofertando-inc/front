@@ -83,8 +83,7 @@ describe('auth store', () => {
 			accessToken: 'jwt-token',
 			user,
 			isAuthenticated: true,
-			isLoading: false,
-			error: null
+			isLoading: false
 		});
 	});
 
@@ -105,8 +104,7 @@ describe('auth store', () => {
 			accessToken: 'jwt-token',
 			user,
 			isAuthenticated: true,
-			isLoading: false,
-			error: null
+			isLoading: false
 		});
 	});
 
@@ -122,8 +120,7 @@ describe('auth store', () => {
 			accessToken: null,
 			user: null,
 			isAuthenticated: false,
-			isLoading: false,
-			error: null
+			isLoading: false
 		});
 	});
 
@@ -141,8 +138,7 @@ describe('auth store', () => {
 			accessToken: 'stored-token',
 			user,
 			isAuthenticated: true,
-			isLoading: false,
-			error: null
+			isLoading: false
 		});
 	});
 
@@ -159,8 +155,7 @@ describe('auth store', () => {
 			accessToken: null,
 			user: null,
 			isAuthenticated: false,
-			isLoading: false,
-			error: 'Unauthorized'
+			isLoading: false
 		});
 	});
 });

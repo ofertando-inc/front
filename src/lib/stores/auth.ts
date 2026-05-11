@@ -10,24 +10,14 @@ interface AuthState {
 	user: User | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
-	error: string | null;
 }
 
 const initialState: AuthState = {
 	accessToken: null,
 	user: null,
 	isAuthenticated: false,
-	isLoading: false,
-	error: null
+	isLoading: false
 };
-
-function normalizeAuthError(error: unknown, fallback: string) {
-	if (error instanceof Error && error.message) {
-		return error.message;
-	}
-
-	return fallback;
-}
 
 export function createAuthStore() {
 	const { subscribe, set, update } = writable<AuthState>(initialState);
@@ -41,8 +31,7 @@ export function createAuthStore() {
 			accessToken: response.accessToken,
 			user: response.user,
 			isAuthenticated: true,
-			isLoading: false,
-			error: null
+			isLoading: false
 		});
 	}
 
@@ -61,34 +50,26 @@ export function createAuthStore() {
 			}));
 		},
 		async login(email: string, password: string) {
-			update((state) => ({ ...state, isLoading: true, error: null }));
+			update((state) => ({ ...state, isLoading: true }));
 
 			try {
 				const response = await loginRequest({ email, password });
 				applyAuth(response);
 				return response.user;
 			} catch (error) {
-				update((state) => ({
-					...state,
-					isLoading: false,
-					error: normalizeAuthError(error, 'Login failed')
-				}));
+				update((state) => ({ ...state, isLoading: false }));
 				throw error;
 			}
 		},
 		async register(email: string, username: string, password: string) {
-			update((state) => ({ ...state, isLoading: true, error: null }));
+			update((state) => ({ ...state, isLoading: true }));
 
 			try {
 				const response = await registerRequest({ email, username, password });
 				applyAuth(response);
 				return response.user;
 			} catch (error) {
-				update((state) => ({
-					...state,
-					isLoading: false,
-					error: normalizeAuthError(error, 'Register failed')
-				}));
+				update((state) => ({ ...state, isLoading: false }));
 				throw error;
 			}
 		},
@@ -104,19 +85,11 @@ export function createAuthStore() {
 
 			update((state) => {
 				token = state.accessToken;
-				return {
-					...state,
-					isLoading: true,
-					error: null
-				};
+				return { ...state, isLoading: true };
 			});
 
 			if (!token) {
-				update((state) => ({
-					...state,
-					isLoading: false,
-					isAuthenticated: false
-				}));
+				update((state) => ({ ...state, isLoading: false, isAuthenticated: false }));
 				return null;
 			}
 
@@ -126,8 +99,7 @@ export function createAuthStore() {
 					...state,
 					user,
 					isAuthenticated: true,
-					isLoading: false,
-					error: null
+					isLoading: false
 				}));
 				return user;
 			} catch (error) {
@@ -135,10 +107,7 @@ export function createAuthStore() {
 					localStorage.removeItem(AUTH_TOKEN_KEY);
 				}
 
-				set({
-					...initialState,
-					error: normalizeAuthError(error, 'Session expired')
-				});
+				set(initialState);
 				throw error;
 			}
 		}

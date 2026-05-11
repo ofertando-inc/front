@@ -2,6 +2,29 @@ export const SUPPORTED_LOCALES = ['es', 'en', 'fr'] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
+export interface ErrorMessages {
+	'auth.unauthorized': string;
+	'auth.forbidden': string;
+	'auth.invalid_credentials': string;
+	'auth.account_disabled': string;
+	'user.email_taken': string;
+	'user.username_taken': string;
+	'validation.failed': string;
+	'db.unique_violation': string;
+	'db.not_found': string;
+	'error.bad_request': string;
+	'error.not_found': string;
+	'error.too_many_requests': string;
+	'error.internal': string;
+	fallback: string;
+}
+
+export interface ValidationMessages {
+	fields: Record<string, Record<string, string>>;
+	system: Record<string, string>;
+	fallback: string;
+}
+
 export interface TranslationMessages {
 	common: {
 		appName: string;
@@ -44,6 +67,7 @@ export interface TranslationMessages {
 		profileTitle: string;
 		notAuthenticated: string;
 		sessionExpired: string;
+		rateLimitedCountdown: string;
 	};
 	profile: {
 		memberSince: string;
@@ -61,4 +85,6 @@ export interface TranslationMessages {
 		noVotes: string;
 		comingSoon: string;
 	};
+	errors: ErrorMessages;
+	validation: ValidationMessages;
 }
