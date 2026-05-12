@@ -45,7 +45,7 @@ You can preview the production build with `npm run preview`.
 
 This repository uses two long-lived branches:
 
-- `dev`: integration branch for tested feature branches. Pushes to `dev` build and deploy the dev image only.
+- `dev`: integration branch for tested feature branches. Pushes to `dev` run CI first; the dev image is deployed only after CI succeeds.
 - `main`: stable branch used as the source of truth for releases.
 
 Temporary work should happen on `feature/*`, `fix/*`, or `hotfix/*` branches.
@@ -61,14 +61,14 @@ The `staging` and `prod` tags are never built directly and are never created fro
 
 ### Dev Deployment
 
-Merging a PR into `dev` triggers `.github/workflows/deploy-dev.yml`.
+Merging a PR into `dev` runs `.github/workflows/ci.yml`. When that CI workflow completes successfully on `dev`, `.github/workflows/deploy-dev.yml` starts automatically.
 
 The workflow builds and pushes:
 
 - `ghcr.io/ofertando-inc/front:dev`
 - `ghcr.io/ofertando-inc/front:dev-<commit-sha>`
 
-It then triggers the dev Dokploy webhook.
+It checks out the exact commit validated by CI, builds the dev image, then triggers the dev Dokploy webhook.
 
 ### Staging Release
 
