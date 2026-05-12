@@ -1,4 +1,4 @@
-name: Deploy staging
+name: Release to staging
 
 on:
   push:
@@ -9,13 +9,40 @@ permissions:
   contents: read
   packages: write
 
+env:
+  IMAGE_NAME: ghcr.io/ofertando-inc/front
+
 jobs:
-  promote:
-    name: Promote dev image to staging
+  release:
+    name: Build versioned image and update staging tag
     runs-on: ubuntu-latest
-    environment: staging
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Validate release tag
+        run: |
+          set -euo pipefail
+
+          if ! printf '%s' "${GITHUB_REF_NAME}" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "Release tags must use semantic versioning, for example v0.1.1."
+            exit 1
+          fi
+
+          git fetch origin main:refs/remotes/origin/main
+          TAG_COMMIT="$(git rev-list -n 1 "${GITHUB_REF_NAME}")"
+
+          if ! git merge-base --is-ancestor "${TAG_COMMIT}" origin/main; then
+            echo "Release tag ${GITHUB_REF_NAME} must point to a commit contained in main."
+            exit 1
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
       - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
@@ -23,15 +50,28 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
+      - name: Build and push versioned image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: production
+          push: true
+          tags: ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Re-tag dev image as staging
+      - name: Verify versioned image exists
+        run: docker buildx imagetools inspect "${IMAGE_NAME}:${GITHUB_REF_NAME}"
+
+      - name: Update stable staging tag from versioned image
         run: |
           docker buildx imagetools create \
-            --tag ghcr.io/ofertando-inc/front:staging \
-            --tag ghcr.io/ofertando-inc/front:staging-${{ github.ref_name }} \
-            ghcr.io/ofertando-inc/front:dev-${{ github.sha }}
+            --tag "${IMAGE_NAME}:staging" \
+            "${IMAGE_NAME}:${GITHUB_REF_NAME}"
 
-      - name: Trigger Dokploy redeploy
-        run: curl -fsS -X POST "${{ secrets.DOKPLOY_STAGING_WEBHOOK_URL }}"
+      - name: Trigger Dokploy staging redeploy
+        run: |
+          curl -fsS -X POST \
+            -H "Content-Type: application/json" \
+            --data "{\"image\":\"${IMAGE_NAME}:staging\",\"release\":\"${GITHUB_REF_NAME}\"}" \
+            "${{ secrets.DOKPLOY_STAGING_WEBHOOK_URL }}"
