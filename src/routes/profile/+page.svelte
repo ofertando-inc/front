@@ -134,7 +134,7 @@
 				tabStyle="underline"
 				divider={false}
 				class="overflow-x-auto"
-				contentClass="pt-6"
+				classes={{ content: 'pt-6' }}
 			>
 				<TabItem key="offers" open>
 					{#snippet titleSlot()}
