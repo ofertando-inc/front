@@ -49,6 +49,7 @@
 - Updated the auth form and header search inputs to use a lighter `gray-400` placeholder color so the example text no longer competes with the typed value
 - Updated the home landing to hide the login and register call-to-action buttons when the visitor is already authenticated, avoiding the duplicate of the header user menu
 - Fixed the document root language to Spanish (`<html lang="es">`) to match the default UI locale and stop misleading screen readers and search engines
+- Updated the auth form submit button to display a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
