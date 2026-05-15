@@ -52,6 +52,8 @@ export interface TranslationMessages {
 		email: string;
 		username: string;
 		password: string;
+		confirmPassword: string;
+		passwordMismatch: string;
 		submitLogin: string;
 		submitRegister: string;
 		invalidCredentials: string;

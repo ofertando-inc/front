@@ -28,6 +28,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'Correo electrónico',
 			username: 'Nombre de usuario',
 			password: 'Contraseña',
+			confirmPassword: 'Confirmar contraseña',
+			passwordMismatch: 'Las contraseñas no coinciden.',
 			submitLogin: 'Entrar',
 			submitRegister: 'Registrarme',
 			invalidCredentials:
@@ -135,6 +137,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'Email',
 			username: 'Username',
 			password: 'Password',
+			confirmPassword: 'Confirm password',
+			passwordMismatch: 'Passwords do not match.',
 			submitLogin: 'Log in',
 			submitRegister: 'Sign up',
 			invalidCredentials:
@@ -241,6 +245,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'E-mail',
 			username: "Nom d'utilisateur",
 			password: 'Mot de passe',
+			confirmPassword: 'Confirmer le mot de passe',
+			passwordMismatch: 'Les mots de passe ne correspondent pas.',
 			submitLogin: 'Se connecter',
 			submitRegister: "S'inscrire",
 			invalidCredentials:

@@ -19,9 +19,11 @@
 	let values = $state({
 		email: '',
 		username: '',
-		password: ''
+		password: '',
+		confirmPassword: ''
 	});
 	let registerError = $state<unknown>(null);
+	let clientFieldErrors = $state<Record<string, string>>({});
 	let loading = $state(false);
 	const cooldown = createCooldown();
 
@@ -33,7 +35,10 @@
 			? formatRateLimitedMessage(cooldown.seconds, $translationStore)
 			: (resolvedError?.bannerMessage ?? null)
 	);
-	let fieldErrors = $derived(resolvedError?.fieldErrors ?? {});
+	let fieldErrors = $derived({
+		...(resolvedError?.fieldErrors ?? {}),
+		...clientFieldErrors
+	});
 
 	onMount(async () => {
 		if (!$authStore.accessToken) return;
@@ -52,6 +57,13 @@
 		if (cooldown.active) return;
 
 		registerError = null;
+		clientFieldErrors = {};
+
+		if (values.password !== values.confirmPassword) {
+			clientFieldErrors = { confirmPassword: $translationStore.auth.passwordMismatch };
+			return;
+		}
+
 		loading = true;
 
 		try {
@@ -94,6 +106,12 @@
 				{
 					name: 'password',
 					label: $translationStore.auth.password,
+					type: 'password',
+					placeholder: '••••••••'
+				},
+				{
+					name: 'confirmPassword',
+					label: $translationStore.auth.confirmPassword,
 					type: 'password',
 					placeholder: '••••••••'
 				}

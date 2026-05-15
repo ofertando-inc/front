@@ -52,6 +52,8 @@
 - Updated the auth form submit button to display a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance
 - Added a localized 404 and generic-error page (`src/routes/+error.svelte`) that displays the HTTP status, a context-appropriate Spanish/English/French message, and a `Volver al inicio` action button
 - Updated the profile page loading state to render a pulse skeleton mirroring the final avatar, identity, and stats grid (with `aria-busy` and a localized `aria-label`) instead of the previous bare `Cargando...` text
+- Added a `Confirmar contraseña` field to the register form with client-only validation that surfaces a localized error under the field when the two passwords do not match, without sending the extra field to the backend (which forbids non-whitelisted properties)
+- Updated the register e2e smoke test to assert both password fields and use an exact-match label query so the new confirmation input does not collide with the original password input
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
