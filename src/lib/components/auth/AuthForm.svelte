@@ -75,8 +75,8 @@
 				aria-invalid={fieldError ? 'true' : undefined}
 				aria-describedby={fieldError ? `${field.name}-error` : undefined}
 				class={fieldError
-					? 'rounded-lg border-red-400 bg-white text-gray-900 focus:border-red-500 focus:ring-red-500'
-					: 'rounded-lg border-gray-300 bg-white text-gray-900 focus:border-primary-500 focus:ring-primary-500'}
+					? 'rounded-lg border-red-400 bg-white text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:ring-red-500'
+					: 'rounded-lg border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500'}
 				required
 			/>
 			{#if fieldError}

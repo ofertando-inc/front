@@ -93,7 +93,7 @@
 				<Input
 					type="search"
 					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-full border-gray-300 bg-gray-50 pl-10 focus:border-primary-500 focus:ring-primary-500"
+					class="rounded-full border-gray-300 bg-gray-50 pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
 				>
 					{#snippet left()}
 						<SearchOutline class="h-5 w-5 text-gray-400" />
@@ -111,7 +111,7 @@
 				<Input
 					type="search"
 					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-lg border-gray-300 bg-gray-50 pl-10 focus:border-primary-500 focus:ring-primary-500"
+					class="rounded-lg border-gray-300 bg-gray-50 pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
 				>
 					{#snippet left()}
 						<SearchOutline class="h-5 w-5 text-gray-400" />
