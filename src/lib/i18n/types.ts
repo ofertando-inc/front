@@ -87,4 +87,11 @@ export interface TranslationMessages {
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
+	errorPage: {
+		notFoundTitle: string;
+		notFoundDescription: string;
+		genericTitle: string;
+		genericDescription: string;
+		backToHome: string;
+	};
 }
