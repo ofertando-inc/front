@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from 'flowbite-svelte';
+	import { authStore } from '$lib/stores/auth';
 	import { translationStore } from '$lib/i18n';
 </script>
 
@@ -14,9 +15,11 @@
 		<h1 class="max-w-2xl text-4xl font-semibold tracking-tight lg:text-6xl">
 			{$translationStore.common.appName}
 		</h1>
-		<div class="flex flex-wrap gap-3">
-			<Button href="/login" color="light">{$translationStore.common.login}</Button>
-			<Button href="/register">{$translationStore.common.register}</Button>
-		</div>
+		{#if !$authStore.isAuthenticated}
+			<div class="flex flex-wrap gap-3">
+				<Button href="/login" color="light">{$translationStore.common.login}</Button>
+				<Button href="/register">{$translationStore.common.register}</Button>
+			</div>
+		{/if}
 	</div>
 </section>

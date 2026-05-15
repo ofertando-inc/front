@@ -46,6 +46,8 @@
 - Fixed the Docker healthcheck so it targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD
 - Updated the staging release workflow to chain after a successful `CI` workflow run on a `v*` tag via `workflow_run`, so a release tag never produces a deployed image without first passing lint, typecheck, unit tests, e2e smoke tests, and the Docker build
 - Updated the production deploy workflow to run under the `production` GitHub Environment, gating manual dispatches behind the configured reviewer approval and branch/tag protection rules
+- Updated the auth form and header search inputs to use a lighter `gray-400` placeholder color so the example text no longer competes with the typed value
+- Updated the home landing to hide the login and register call-to-action buttons when the visitor is already authenticated, avoiding the duplicate of the header user menu
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
