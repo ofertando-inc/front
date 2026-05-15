@@ -51,6 +51,7 @@
 - Fixed the document root language to Spanish (`<html lang="es">`) to match the default UI locale and stop misleading screen readers and search engines
 - Updated the auth form submit button to display a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance
 - Added a localized 404 and generic-error page (`src/routes/+error.svelte`) that displays the HTTP status, a context-appropriate Spanish/English/French message, and a `Volver al inicio` action button
+- Updated the profile page loading state to render a pulse skeleton mirroring the final avatar, identity, and stats grid (with `aria-busy` and a localized `aria-label`) instead of the previous bare `Cargando...` text
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
