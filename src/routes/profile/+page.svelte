@@ -44,9 +44,29 @@
 </svelte:head>
 
 {#if loading}
-	<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm">
-		{$translationStore.common.loading}
-	</Card>
+	<section
+		class="mx-auto max-w-7xl space-y-8 py-4 sm:py-8"
+		aria-busy="true"
+		aria-label={$translationStore.common.loading}
+	>
+		<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+			<div class="flex animate-pulse flex-col items-center gap-6 md:flex-row md:items-start">
+				<div class="h-24 w-24 shrink-0 rounded-full bg-gray-200"></div>
+				<div class="min-w-0 flex-1 space-y-3">
+					<div class="mx-auto h-8 w-48 rounded bg-gray-200 md:mx-0"></div>
+					<div class="mx-auto h-4 w-64 rounded bg-gray-200 md:mx-0"></div>
+					<div class="mx-auto h-3 w-56 rounded bg-gray-200 md:mx-0"></div>
+					<div
+						class="mx-auto mt-6 grid w-full max-w-md grid-cols-3 gap-3 sm:gap-6 md:mx-0 md:max-w-lg"
+					>
+						<div class="h-16 rounded-xl bg-gray-200"></div>
+						<div class="h-16 rounded-xl bg-gray-200"></div>
+						<div class="h-16 rounded-xl bg-gray-200"></div>
+					</div>
+				</div>
+			</div>
+		</Card>
+	</section>
 {:else if $authStore.user}
 	<section class="mx-auto max-w-7xl space-y-8 py-4 sm:py-8">
 		<Card size="xl" class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
@@ -114,7 +134,7 @@
 				tabStyle="underline"
 				divider={false}
 				class="overflow-x-auto"
-				contentClass="pt-6"
+				classes={{ content: 'pt-6' }}
 			>
 				<TabItem key="offers" open>
 					{#snippet titleSlot()}

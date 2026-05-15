@@ -46,6 +46,16 @@
 - Fixed the Docker healthcheck so it targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD
 - Updated the staging release workflow to chain after a successful `CI` workflow run on a `v*` tag via `workflow_run`, so a release tag never produces a deployed image without first passing lint, typecheck, unit tests, e2e smoke tests, and the Docker build
 - Updated the production deploy workflow to run under the `production` GitHub Environment, gating manual dispatches behind the configured reviewer approval and branch/tag protection rules
+- Updated the auth form and header search inputs to use a lighter `gray-400` placeholder color so the example text no longer competes with the typed value
+- Updated the home landing to hide the login and register call-to-action buttons when the visitor is already authenticated, avoiding the duplicate of the header user menu
+- Fixed the document root language to Spanish (`<html lang="es">`) to match the default UI locale and stop misleading screen readers and search engines
+- Updated the auth form submit button to display a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance
+- Added a localized 404 and generic-error page (`src/routes/+error.svelte`) that displays the HTTP status, a context-appropriate Spanish/English/French message, and a `Volver al inicio` action button
+- Updated the profile page loading state to render a pulse skeleton mirroring the final avatar, identity, and stats grid (with `aria-busy` and a localized `aria-label`) instead of the previous bare `Cargando...` text
+- Added a `Confirmar contraseña` field to the register form with client-only validation that surfaces a localized error under the field when the two passwords do not match, without sending the extra field to the backend (which forbids non-whitelisted properties)
+- Updated the register e2e smoke test to assert both password fields and use an exact-match label query so the new confirmation input does not collide with the original password input
+- Updated the README to replace the default `sv` template content with a project header, local setup steps, environment variables, npm scripts, and the catalog of available routes
+- Fixed the login and register pages to redirect authenticated visitors to `/profile` when reached via direct URL: an `$effect` watching `$authStore.user` replaces the previous `onMount` hook that fired before the layout had restored the token from `localStorage`
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers

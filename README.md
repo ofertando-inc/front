@@ -1,45 +1,65 @@
-# sv
+# Ofertando Frontend
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+SvelteKit + TypeScript frontend for the Ofertando deals platform.
 
-## Creating a project
+## Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- SvelteKit 2 (`adapter-node`) + Svelte 5 (runes)
+- TypeScript
+- Tailwind CSS v4 + Flowbite Svelte + Flowbite Svelte Icons
+- Vitest (unit + component) + Playwright (e2e)
+- Docker image deployed via Dokploy
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Local setup
 
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.15.1 create --template minimal --types ts --add prettier eslint vitest="usages:component,unit" playwright tailwindcss="plugins:forms" sveltekit-adapter="adapter:node" --install npm frontend
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Prerequisites: Node.js 24+, npm 10+.
 
 ```sh
+git clone https://github.com/ofertando-inc/front.git
+cd front
+cp .env.example .env
+# adjust PUBLIC_API_URL in .env if you run the backend on a different host or port
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+The dev server listens on http://localhost:5173 and reloads on file changes.
 
-To create a production version of your app:
+## Environment variables
 
-```sh
-npm run build
-```
+| Variable         | Purpose                                                       | Default                 |
+| ---------------- | ------------------------------------------------------------- | ----------------------- |
+| `NODE_ENV`       | Node runtime mode (`development`, `production`)               | `development`           |
+| `PORT`           | Port the node server listens on inside the container          | `3000`                  |
+| `FRONTEND_PORT`  | Host port the docker-compose service exposes                  | `5173`                  |
+| `PUBLIC_API_URL` | Backend base URL, consumed at runtime via `window.APP_CONFIG` | `http://localhost:3000` |
 
-You can preview the production build with `npm run preview`.
+In the deployed image, `PUBLIC_API_URL` is injected at container boot by `docker/entrypoint.sh`, which writes `build/client/config.js`. The committed `static/config.js` only serves local development, where Vite serves it directly.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Scripts
+
+| Script              | Action                                                        |
+| ------------------- | ------------------------------------------------------------- |
+| `npm run dev`       | Start the Vite dev server                                     |
+| `npm run build`     | Build the production bundle                                   |
+| `npm run preview`   | Preview the production build locally                          |
+| `npm run start`     | Run the built node server (after `build`)                     |
+| `npm run check`     | Type-check via `svelte-check`                                 |
+| `npm run lint`      | Prettier check + ESLint                                       |
+| `npm run format`    | Prettier write                                                |
+| `npm run test:unit` | Vitest unit + component tests                                 |
+| `npm run test:e2e`  | Playwright e2e tests (builds and serves a production preview) |
+| `npm test`          | All tests (unit then e2e)                                     |
+
+## Routes
+
+| Path            | Description                                                                                 | Auth required                         |
+| --------------- | ------------------------------------------------------------------------------------------- | ------------------------------------- |
+| `/`             | Home — branding hero with login/register call-to-action buttons (hidden when authenticated) | No                                    |
+| `/login`        | Sign-in form, calls `POST /auth/login`, stores the JWT and redirects to `/profile`          | No                                    |
+| `/register`     | Account creation form with client-side password confirmation, calls `POST /auth/register`   | No                                    |
+| `/profile`      | Current user info from `GET /users/me`, with placeholder offers / comments / votes tabs     | Yes (redirects to `/login` otherwise) |
+| _Anything else_ | Localized 404 / generic error page rendered by `src/routes/+error.svelte`                   | —                                     |
 
 ## Deployment Workflow
 
@@ -74,7 +94,7 @@ It checks out the exact commit validated by CI, builds the dev image, then trigg
 
 When `dev` is ready for release, merge `dev` into `main` by PR, then create a semantic version tag from `main`.
 
-Pushing a tag like `v0.1.1` triggers `.github/workflows/deploy-staging.yml`.
+Pushing a tag like `v0.1.1` triggers `.github/workflows/deploy-staging.yml` after the CI workflow on the tag has succeeded.
 
 The workflow validates the tag, builds `ghcr.io/ofertando-inc/front:v0.1.1`, updates `ghcr.io/ofertando-inc/front:staging` from that versioned image, and triggers Dokploy staging.
 
@@ -82,7 +102,7 @@ The workflow validates the tag, builds `ghcr.io/ofertando-inc/front:v0.1.1`, upd
 
 Production is manual and does not rebuild from source.
 
-Run `.github/workflows/deploy-prod.yml` manually with the `tag` input, for example `v0.1.1`.
+Run `.github/workflows/deploy-prod.yml` manually with the `tag` input, for example `v0.1.1`. The workflow runs under the `production` GitHub Environment, so it is gated by the configured reviewer approval and branch/tag protection rules.
 
 The workflow validates the tag, verifies that `ghcr.io/ofertando-inc/front:v0.1.1` already exists, updates `ghcr.io/ofertando-inc/front:prod` from that same image, and triggers Dokploy production.
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Button, Input, Label } from 'flowbite-svelte';
+	import { Button, Input, Label, Spinner } from 'flowbite-svelte';
 
 	interface Field {
 		name: string;
@@ -75,8 +75,8 @@
 				aria-invalid={fieldError ? 'true' : undefined}
 				aria-describedby={fieldError ? `${field.name}-error` : undefined}
 				class={fieldError
-					? 'rounded-lg border-red-400 bg-white text-gray-900 focus:border-red-500 focus:ring-red-500'
-					: 'rounded-lg border-gray-300 bg-white text-gray-900 focus:border-primary-500 focus:ring-primary-500'}
+					? 'rounded-lg border-red-400 bg-white text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:ring-red-500'
+					: 'rounded-lg border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500'}
 				required
 			/>
 			{#if fieldError}
@@ -95,6 +95,9 @@
 	{/if}
 
 	<Button type="submit" class="w-full rounded-xl py-3" disabled={loading || disabled}>
-		{#if loading}{submitLabel}...{:else}{submitLabel}{/if}
+		{#if loading}
+			<Spinner class="me-3 !fill-white !text-white/30" size="4" />
+		{/if}
+		{submitLabel}
 	</Button>
 </form>

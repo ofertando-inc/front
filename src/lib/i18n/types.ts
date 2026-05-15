@@ -52,6 +52,8 @@ export interface TranslationMessages {
 		email: string;
 		username: string;
 		password: string;
+		confirmPassword: string;
+		passwordMismatch: string;
 		submitLogin: string;
 		submitRegister: string;
 		invalidCredentials: string;
@@ -87,4 +89,11 @@ export interface TranslationMessages {
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
+	errorPage: {
+		notFoundTitle: string;
+		notFoundDescription: string;
+		genericTitle: string;
+		genericDescription: string;
+		backToHome: string;
+	};
 }

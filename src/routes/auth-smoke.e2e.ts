@@ -23,7 +23,8 @@ test('register page renders the register form', async ({ page }) => {
 	await expect(page.getByRole('heading', { name: 'Crear cuenta' }).first()).toBeVisible();
 	await expect(page.getByLabel('Correo electrónico')).toBeVisible();
 	await expect(page.getByLabel('Nombre de usuario')).toBeVisible();
-	await expect(page.getByLabel('Contraseña')).toBeVisible();
+	await expect(page.getByLabel('Contraseña', { exact: true })).toBeVisible();
+	await expect(page.getByLabel('Confirmar contraseña')).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Registrarme' })).toBeVisible();
 });
 

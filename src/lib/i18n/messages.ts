@@ -28,6 +28,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'Correo electrónico',
 			username: 'Nombre de usuario',
 			password: 'Contraseña',
+			confirmPassword: 'Confirmar contraseña',
+			passwordMismatch: 'Las contraseñas no coinciden.',
 			submitLogin: 'Entrar',
 			submitRegister: 'Registrarme',
 			invalidCredentials:
@@ -99,6 +101,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 				whitelistValidation: 'Campo inesperado en la solicitud.'
 			},
 			fallback: 'Campo no válido.'
+		},
+		errorPage: {
+			notFoundTitle: 'Página no encontrada',
+			notFoundDescription: 'La página que buscas no existe o fue movida.',
+			genericTitle: 'Algo salió mal',
+			genericDescription: 'Inténtalo de nuevo en unos momentos.',
+			backToHome: 'Volver al inicio'
 		}
 	},
 	en: {
@@ -128,6 +137,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'Email',
 			username: 'Username',
 			password: 'Password',
+			confirmPassword: 'Confirm password',
+			passwordMismatch: 'Passwords do not match.',
 			submitLogin: 'Log in',
 			submitRegister: 'Sign up',
 			invalidCredentials:
@@ -198,6 +209,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 				whitelistValidation: 'Unexpected field in the request.'
 			},
 			fallback: 'Invalid field.'
+		},
+		errorPage: {
+			notFoundTitle: 'Page not found',
+			notFoundDescription: 'The page you are looking for does not exist or has been moved.',
+			genericTitle: 'Something went wrong',
+			genericDescription: 'Please try again in a few moments.',
+			backToHome: 'Back to home'
 		}
 	},
 	fr: {
@@ -227,6 +245,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			email: 'E-mail',
 			username: "Nom d'utilisateur",
 			password: 'Mot de passe',
+			confirmPassword: 'Confirmer le mot de passe',
+			passwordMismatch: 'Les mots de passe ne correspondent pas.',
 			submitLogin: 'Se connecter',
 			submitRegister: "S'inscrire",
 			invalidCredentials:
@@ -297,6 +317,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 				whitelistValidation: 'Champ inattendu dans la requête.'
 			},
 			fallback: 'Champ non valide.'
+		},
+		errorPage: {
+			notFoundTitle: 'Page introuvable',
+			notFoundDescription: "La page que vous recherchez n'existe pas ou a été déplacée.",
+			genericTitle: 'Une erreur est survenue',
+			genericDescription: 'Veuillez réessayer dans quelques instants.',
+			backToHome: "Retour à l'accueil"
 		}
 	}
 };
