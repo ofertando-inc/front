@@ -44,6 +44,8 @@
 - Fixed the Docker healthcheck to honor the `PORT` environment variable so it does not break when the container is started on a non-default port, and dropped the stale `EXPOSE 3000` directive that no longer reflects the runtime port
 - Updated `docker/build-push-action` from `v6` to `v7` in the dev deploy workflow to run on the Node 24 runtime and silence the GitHub Actions Node 20 deprecation warning
 - Fixed the Docker healthcheck so it targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD
+- Updated the staging release workflow to chain after a successful `CI` workflow run on a `v*` tag via `workflow_run`, so a release tag never produces a deployed image without first passing lint, typecheck, unit tests, e2e smoke tests, and the Docker build
+- Updated the production deploy workflow to run under the `production` GitHub Environment, gating manual dispatches behind the configured reviewer approval and branch/tag protection rules
 - Added unit tests for the API client error handling
 - Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
 - Added unit tests for the error key catalog and the validation message helpers
