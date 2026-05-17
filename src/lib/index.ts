@@ -3,6 +3,7 @@ export * from '$lib/types/auth';
 export * from '$lib/types/offer';
 export * from '$lib/api/client';
 export * from '$lib/api/auth';
+export * from '$lib/api/offers';
 export * from '$lib/stores/auth';
 export * from '$lib/auth/authErrors';
 export * from '$lib/errors/errorKeys';
