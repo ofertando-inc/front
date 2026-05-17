@@ -15,6 +15,8 @@
 - Added an offer mock dataset (`src/lib/data/mockDeals.ts`) of nine `Offer` records spanning every status, used for local development, fakes on the detail page, and the popular-stores section
 - Added a `DealStatusBadge` component wrapping Flowbite `Badge`, mapping each `OfferStatus` to a coherent color (green/yellow/red/gray/secondary) and the locale-aware label from the `offerStatus` namespace
 - Added a `VotePanel` component with optimistic local toggle state for up/down votes (state-only, no backend persistence yet), three sizes, hot-deal coloring above 100, and localized `aria-label`s for screen readers
+- Added a `DealCard` component composing Flowbite `Card`, `DealStatusBadge`, and `VotePanel` with a localized type badge (online/local), store and city footer, and an expiration date formatted via `Intl.DateTimeFormat` in the current locale
+- Added a placeholder `/deals/[id]` route so the typed `resolve()` helper accepts the deal detail link from `DealCard`; the full detail page lands in a later PR
 
 ## 0.1.0
 

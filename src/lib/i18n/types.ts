@@ -109,6 +109,9 @@ export interface TranslationMessages {
 	deals: {
 		voteUp: string;
 		voteDown: string;
+		typeOnline: string;
+		typeLocal: string;
+		expiresOn: string;
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;

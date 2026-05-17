@@ -80,7 +80,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deals: {
 			voteUp: 'Votar positivo',
-			voteDown: 'Votar negativo'
+			voteDown: 'Votar negativo',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expira'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -248,7 +251,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deals: {
 			voteUp: 'Vote up',
-			voteDown: 'Vote down'
+			voteDown: 'Vote down',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expires'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -415,7 +421,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deals: {
 			voteUp: 'Voter positif',
-			voteDown: 'Voter négatif'
+			voteDown: 'Voter négatif',
+			typeOnline: 'En ligne',
+			typeLocal: 'Local',
+			expiresOn: 'Expire'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
