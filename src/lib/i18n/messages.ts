@@ -64,6 +64,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: 'Historial de votos no disponible.',
 			comingSoon: 'Disponible cuando conectemos los datos de actividad.'
 		},
+		offer: {
+			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
+			genericCreateError: 'No pudimos crear la oferta en este momento.',
+			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
+			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
+			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
+		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
 			'auth.forbidden': 'No tienes permiso para realizar esta acción.',
@@ -72,6 +79,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Tu cuenta está deshabilitada. Contacta con el soporte.',
 			'user.email_taken': 'Ese correo ya está registrado. Usa otro o inicia sesión.',
 			'user.username_taken': 'Ese nombre de usuario ya existe. Elige uno diferente.',
+			'offer.not_found': 'No encontramos esa oferta. Puede haber sido eliminada.',
+			'offer.forbidden': 'No tienes permiso para modificar esta oferta.',
+			'offer.invalid_dates':
+				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
+			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
 			'db.not_found': 'No encontramos lo que buscas.',
@@ -95,6 +108,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'La contraseña debe ser una cadena de texto.',
 					minLength: 'La contraseña debe tener al menos 8 caracteres.'
+				},
+				title: {
+					isString: 'El título debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa un título.',
+					maxLength: 'El título es demasiado largo (máximo 200 caracteres).'
+				},
+				description: {
+					isString: 'La descripción debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa una descripción.',
+					maxLength: 'La descripción es demasiado larga (máximo 5000 caracteres).'
+				},
+				offerType: {
+					isString: 'El tipo de oferta debe ser una cadena de texto.',
+					isNotEmpty: 'Selecciona un tipo de oferta.',
+					maxLength: 'El tipo de oferta es demasiado largo (máximo 50 caracteres).'
+				},
+				externalUrl: {
+					isString: 'El enlace debe ser una cadena de texto.',
+					isUrl: 'Ingresa una URL válida.'
+				},
+				storeName: {
+					isString: 'El nombre de la tienda debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa el nombre de la tienda.',
+					maxLength: 'El nombre de la tienda es demasiado largo (máximo 100 caracteres).'
+				},
+				city: {
+					isString: 'La ciudad debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa una ciudad.',
+					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
+				},
+				startDate: {
+					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).'
+				},
+				endDate: {
+					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).'
 				}
 			},
 			system: {
@@ -173,6 +221,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: 'Vote history is not available yet.',
 			comingSoon: 'Available when activity data is connected.'
 		},
+		offer: {
+			genericBrowseError: 'We could not load the offers right now.',
+			genericCreateError: 'We could not create the offer right now.',
+			genericUpdateError: 'We could not update the offer right now.',
+			genericDeleteError: 'We could not delete the offer right now.',
+			serverError: 'The server is unavailable right now. Please try again later.'
+		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
 			'auth.forbidden': 'You do not have permission to perform this action.',
@@ -181,6 +236,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Your account is disabled. Please contact support.',
 			'user.email_taken': 'That email is already registered. Use another one or sign in.',
 			'user.username_taken': 'That username already exists. Choose a different one.',
+			'offer.not_found': 'We could not find that offer. It may have been removed.',
+			'offer.forbidden': 'You do not have permission to modify this offer.',
+			'offer.invalid_dates':
+				'Invalid dates: the end date must be after the start date and in the future.',
+			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
 			'db.not_found': 'We could not find what you are looking for.',
@@ -203,6 +264,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'The password must be a string.',
 					minLength: 'Password must be at least 8 characters long.'
+				},
+				title: {
+					isString: 'The title must be a string.',
+					isNotEmpty: 'Enter a title.',
+					maxLength: 'The title is too long (max 200 characters).'
+				},
+				description: {
+					isString: 'The description must be a string.',
+					isNotEmpty: 'Enter a description.',
+					maxLength: 'The description is too long (max 5000 characters).'
+				},
+				offerType: {
+					isString: 'The offer type must be a string.',
+					isNotEmpty: 'Select an offer type.',
+					maxLength: 'The offer type is too long (max 50 characters).'
+				},
+				externalUrl: {
+					isString: 'The link must be a string.',
+					isUrl: 'Enter a valid URL.'
+				},
+				storeName: {
+					isString: 'The store name must be a string.',
+					isNotEmpty: 'Enter the store name.',
+					maxLength: 'The store name is too long (max 100 characters).'
+				},
+				city: {
+					isString: 'The city must be a string.',
+					isNotEmpty: 'Enter a city.',
+					maxLength: 'The city name is too long (max 100 characters).'
+				},
+				startDate: {
+					isDateString: 'Invalid start date (ISO 8601 format expected).'
+				},
+				endDate: {
+					isDateString: 'Invalid end date (ISO 8601 format expected).'
 				}
 			},
 			system: {
@@ -281,6 +377,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: "L'historique des votes n'est pas encore disponible.",
 			comingSoon: "Disponible lorsque les données d'activité seront connectées."
 		},
+		offer: {
+			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
+			genericCreateError: "Nous n'avons pas pu créer l'offre pour le moment.",
+			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
+			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
+			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
+		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
 			'auth.forbidden': "Vous n'avez pas la permission d'effectuer cette action.",
@@ -289,6 +392,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Votre compte est désactivé. Contactez le support.',
 			'user.email_taken': 'Cet e-mail est déjà enregistré. Utilisez-en un autre ou connectez-vous.',
 			'user.username_taken': "Ce nom d'utilisateur existe déjà. Choisissez-en un autre.",
+			'offer.not_found': "Nous n'avons pas trouvé cette offre. Elle a peut-être été supprimée.",
+			'offer.forbidden': "Vous n'avez pas la permission de modifier cette offre.",
+			'offer.invalid_dates':
+				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
+			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'pagination.invalid_cursor':
+				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',
 			'db.unique_violation': 'Un enregistrement avec ces données existe déjà.',
 			'db.not_found': "Nous n'avons pas trouvé ce que vous cherchez.",
@@ -311,6 +421,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'Le mot de passe doit être une chaîne de caractères.',
 					minLength: 'Le mot de passe doit faire au moins 8 caractères.'
+				},
+				title: {
+					isString: 'Le titre doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez un titre.',
+					maxLength: 'Le titre est trop long (200 caractères maximum).'
+				},
+				description: {
+					isString: 'La description doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez une description.',
+					maxLength: 'La description est trop longue (5000 caractères maximum).'
+				},
+				offerType: {
+					isString: "Le type d'offre doit être une chaîne de caractères.",
+					isNotEmpty: "Sélectionnez un type d'offre.",
+					maxLength: "Le type d'offre est trop long (50 caractères maximum)."
+				},
+				externalUrl: {
+					isString: 'Le lien doit être une chaîne de caractères.',
+					isUrl: 'Saisissez une URL valide.'
+				},
+				storeName: {
+					isString: 'Le nom du magasin doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez le nom du magasin.',
+					maxLength: 'Le nom du magasin est trop long (100 caractères maximum).'
+				},
+				city: {
+					isString: 'La ville doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez une ville.',
+					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
+				},
+				startDate: {
+					isDateString: 'Date de début invalide (format ISO 8601 attendu).'
+				},
+				endDate: {
+					isDateString: 'Date de fin invalide (format ISO 8601 attendu).'
 				}
 			},
 			system: {

@@ -9,6 +9,11 @@ export interface ErrorMessages {
 	'auth.account_disabled': string;
 	'user.email_taken': string;
 	'user.username_taken': string;
+	'offer.not_found': string;
+	'offer.forbidden': string;
+	'offer.invalid_dates': string;
+	'offer.invalid_status_transition': string;
+	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
 	'db.not_found': string;
@@ -86,6 +91,13 @@ export interface TranslationMessages {
 		noComments: string;
 		noVotes: string;
 		comingSoon: string;
+	};
+	offer: {
+		genericBrowseError: string;
+		genericCreateError: string;
+		genericUpdateError: string;
+		genericDeleteError: string;
+		serverError: string;
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
