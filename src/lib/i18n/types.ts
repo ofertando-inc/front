@@ -106,6 +106,10 @@ export interface TranslationMessages {
 		DELETED: string;
 		EXPIRED: string;
 	};
+	deals: {
+		voteUp: string;
+		voteDown: string;
+	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
 	errorPage: {

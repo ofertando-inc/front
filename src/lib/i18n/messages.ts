@@ -78,6 +78,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			DELETED: 'Eliminada',
 			EXPIRED: 'Expirada'
 		},
+		deals: {
+			voteUp: 'Votar positivo',
+			voteDown: 'Votar negativo'
+		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
 			'auth.forbidden': 'No tienes permiso para realizar esta acción.',
@@ -242,6 +246,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			DELETED: 'Deleted',
 			EXPIRED: 'Expired'
 		},
+		deals: {
+			voteUp: 'Vote up',
+			voteDown: 'Vote down'
+		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
 			'auth.forbidden': 'You do not have permission to perform this action.',
@@ -404,6 +412,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			DISABLED: 'Désactivée',
 			DELETED: 'Supprimée',
 			EXPIRED: 'Expirée'
+		},
+		deals: {
+			voteUp: 'Voter positif',
+			voteDown: 'Voter négatif'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
