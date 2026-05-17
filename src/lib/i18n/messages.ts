@@ -83,7 +83,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			voteDown: 'Votar negativo',
 			typeOnline: 'Online',
 			typeLocal: 'Local',
-			expiresOn: 'Expira'
+			expiresOn: 'Expira',
+			filterCity: 'Ciudad',
+			filterType: 'Tipo',
+			allCities: 'Todas las ciudades',
+			allTypes: 'Todos los tipos',
+			sortRecent: 'Más recientes',
+			sortPopular: 'Más populares',
+			periodAll: 'Siempre',
+			periodDay: 'Hoy',
+			periodWeek: 'Esta semana',
+			periodMonth: 'Este mes',
+			periodYear: 'Este año'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -254,7 +265,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			voteDown: 'Vote down',
 			typeOnline: 'Online',
 			typeLocal: 'Local',
-			expiresOn: 'Expires'
+			expiresOn: 'Expires',
+			filterCity: 'City',
+			filterType: 'Type',
+			allCities: 'All cities',
+			allTypes: 'All types',
+			sortRecent: 'Most recent',
+			sortPopular: 'Most popular',
+			periodAll: 'All time',
+			periodDay: 'Today',
+			periodWeek: 'This week',
+			periodMonth: 'This month',
+			periodYear: 'This year'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -424,7 +446,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			voteDown: 'Voter négatif',
 			typeOnline: 'En ligne',
 			typeLocal: 'Local',
-			expiresOn: 'Expire'
+			expiresOn: 'Expire',
+			filterCity: 'Ville',
+			filterType: 'Type',
+			allCities: 'Toutes les villes',
+			allTypes: 'Tous les types',
+			sortRecent: 'Plus récentes',
+			sortPopular: 'Plus populaires',
+			periodAll: 'Toujours',
+			periodDay: "Aujourd'hui",
+			periodWeek: 'Cette semaine',
+			periodMonth: 'Ce mois-ci',
+			periodYear: 'Cette année'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',

@@ -17,6 +17,7 @@
 - Added a `VotePanel` component with optimistic local toggle state for up/down votes (state-only, no backend persistence yet), three sizes, hot-deal coloring above 100, and localized `aria-label`s for screen readers
 - Added a `DealCard` component composing Flowbite `Card`, `DealStatusBadge`, and `VotePanel` with a localized type badge (online/local), store and city footer, and an expiration date formatted via `Intl.DateTimeFormat` in the current locale
 - Added a placeholder `/deals/[id]` route so the typed `resolve()` helper accepts the deal detail link from `DealCard`; the full detail page lands in a later PR
+- Added a `DealFilters` component composing Flowbite `Select` and `ButtonGroup`: city and offer-type dropdowns (with an "all" option), a recent/popular sort toggle, and a contextual period dropdown that appears only when sorting by popularity. Values are exposed via `$bindable` props so the parent owns the filter state and can map empty strings back to `undefined` when calling the offers API
 
 ## 0.1.0
 

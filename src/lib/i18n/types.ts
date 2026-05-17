@@ -112,6 +112,17 @@ export interface TranslationMessages {
 		typeOnline: string;
 		typeLocal: string;
 		expiresOn: string;
+		filterCity: string;
+		filterType: string;
+		allCities: string;
+		allTypes: string;
+		sortRecent: string;
+		sortPopular: string;
+		periodAll: string;
+		periodDay: string;
+		periodWeek: string;
+		periodMonth: string;
+		periodYear: string;
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
