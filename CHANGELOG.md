@@ -3,6 +3,9 @@
 ## 0.2.0
 
 - Updated the dev and staging deploy workflows to run under dedicated `dev` and `staging` GitHub Environments, surfacing every deployment in the repo's Deployments tab alongside production and unlocking per-environment secrets, variables, and reviewer rules
+- Added offer domain types (`Offer`, `OfferStatus`, `OfferSort`, `OfferPeriod`, `PaginatedOffers`, `CreateOfferDto`, `UpdateOfferDto`, `ListOffersQuery`) aligned with the backend `/offers/*` contract
+- Added new error keys for the offers and pagination namespaces (`offer.not_found`, `offer.forbidden`, `offer.invalid_dates`, `offer.invalid_status_transition`, `pagination.invalid_cursor`) plus their localized messages in Spanish, English, and French
+- Added validation dictionaries for the offer fields (`title`, `description`, `offerType`, `externalUrl`, `storeName`, `city`, `startDate`, `endDate`) covering the `isString`, `isNotEmpty`, `maxLength`, `isUrl`, and `isDateString` constraints in the three locales
 
 ## 0.1.0
 
