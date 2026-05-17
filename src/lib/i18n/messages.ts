@@ -71,6 +71,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
+		offerStatus: {
+			ACTIVE: 'Activa',
+			REPORTED: 'Reportada',
+			DISABLED: 'Desactivada',
+			DELETED: 'Eliminada',
+			EXPIRED: 'Expirada'
+		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
 			'auth.forbidden': 'No tienes permiso para realizar esta acción.',
@@ -228,6 +235,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'We could not delete the offer right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Reported',
+			DISABLED: 'Disabled',
+			DELETED: 'Deleted',
+			EXPIRED: 'Expired'
+		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
 			'auth.forbidden': 'You do not have permission to perform this action.',
@@ -383,6 +397,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
+		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Signalée',
+			DISABLED: 'Désactivée',
+			DELETED: 'Supprimée',
+			EXPIRED: 'Expirée'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',

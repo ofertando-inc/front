@@ -99,6 +99,13 @@ export interface TranslationMessages {
 		genericDeleteError: string;
 		serverError: string;
 	};
+	offerStatus: {
+		ACTIVE: string;
+		REPORTED: string;
+		DISABLED: string;
+		DELETED: string;
+		EXPIRED: string;
+	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
 	errorPage: {

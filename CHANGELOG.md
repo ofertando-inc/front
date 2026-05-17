@@ -11,6 +11,8 @@
 - Added an offer error resolver (`src/lib/offers/offerErrors.ts`) that turns an `ApiError` into a banner message and per-field errors for the `browse`, `create`, `update`, and `delete` contexts, mirroring the auth error resolver pattern
 - Added a localized `offer` namespace in the translation messages with contextual generic and server-error fallbacks for offer browse, create, update, and delete failures
 - Added unit tests for the offer error resolver covering each offer key, validation details, 5xx fallbacks, unknown keys, and non-ApiError throws per context
+- Added a localized `offerStatus` namespace mapping each `OfferStatus` value to its Spanish, English, and French label
+- Added an offer mock dataset (`src/lib/data/mockDeals.ts`) of nine `Offer` records spanning every status, used for local development, fakes on the detail page, and the popular-stores section
 
 ## 0.1.0
 
