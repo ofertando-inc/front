@@ -64,6 +64,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: 'Historial de votos no disponible.',
 			comingSoon: 'Disponible cuando conectemos los datos de actividad.'
 		},
+		offer: {
+			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
+			genericCreateError: 'No pudimos crear la oferta en este momento.',
+			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
+			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
+			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
+		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
 			'auth.forbidden': 'No tienes permiso para realizar esta acción.',
@@ -214,6 +221,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: 'Vote history is not available yet.',
 			comingSoon: 'Available when activity data is connected.'
 		},
+		offer: {
+			genericBrowseError: 'We could not load the offers right now.',
+			genericCreateError: 'We could not create the offer right now.',
+			genericUpdateError: 'We could not update the offer right now.',
+			genericDeleteError: 'We could not delete the offer right now.',
+			serverError: 'The server is unavailable right now. Please try again later.'
+		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
 			'auth.forbidden': 'You do not have permission to perform this action.',
@@ -362,6 +376,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noComments: "Vous n'avez encore commenté aucune offre.",
 			noVotes: "L'historique des votes n'est pas encore disponible.",
 			comingSoon: "Disponible lorsque les données d'activité seront connectées."
+		},
+		offer: {
+			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
+			genericCreateError: "Nous n'avons pas pu créer l'offre pour le moment.",
+			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
+			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
+			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',

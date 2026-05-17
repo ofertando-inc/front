@@ -6,5 +6,6 @@ export * from '$lib/api/auth';
 export * from '$lib/api/offers';
 export * from '$lib/stores/auth';
 export * from '$lib/auth/authErrors';
+export * from '$lib/offers/offerErrors';
 export * from '$lib/errors/errorKeys';
 export * from '$lib/errors/getErrorMessage';

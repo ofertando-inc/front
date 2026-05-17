@@ -92,6 +92,13 @@ export interface TranslationMessages {
 		noVotes: string;
 		comingSoon: string;
 	};
+	offer: {
+		genericBrowseError: string;
+		genericCreateError: string;
+		genericUpdateError: string;
+		genericDeleteError: string;
+		serverError: string;
+	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
 	errorPage: {

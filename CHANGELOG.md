@@ -8,6 +8,9 @@
 - Added validation dictionaries for the offer fields (`title`, `description`, `offerType`, `externalUrl`, `storeName`, `city`, `startDate`, `endDate`) covering the `isString`, `isNotEmpty`, `maxLength`, `isUrl`, and `isDateString` constraints in the three locales
 - Added an offers API client (`src/lib/api/offers.ts`) exposing `listOffers`, `getMyOffers`, `getOfferById`, `createOffer`, `updateOffer`, and `deleteOffer` on the `/offers/*` backend contract, with cursor-aware query serialization, bearer-token auth, and `204 No Content` tolerance for delete
 - Added unit tests for the offers API client covering query serialization, bearer-token forwarding, id encoding, payload bodies, `offer.not_found` / `offer.invalid_dates` / `offer.forbidden` error propagation, and the 204 delete path
+- Added an offer error resolver (`src/lib/offers/offerErrors.ts`) that turns an `ApiError` into a banner message and per-field errors for the `browse`, `create`, `update`, and `delete` contexts, mirroring the auth error resolver pattern
+- Added a localized `offer` namespace in the translation messages with contextual generic and server-error fallbacks for offer browse, create, update, and delete failures
+- Added unit tests for the offer error resolver covering each offer key, validation details, 5xx fallbacks, unknown keys, and non-ApiError throws per context
 
 ## 0.1.0
 
