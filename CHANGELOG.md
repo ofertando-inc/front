@@ -13,6 +13,7 @@
 - Added unit tests for the offer error resolver covering each offer key, validation details, 5xx fallbacks, unknown keys, and non-ApiError throws per context
 - Added a localized `offerStatus` namespace mapping each `OfferStatus` value to its Spanish, English, and French label
 - Added an offer mock dataset (`src/lib/data/mockDeals.ts`) of nine `Offer` records spanning every status, used for local development, fakes on the detail page, and the popular-stores section
+- Added a `DealStatusBadge` component wrapping Flowbite `Badge`, mapping each `OfferStatus` to a coherent color (green/yellow/red/gray/secondary) and the locale-aware label from the `offerStatus` namespace
 
 ## 0.1.0
 
