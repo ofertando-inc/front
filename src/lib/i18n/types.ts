@@ -137,6 +137,25 @@ export interface TranslationMessages {
 		popularStoresTitle: string;
 		viewAll: string;
 	};
+	deal: {
+		goToStore: string;
+		report: string;
+		share: string;
+		publishedBy: string;
+		relatedTitle: string;
+		relatedEmpty: string;
+		commentsTitle: string;
+		commentPlaceholder: string;
+		commentSubmit: string;
+		commentDisabledHint: string;
+		expiredBanner: string;
+		disabledBanner: string;
+		reportedBanner: string;
+		mockComment1: string;
+		mockComment2: string;
+		mockComment3: string;
+		mockCommentAge: string;
+	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
 	errorPage: {

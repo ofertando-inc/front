@@ -25,6 +25,9 @@
 - Updated the home e2e smoke test to assert the new hero heading and the hot/recent section titles while keeping the header-driven login/register link assertions
 - Added the full `/deals` listing page composing `DealFilters` (city, offer type, sort, period) and a `DealCard` grid backed by cursor pagination. Filter changes reset the cursor through an `$effect`, the load-more button is hidden when the next cursor is null, expired sessions and unknown errors surface via `resolveOfferError`, and a `pagination.invalid_cursor` response silently refetches the first page
 - Added an e2e smoke test that visits `/deals` and asserts the listing heading plus the recent/popular sort buttons
+- Added the full `/deals/[id]` detail page with a localized two-column layout (status badge, store/city/expiration meta, vote panel, external store CTA, description, author and share/report icons), a moderated status banner for `EXPIRED` / `DISABLED` / `REPORTED` offers, mocked comments, and a related-offers sidebar that filters out the current offer
+- Added an `offer.not_found` 404 fallback on the detail page with a back-to-listing button, plus loading skeletons for both the main card and the related sidebar
+- Added a `deal` translation namespace with the detail-page strings (CTA, banners, mock comments, related and comments titles) in Spanish, English, and French
 
 ## 0.1.0
 
