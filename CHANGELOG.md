@@ -30,6 +30,7 @@
 - Added a `deal` translation namespace with the detail-page strings (CTA, banners, mock comments, related and comments titles) in Spanish, English, and French
 - Added a graceful error fallback on the offer detail page that shows a localized "go back" card when the fetch fails for a reason other than `offer.not_found`, preventing a blank screen when the API is unreachable
 - Added an e2e smoke test asserting the detail page renders a usable fallback when the requested offer id cannot be loaded
+- Fixed `DealCard` and `DealCardSkeleton` to stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells
 
 ## 0.1.0
 

@@ -10,7 +10,7 @@
 
 <Card
 	aria-busy="true"
-	class="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white !p-0 {className}"
+	class="flex !max-w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white !p-0 {className}"
 >
 	<div class="flex flex-grow animate-pulse flex-col p-4">
 		<div class="mb-3 flex items-start justify-between gap-4">
