@@ -115,7 +115,7 @@
 	{#if loading}
 		<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 			<div class="space-y-6 lg:col-span-2">
-				<Card class="!p-6 sm:!p-8">
+				<Card class="!max-w-full !p-6 sm:!p-8">
 					<div class="animate-pulse space-y-4">
 						<div class="h-5 w-32 rounded bg-gray-200"></div>
 						<div class="h-8 w-3/4 rounded bg-gray-200"></div>
@@ -126,7 +126,7 @@
 				</Card>
 			</div>
 			<div class="space-y-6">
-				<Card class="!p-6">
+				<Card class="!max-w-full !p-6">
 					<div class="animate-pulse space-y-3">
 						<div class="h-5 w-1/2 rounded bg-gray-200"></div>
 						<div class="h-3 w-full rounded bg-gray-200"></div>
@@ -180,7 +180,7 @@
 					</p>
 				{/if}
 
-				<Card class="!p-6 sm:!p-8">
+				<Card class="!max-w-full !p-6 sm:!p-8">
 					<div class="mb-4 flex flex-wrap items-center gap-3">
 						<DealStatusBadge status={offer.status} />
 						<span class="flex items-center gap-1 text-sm text-gray-500">
@@ -262,7 +262,7 @@
 					</div>
 				</Card>
 
-				<Card class="!p-6 sm:!p-8">
+				<Card class="!max-w-full !p-6 sm:!p-8">
 					<h2 class="mb-6 text-xl font-bold text-gray-900">
 						{$translationStore.deal.commentsTitle} ({MOCK_COMMENTS.length})
 					</h2>
@@ -302,7 +302,7 @@
 			</div>
 
 			<aside class="space-y-6">
-				<Card class="!p-6">
+				<Card class="!max-w-full !p-6">
 					<h3 class="mb-4 font-bold text-gray-900">{$translationStore.deal.relatedTitle}</h3>
 					{#if related.length === 0}
 						<p class="text-sm text-gray-500">{$translationStore.deal.relatedEmpty}</p>
