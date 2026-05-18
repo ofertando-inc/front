@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-test('home page renders auth-first landing', async ({ page }) => {
+test('home page renders the hero and section titles', async ({ page }) => {
 	await page.goto('/');
 
-	await expect(page.getByRole('heading', { name: 'Ofertando' })).toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: 'Descubre las mejores ofertas en Colombia' })
+	).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Ofertas calientes' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Agregadas recientemente' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Entrar' }).first()).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Crear cuenta' }).first()).toBeVisible();
 });
@@ -26,6 +30,14 @@ test('register page renders the register form', async ({ page }) => {
 	await expect(page.getByLabel('Contraseña', { exact: true })).toBeVisible();
 	await expect(page.getByLabel('Confirmar contraseña')).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Registrarme' })).toBeVisible();
+});
+
+test('deals page renders the listing heading and filters', async ({ page }) => {
+	await page.goto('/deals');
+
+	await expect(page.getByRole('heading', { name: 'Todas las ofertas' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Más recientes' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Más populares' })).toBeVisible();
 });
 
 test('profile redirects unauthenticated users to login', async ({ page }) => {
