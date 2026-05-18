@@ -99,6 +99,31 @@ export interface TranslationMessages {
 		genericDeleteError: string;
 		serverError: string;
 	};
+	offerStatus: {
+		ACTIVE: string;
+		REPORTED: string;
+		DISABLED: string;
+		DELETED: string;
+		EXPIRED: string;
+	};
+	deals: {
+		voteUp: string;
+		voteDown: string;
+		typeOnline: string;
+		typeLocal: string;
+		expiresOn: string;
+		filterCity: string;
+		filterType: string;
+		allCities: string;
+		allTypes: string;
+		sortRecent: string;
+		sortPopular: string;
+		periodAll: string;
+		periodDay: string;
+		periodWeek: string;
+		periodMonth: string;
+		periodYear: string;
+	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
 	errorPage: {

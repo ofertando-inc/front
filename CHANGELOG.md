@@ -11,6 +11,13 @@
 - Added an offer error resolver (`src/lib/offers/offerErrors.ts`) that turns an `ApiError` into a banner message and per-field errors for the `browse`, `create`, `update`, and `delete` contexts, mirroring the auth error resolver pattern
 - Added a localized `offer` namespace in the translation messages with contextual generic and server-error fallbacks for offer browse, create, update, and delete failures
 - Added unit tests for the offer error resolver covering each offer key, validation details, 5xx fallbacks, unknown keys, and non-ApiError throws per context
+- Added a localized `offerStatus` namespace mapping each `OfferStatus` value to its Spanish, English, and French label
+- Added an offer mock dataset (`src/lib/data/mockDeals.ts`) of nine `Offer` records spanning every status, used for local development, fakes on the detail page, and the popular-stores section
+- Added a `DealStatusBadge` component wrapping Flowbite `Badge`, mapping each `OfferStatus` to a coherent color (green/yellow/red/gray/secondary) and the locale-aware label from the `offerStatus` namespace
+- Added a `VotePanel` component with optimistic local toggle state for up/down votes (state-only, no backend persistence yet), three sizes, hot-deal coloring above 100, and localized `aria-label`s for screen readers
+- Added a `DealCard` component composing Flowbite `Card`, `DealStatusBadge`, and `VotePanel` with a localized type badge (online/local), store and city footer, and an expiration date formatted via `Intl.DateTimeFormat` in the current locale
+- Added a placeholder `/deals/[id]` route so the typed `resolve()` helper accepts the deal detail link from `DealCard`; the full detail page lands in a later PR
+- Added a `DealFilters` component composing Flowbite `Select` and `ButtonGroup`: city and offer-type dropdowns (with an "all" option), a recent/popular sort toggle, and a contextual period dropdown that appears only when sorting by popularity. Values are exposed via `$bindable` props so the parent owns the filter state and can map empty strings back to `undefined` when calling the offers API
 
 ## 0.1.0
 

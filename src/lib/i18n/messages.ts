@@ -71,6 +71,31 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
+		offerStatus: {
+			ACTIVE: 'Activa',
+			REPORTED: 'Reportada',
+			DISABLED: 'Desactivada',
+			DELETED: 'Eliminada',
+			EXPIRED: 'Expirada'
+		},
+		deals: {
+			voteUp: 'Votar positivo',
+			voteDown: 'Votar negativo',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expira',
+			filterCity: 'Ciudad',
+			filterType: 'Tipo',
+			allCities: 'Todas las ciudades',
+			allTypes: 'Todos los tipos',
+			sortRecent: 'Más recientes',
+			sortPopular: 'Más populares',
+			periodAll: 'Siempre',
+			periodDay: 'Hoy',
+			periodWeek: 'Esta semana',
+			periodMonth: 'Este mes',
+			periodYear: 'Este año'
+		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
 			'auth.forbidden': 'No tienes permiso para realizar esta acción.',
@@ -228,6 +253,31 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'We could not delete the offer right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Reported',
+			DISABLED: 'Disabled',
+			DELETED: 'Deleted',
+			EXPIRED: 'Expired'
+		},
+		deals: {
+			voteUp: 'Vote up',
+			voteDown: 'Vote down',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expires',
+			filterCity: 'City',
+			filterType: 'Type',
+			allCities: 'All cities',
+			allTypes: 'All types',
+			sortRecent: 'Most recent',
+			sortPopular: 'Most popular',
+			periodAll: 'All time',
+			periodDay: 'Today',
+			periodWeek: 'This week',
+			periodMonth: 'This month',
+			periodYear: 'This year'
+		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
 			'auth.forbidden': 'You do not have permission to perform this action.',
@@ -383,6 +433,31 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
+		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Signalée',
+			DISABLED: 'Désactivée',
+			DELETED: 'Supprimée',
+			EXPIRED: 'Expirée'
+		},
+		deals: {
+			voteUp: 'Voter positif',
+			voteDown: 'Voter négatif',
+			typeOnline: 'En ligne',
+			typeLocal: 'Local',
+			expiresOn: 'Expire',
+			filterCity: 'Ville',
+			filterType: 'Type',
+			allCities: 'Toutes les villes',
+			allTypes: 'Tous les types',
+			sortRecent: 'Plus récentes',
+			sortPopular: 'Plus populaires',
+			periodAll: 'Toujours',
+			periodDay: "Aujourd'hui",
+			periodWeek: 'Cette semaine',
+			periodMonth: 'Ce mois-ci',
+			periodYear: 'Cette année'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
