@@ -23,6 +23,8 @@
 - Rewrote the home page with a localized hero (title, subtitle, explore and publish CTAs), a hot-deals row fetched with `sort=score&period=week&limit=3`, a recent-deals row fetched with `sort=date&limit=6`, and a popular-stores chip section. Skeletons cover the fetch latency and failures degrade silently to empty grids
 - Added placeholder `/deals` and `/create-deal` routes so the typed `resolve()` helper accepts the home CTAs; both are replaced by their full pages in upcoming commits
 - Updated the home e2e smoke test to assert the new hero heading and the hot/recent section titles while keeping the header-driven login/register link assertions
+- Added the full `/deals` listing page composing `DealFilters` (city, offer type, sort, period) and a `DealCard` grid backed by cursor pagination. Filter changes reset the cursor through an `$effect`, the load-more button is hidden when the next cursor is null, expired sessions and unknown errors surface via `resolveOfferError`, and a `pagination.invalid_cursor` response silently refetches the first page
+- Added an e2e smoke test that visits `/deals` and asserts the listing heading plus the recent/popular sort buttons
 
 ## 0.1.0
 

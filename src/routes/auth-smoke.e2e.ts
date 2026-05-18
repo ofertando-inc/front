@@ -32,6 +32,14 @@ test('register page renders the register form', async ({ page }) => {
 	await expect(page.getByRole('button', { name: 'Registrarme' })).toBeVisible();
 });
 
+test('deals page renders the listing heading and filters', async ({ page }) => {
+	await page.goto('/deals');
+
+	await expect(page.getByRole('heading', { name: 'Todas las ofertas' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Más recientes' })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Más populares' })).toBeVisible();
+});
+
 test('profile redirects unauthenticated users to login', async ({ page }) => {
 	await page.goto('/profile');
 
