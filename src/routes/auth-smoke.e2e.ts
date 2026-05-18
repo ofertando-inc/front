@@ -40,6 +40,12 @@ test('deals page renders the listing heading and filters', async ({ page }) => {
 	await expect(page.getByRole('button', { name: 'Más populares' })).toBeVisible();
 });
 
+test('detail page renders a fallback when the offer cannot be loaded', async ({ page }) => {
+	await page.goto('/deals/non-existent-id');
+
+	await expect(page.getByRole('link', { name: 'Volver al inicio' })).toBeVisible();
+});
+
 test('profile redirects unauthenticated users to login', async ({ page }) => {
 	await page.goto('/profile');
 
