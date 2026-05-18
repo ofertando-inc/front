@@ -147,6 +147,18 @@
 				</Button>
 			</div>
 		</Card>
+	{:else if bannerError && !offer}
+		<Card class="mx-auto max-w-md !p-8 text-center">
+			<h1 class="text-2xl font-bold text-gray-900">
+				{$translationStore.errorPage.genericTitle}
+			</h1>
+			<p class="mt-3 text-sm text-gray-600">{bannerError}</p>
+			<div class="mt-6 flex justify-center">
+				<Button href={resolve('/deals')} class="rounded-xl">
+					{$translationStore.errorPage.backToHome}
+				</Button>
+			</div>
+		</Card>
 	{:else if offer}
 		<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 			<div class="space-y-6 lg:col-span-2">

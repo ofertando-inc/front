@@ -28,6 +28,8 @@
 - Added the full `/deals/[id]` detail page with a localized two-column layout (status badge, store/city/expiration meta, vote panel, external store CTA, description, author and share/report icons), a moderated status banner for `EXPIRED` / `DISABLED` / `REPORTED` offers, mocked comments, and a related-offers sidebar that filters out the current offer
 - Added an `offer.not_found` 404 fallback on the detail page with a back-to-listing button, plus loading skeletons for both the main card and the related sidebar
 - Added a `deal` translation namespace with the detail-page strings (CTA, banners, mock comments, related and comments titles) in Spanish, English, and French
+- Added a graceful error fallback on the offer detail page that shows a localized "go back" card when the fetch fails for a reason other than `offer.not_found`, preventing a blank screen when the API is unreachable
+- Added an e2e smoke test asserting the detail page renders a usable fallback when the requested offer id cannot be loaded
 
 ## 0.1.0
 
