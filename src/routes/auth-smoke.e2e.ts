@@ -1,9 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-test('home page renders auth-first landing', async ({ page }) => {
+test('home page renders the hero and section titles', async ({ page }) => {
 	await page.goto('/');
 
-	await expect(page.getByRole('heading', { name: 'Ofertando' })).toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: 'Descubre las mejores ofertas en Colombia' })
+	).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Ofertas calientes' })).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Agregadas recientemente' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Entrar' }).first()).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Crear cuenta' }).first()).toBeVisible();
 });

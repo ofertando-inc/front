@@ -20,6 +20,9 @@
 - Added a `DealFilters` component composing Flowbite `Select` and `ButtonGroup`: city and offer-type dropdowns (with an "all" option), a recent/popular sort toggle, and a contextual period dropdown that appears only when sorting by popularity. Values are exposed via `$bindable` props so the parent owns the filter state and can map empty strings back to `undefined` when calling the offers API
 - Added a `home` translation namespace and extended the `deals` namespace with the listing title, load-more, and empty-state copy in Spanish, English, and French
 - Added a `DealCardSkeleton` component that mirrors the `DealCard` layout with pulse-animated gray blocks (vote column, badges, title, description, footer) and an `aria-busy` flag for screen readers
+- Rewrote the home page with a localized hero (title, subtitle, explore and publish CTAs), a hot-deals row fetched with `sort=score&period=week&limit=3`, a recent-deals row fetched with `sort=date&limit=6`, and a popular-stores chip section. Skeletons cover the fetch latency and failures degrade silently to empty grids
+- Added placeholder `/deals` and `/create-deal` routes so the typed `resolve()` helper accepts the home CTAs; both are replaced by their full pages in upcoming commits
+- Updated the home e2e smoke test to assert the new hero heading and the hot/recent section titles while keeping the header-driven login/register link assertions
 
 ## 0.1.0
 
