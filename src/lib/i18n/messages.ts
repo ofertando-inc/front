@@ -94,7 +94,21 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodDay: 'Hoy',
 			periodWeek: 'Esta semana',
 			periodMonth: 'Este mes',
-			periodYear: 'Este año'
+			periodYear: 'Este año',
+			listingTitle: 'Todas las ofertas',
+			loadMore: 'Cargar más',
+			empty: 'No hay ofertas que coincidan con tus filtros.'
+		},
+		home: {
+			heroTitle: 'Descubre las mejores ofertas en Colombia',
+			heroSubtitle:
+				'Únete a la comunidad de ahorradores más grande del país. Encuentra, comparte y vota por los mejores descuentos en tiendas físicas y online.',
+			exploreCta: 'Explorar ofertas',
+			publishCta: 'Compartir un descuento',
+			hotDealsTitle: 'Ofertas calientes',
+			recentDealsTitle: 'Agregadas recientemente',
+			popularStoresTitle: 'Tiendas populares',
+			viewAll: 'Ver todas'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -276,7 +290,21 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodDay: 'Today',
 			periodWeek: 'This week',
 			periodMonth: 'This month',
-			periodYear: 'This year'
+			periodYear: 'This year',
+			listingTitle: 'All offers',
+			loadMore: 'Load more',
+			empty: 'No offers match your filters.'
+		},
+		home: {
+			heroTitle: 'Discover the best deals in Colombia',
+			heroSubtitle:
+				'Join the largest community of bargain hunters in the country. Find, share, and vote on the best discounts in physical stores and online.',
+			exploreCta: 'Explore offers',
+			publishCta: 'Share a discount',
+			hotDealsTitle: 'Hot deals',
+			recentDealsTitle: 'Recently added',
+			popularStoresTitle: 'Popular stores',
+			viewAll: 'View all'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -457,7 +485,21 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodDay: "Aujourd'hui",
 			periodWeek: 'Cette semaine',
 			periodMonth: 'Ce mois-ci',
-			periodYear: 'Cette année'
+			periodYear: 'Cette année',
+			listingTitle: 'Toutes les offres',
+			loadMore: 'Charger plus',
+			empty: 'Aucune offre ne correspond à vos filtres.'
+		},
+		home: {
+			heroTitle: 'Découvrez les meilleures offres en Colombie',
+			heroSubtitle:
+				'Rejoignez la plus grande communauté de chasseurs de bonnes affaires du pays. Trouvez, partagez et votez pour les meilleurs rabais en magasin et en ligne.',
+			exploreCta: 'Explorer les offres',
+			publishCta: 'Partager une réduction',
+			hotDealsTitle: 'Offres en feu',
+			recentDealsTitle: 'Récemment ajoutées',
+			popularStoresTitle: 'Magasins populaires',
+			viewAll: 'Voir toutes'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',

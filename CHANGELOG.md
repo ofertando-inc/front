@@ -18,6 +18,8 @@
 - Added a `DealCard` component composing Flowbite `Card`, `DealStatusBadge`, and `VotePanel` with a localized type badge (online/local), store and city footer, and an expiration date formatted via `Intl.DateTimeFormat` in the current locale
 - Added a placeholder `/deals/[id]` route so the typed `resolve()` helper accepts the deal detail link from `DealCard`; the full detail page lands in a later PR
 - Added a `DealFilters` component composing Flowbite `Select` and `ButtonGroup`: city and offer-type dropdowns (with an "all" option), a recent/popular sort toggle, and a contextual period dropdown that appears only when sorting by popularity. Values are exposed via `$bindable` props so the parent owns the filter state and can map empty strings back to `undefined` when calling the offers API
+- Added a `home` translation namespace and extended the `deals` namespace with the listing title, load-more, and empty-state copy in Spanish, English, and French
+- Added a `DealCardSkeleton` component that mirrors the `DealCard` layout with pulse-animated gray blocks (vote column, badges, title, description, footer) and an `aria-busy` flag for screen readers
 
 ## 0.1.0
 

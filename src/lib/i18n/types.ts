@@ -123,6 +123,19 @@ export interface TranslationMessages {
 		periodWeek: string;
 		periodMonth: string;
 		periodYear: string;
+		listingTitle: string;
+		loadMore: string;
+		empty: string;
+	};
+	home: {
+		heroTitle: string;
+		heroSubtitle: string;
+		exploreCta: string;
+		publishCta: string;
+		hotDealsTitle: string;
+		recentDealsTitle: string;
+		popularStoresTitle: string;
+		viewAll: string;
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;
