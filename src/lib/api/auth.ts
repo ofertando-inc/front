@@ -1,5 +1,5 @@
 import { apiRequest } from '$lib/api/client';
-import type { AuthResponse, User } from '$lib/types/auth';
+import type { User } from '$lib/types/auth';
 
 interface LoginPayload {
 	email: string;
@@ -11,24 +11,33 @@ interface RegisterPayload extends LoginPayload {
 }
 
 export function login(payload: LoginPayload) {
-	return apiRequest<AuthResponse>('/auth/login', {
+	return apiRequest<User>('/auth/login', {
 		method: 'POST',
 		body: JSON.stringify(payload)
 	});
 }
 
 export function register(payload: RegisterPayload) {
-	return apiRequest<AuthResponse>('/auth/register', {
+	return apiRequest<User>('/auth/register', {
 		method: 'POST',
 		body: JSON.stringify(payload)
 	});
 }
 
-// The token parameter is kept for compatibility with existing call sites and
-// will be removed in the next commit alongside the auth store refactor.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function getCurrentUser(_token?: string) {
+export function getCurrentUser() {
 	return apiRequest<User>('/users/me', {
 		method: 'GET'
+	});
+}
+
+export function refreshSession() {
+	return apiRequest<User>('/auth/refresh', {
+		method: 'POST'
+	});
+}
+
+export function logout() {
+	return apiRequest<void>('/auth/logout', {
+		method: 'POST'
 	});
 }

@@ -34,6 +34,9 @@
 - Updated the API client to ship `credentials: 'include'` on every request so the browser carries the `access_token` cookie set by the backend
 - Added a mutex-protected refresh-on-401 retry inside `apiRequest`: a single failing call triggers `POST /auth/refresh` (cookie-driven), retries the original request once on success, and bypasses the refresh dance for `/auth/*` endpoints so that login validation errors surface cleanly
 - Updated the offers API client to drop the explicit bearer-token parameter from every function; authentication is now carried entirely by the session cookie
+- Updated the auth API to return the `User` directly on `/auth/login` and `/auth/register` (cookies carry the tokens), and added `refreshSession()` and `logout()` helpers wired on the new `/auth/refresh` and `/auth/logout` endpoints
+- Removed the legacy `AuthResponse` type along with the `accessToken` field and the `localStorage` token persistence from the auth store; the client store is now a thin `{ user, isAuthenticated, isLoading }` shape backed by HTTP-only cookies
+- Updated the layout, profile page, and header to use the cookie-based session: the layout boots a `loadCurrentUser()` probe with a silent catch, the profile page always probes the session before deciding to redirect, and the header awaits the logout API call before navigating home
 
 ## 0.1.0
 

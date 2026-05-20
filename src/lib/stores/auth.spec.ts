@@ -1,19 +1,21 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { get } from 'svelte/store';
-import type { AuthResponse, User } from '$lib/types/auth';
+import type { User } from '$lib/types/auth';
 
 vi.mock('$lib/api/auth', () => ({
 	getCurrentUser: vi.fn(),
 	login: vi.fn(),
+	logout: vi.fn(),
 	register: vi.fn()
 }));
 
-vi.mock('$app/environment', () => ({
-	browser: true
-}));
-
-import { getCurrentUser, login as loginRequest, register as registerRequest } from '$lib/api/auth';
-import { AUTH_TOKEN_KEY, createAuthStore } from '$lib/stores/auth';
+import {
+	getCurrentUser,
+	login as loginRequest,
+	logout as logoutRequest,
+	register as registerRequest
+} from '$lib/api/auth';
+import { createAuthStore } from '$lib/stores/auth';
 
 const user: User = {
 	id: 'user-1',
@@ -25,50 +27,18 @@ const user: User = {
 	updatedAt: '2026-04-28T12:18:37.315Z'
 };
 
-const authResponse: AuthResponse = {
-	accessToken: 'jwt-token',
-	user
-};
-
 const loginMock = vi.mocked(loginRequest);
 const registerMock = vi.mocked(registerRequest);
+const logoutMock = vi.mocked(logoutRequest);
 const getCurrentUserMock = vi.mocked(getCurrentUser);
 
-function createLocalStorageMock() {
-	const store = new Map<string, string>();
-
-	return {
-		clear: vi.fn(() => store.clear()),
-		getItem: vi.fn((key: string) => store.get(key) ?? null),
-		removeItem: vi.fn((key: string) => store.delete(key)),
-		setItem: vi.fn((key: string, value: string) => {
-			store.set(key, value);
-		})
-	};
-}
-
 beforeEach(() => {
-	vi.stubGlobal('localStorage', createLocalStorageMock());
-	localStorage.clear();
 	vi.clearAllMocks();
 });
 
 describe('auth store', () => {
-	it('loads an existing token from localStorage on initialize', () => {
-		localStorage.setItem(AUTH_TOKEN_KEY, 'stored-token');
-		const store = createAuthStore();
-
-		store.initialize();
-
-		expect(get(store)).toMatchObject({
-			accessToken: 'stored-token',
-			isAuthenticated: true,
-			user: null
-		});
-	});
-
-	it('stores token and user after login succeeds', async () => {
-		loginMock.mockResolvedValue(authResponse);
+	it('stores the user after login succeeds', async () => {
+		loginMock.mockResolvedValue(user);
 		const store = createAuthStore();
 
 		const result = await store.login('maria@example.com', 'password123');
@@ -78,17 +48,27 @@ describe('auth store', () => {
 			password: 'password123'
 		});
 		expect(result).toEqual(user);
-		expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe('jwt-token');
 		expect(get(store)).toMatchObject({
-			accessToken: 'jwt-token',
 			user,
 			isAuthenticated: true,
 			isLoading: false
 		});
 	});
 
-	it('stores token and user after register succeeds', async () => {
-		registerMock.mockResolvedValue(authResponse);
+	it('clears isLoading and rethrows when login fails', async () => {
+		loginMock.mockRejectedValue(new Error('invalid'));
+		const store = createAuthStore();
+
+		await expect(store.login('a@b.c', 'pw')).rejects.toThrow('invalid');
+		expect(get(store)).toMatchObject({
+			user: null,
+			isAuthenticated: false,
+			isLoading: false
+		});
+	});
+
+	it('stores the user after register succeeds', async () => {
+		registerMock.mockResolvedValue(user);
 		const store = createAuthStore();
 
 		const result = await store.register('maria@example.com', 'maria123', 'password123');
@@ -99,60 +79,65 @@ describe('auth store', () => {
 			password: 'password123'
 		});
 		expect(result).toEqual(user);
-		expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBe('jwt-token');
 		expect(get(store)).toMatchObject({
-			accessToken: 'jwt-token',
 			user,
 			isAuthenticated: true,
 			isLoading: false
 		});
 	});
 
-	it('clears token and state on logout', async () => {
-		loginMock.mockResolvedValue(authResponse);
+	it('calls the logout endpoint and clears the state', async () => {
+		loginMock.mockResolvedValue(user);
+		logoutMock.mockResolvedValue();
 		const store = createAuthStore();
 
 		await store.login('maria@example.com', 'password123');
-		store.logout();
+		await store.logout();
 
-		expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
+		expect(logoutMock).toHaveBeenCalledTimes(1);
 		expect(get(store)).toMatchObject({
-			accessToken: null,
 			user: null,
 			isAuthenticated: false,
 			isLoading: false
 		});
 	});
 
-	it('loads the current user with the stored token', async () => {
-		localStorage.setItem(AUTH_TOKEN_KEY, 'stored-token');
+	it('clears the state even when the logout endpoint fails', async () => {
+		loginMock.mockResolvedValue(user);
+		logoutMock.mockRejectedValue(new Error('network'));
+		const store = createAuthStore();
+
+		await store.login('maria@example.com', 'password123');
+		await store.logout();
+
+		expect(get(store)).toMatchObject({
+			user: null,
+			isAuthenticated: false
+		});
+	});
+
+	it('loads the current user from the session cookie', async () => {
 		getCurrentUserMock.mockResolvedValue(user);
 		const store = createAuthStore();
-		store.initialize();
 
 		const result = await store.loadCurrentUser();
 
-		expect(getCurrentUserMock).toHaveBeenCalledWith('stored-token');
+		expect(getCurrentUserMock).toHaveBeenCalled();
 		expect(result).toEqual(user);
 		expect(get(store)).toMatchObject({
-			accessToken: 'stored-token',
 			user,
 			isAuthenticated: true,
 			isLoading: false
 		});
 	});
 
-	it('clears auth state when current user loading fails', async () => {
-		localStorage.setItem(AUTH_TOKEN_KEY, 'stored-token');
+	it('clears auth state when loadCurrentUser fails', async () => {
 		getCurrentUserMock.mockRejectedValue(new Error('Unauthorized'));
 		const store = createAuthStore();
-		store.initialize();
 
 		await expect(store.loadCurrentUser()).rejects.toThrow('Unauthorized');
 
-		expect(localStorage.getItem(AUTH_TOKEN_KEY)).toBeNull();
 		expect(get(store)).toMatchObject({
-			accessToken: null,
 			user: null,
 			isAuthenticated: false,
 			isLoading: false
