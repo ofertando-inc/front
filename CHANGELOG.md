@@ -37,6 +37,8 @@
 - Updated the auth API to return the `User` directly on `/auth/login` and `/auth/register` (cookies carry the tokens), and added `refreshSession()` and `logout()` helpers wired on the new `/auth/refresh` and `/auth/logout` endpoints
 - Removed the legacy `AuthResponse` type along with the `accessToken` field and the `localStorage` token persistence from the auth store; the client store is now a thin `{ user, isAuthenticated, isLoading }` shape backed by HTTP-only cookies
 - Updated the layout, profile page, and header to use the cookie-based session: the layout boots a `loadCurrentUser()` probe with a silent catch, the profile page always probes the session before deciding to redirect, and the header awaits the logout API call before navigating home
+- Documented the cookie session contract in `.env.example`, including the backend requirements (`Set-Cookie` on `access_token`/`refresh_token`, `Access-Control-Allow-Credentials: true`, frontend origin in `CORS_ORIGINS`) and the rule that no token is ever stored client-side
+- Added an e2e regression that visits the home page and asserts no key containing "token" is persisted in `localStorage`, guarding against future reintroduction of client-side token storage
 
 ## 0.1.0
 
