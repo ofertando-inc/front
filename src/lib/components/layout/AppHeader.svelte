@@ -21,7 +21,7 @@
 	import { SearchOutline, TagSolid } from 'flowbite-svelte-icons';
 
 	async function handleLogout() {
-		authStore.logout();
+		await authStore.logout();
 		await goto(resolve('/'));
 	}
 

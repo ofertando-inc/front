@@ -1,19 +1,19 @@
-import { browser } from '$app/environment';
-import { getCurrentUser, login as loginRequest, register as registerRequest } from '$lib/api/auth';
-import type { AuthResponse, User } from '$lib/types/auth';
+import {
+	getCurrentUser,
+	login as loginRequest,
+	logout as logoutRequest,
+	register as registerRequest
+} from '$lib/api/auth';
+import type { User } from '$lib/types/auth';
 import { writable } from 'svelte/store';
 
-export const AUTH_TOKEN_KEY = 'ofertando.accessToken';
-
 interface AuthState {
-	accessToken: string | null;
 	user: User | null;
 	isAuthenticated: boolean;
 	isLoading: boolean;
 }
 
 const initialState: AuthState = {
-	accessToken: null,
 	user: null,
 	isAuthenticated: false,
 	isLoading: false
@@ -22,14 +22,9 @@ const initialState: AuthState = {
 export function createAuthStore() {
 	const { subscribe, set, update } = writable<AuthState>(initialState);
 
-	function applyAuth(response: AuthResponse) {
-		if (browser) {
-			localStorage.setItem(AUTH_TOKEN_KEY, response.accessToken);
-		}
-
+	function applyUser(user: User) {
 		set({
-			accessToken: response.accessToken,
-			user: response.user,
+			user,
 			isAuthenticated: true,
 			isLoading: false
 		});
@@ -37,25 +32,12 @@ export function createAuthStore() {
 
 	return {
 		subscribe,
-		initialize() {
-			if (!browser) return;
-
-			const token = localStorage.getItem(AUTH_TOKEN_KEY);
-			if (!token) return;
-
-			update((state) => ({
-				...state,
-				accessToken: token,
-				isAuthenticated: true
-			}));
-		},
 		async login(email: string, password: string) {
 			update((state) => ({ ...state, isLoading: true }));
-
 			try {
-				const response = await loginRequest({ email, password });
-				applyAuth(response);
-				return response.user;
+				const user = await loginRequest({ email, password });
+				applyUser(user);
+				return user;
 			} catch (error) {
 				update((state) => ({ ...state, isLoading: false }));
 				throw error;
@@ -63,50 +45,32 @@ export function createAuthStore() {
 		},
 		async register(email: string, username: string, password: string) {
 			update((state) => ({ ...state, isLoading: true }));
-
 			try {
-				const response = await registerRequest({ email, username, password });
-				applyAuth(response);
-				return response.user;
+				const user = await registerRequest({ email, username, password });
+				applyUser(user);
+				return user;
 			} catch (error) {
 				update((state) => ({ ...state, isLoading: false }));
 				throw error;
 			}
 		},
-		logout() {
-			if (browser) {
-				localStorage.removeItem(AUTH_TOKEN_KEY);
+		async logout() {
+			// Best effort: even if the backend call fails (network, already expired),
+			// always clear the client state so the UI is consistent.
+			try {
+				await logoutRequest();
+			} catch {
+				// Swallow — the cookie will expire naturally and the user can re-login.
 			}
-
 			set(initialState);
 		},
 		async loadCurrentUser() {
-			let token: string | null = null;
-
-			update((state) => {
-				token = state.accessToken;
-				return { ...state, isLoading: true };
-			});
-
-			if (!token) {
-				update((state) => ({ ...state, isLoading: false, isAuthenticated: false }));
-				return null;
-			}
-
+			update((state) => ({ ...state, isLoading: true }));
 			try {
-				const user = await getCurrentUser(token);
-				update((state) => ({
-					...state,
-					user,
-					isAuthenticated: true,
-					isLoading: false
-				}));
+				const user = await getCurrentUser();
+				applyUser(user);
 				return user;
 			} catch (error) {
-				if (browser) {
-					localStorage.removeItem(AUTH_TOKEN_KEY);
-				}
-
 				set(initialState);
 				throw error;
 			}

@@ -52,3 +52,11 @@ test('profile redirects unauthenticated users to login', async ({ page }) => {
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
 });
+
+test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {
+	await page.goto('/');
+
+	const localStorageKeys = await page.evaluate(() => Object.keys(localStorage));
+	expect(localStorageKeys).not.toContain('ofertando.accessToken');
+	expect(localStorageKeys.filter((key) => key.toLowerCase().includes('token'))).toEqual([]);
+});

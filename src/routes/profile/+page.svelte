@@ -23,11 +23,9 @@
 	onMount(async () => {
 		if (!browser) return;
 
-		if (!$authStore.accessToken) {
-			await goto(resolveRoute('/login'));
-			return;
-		}
-
+		// With cookie-based sessions we can't peek the auth state without a
+		// round-trip. Try to load the current user — if the cookies are missing
+		// or expired (and the refresh also fails), redirect to login.
 		try {
 			await authStore.loadCurrentUser();
 		} catch {

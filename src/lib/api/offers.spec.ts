@@ -48,7 +48,7 @@ describe('listOffers', () => {
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers`,
-			expect.objectContaining({ method: 'GET' })
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
 		);
 		expect(res).toEqual({ items: [], nextCursor: null });
 	});
@@ -86,26 +86,26 @@ describe('listOffers', () => {
 });
 
 describe('getMyOffers', () => {
-	it('sends the bearer token on /offers/mine', async () => {
+	it('calls /offers/mine with credentials so the session cookie ships', async () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await getMyOffers('jwt-token');
+		await getMyOffers();
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers/mine`,
 			expect.objectContaining({
 				method: 'GET',
-				headers: expect.objectContaining({ Authorization: 'Bearer jwt-token' })
+				credentials: 'include'
 			})
 		);
 	});
 
-	it('forwards query params alongside the bearer token', async () => {
+	it('forwards query params alongside the credentials', async () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await getMyOffers('jwt-token', { sort: 'date', limit: 10 });
+		await getMyOffers({ sort: 'date', limit: 10 });
 
 		const url = fetchMock.mock.calls[0]?.[0] as string;
 		expect(url).toContain('/offers/mine?');
@@ -144,19 +144,19 @@ describe('getOfferById', () => {
 });
 
 describe('createOffer', () => {
-	it('POSTs the JSON body with the bearer token', async () => {
+	it('POSTs the JSON body with credentials', async () => {
 		const created = { id: 'new', ...validCreatePayload };
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse(created, 201));
 		vi.stubGlobal('fetch', fetchMock);
 
-		const res = await createOffer(validCreatePayload, 'jwt');
+		const res = await createOffer(validCreatePayload);
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers`,
 			expect.objectContaining({
 				method: 'POST',
+				credentials: 'include',
 				headers: expect.objectContaining({
-					Authorization: 'Bearer jwt',
 					'Content-Type': 'application/json'
 				}),
 				body: JSON.stringify(validCreatePayload)
@@ -171,22 +171,22 @@ describe('createOffer', () => {
 			vi.fn().mockResolvedValue(jsonResponse({ key: 'offer.invalid_dates', statusCode: 400 }, 400))
 		);
 
-		await expect(createOffer(validCreatePayload, 'jwt')).rejects.toBeInstanceOf(ApiError);
+		await expect(createOffer(validCreatePayload)).rejects.toBeInstanceOf(ApiError);
 	});
 });
 
 describe('updateOffer', () => {
-	it('PATCHes the partial payload', async () => {
+	it('PATCHes the partial payload with credentials', async () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'abc', title: 'new' }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await updateOffer('abc', { title: 'new' }, 'jwt');
+		await updateOffer('abc', { title: 'new' });
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers/abc`,
 			expect.objectContaining({
 				method: 'PATCH',
-				headers: expect.objectContaining({ Authorization: 'Bearer jwt' }),
+				credentials: 'include',
 				body: '{"title":"new"}'
 			})
 		);
@@ -194,17 +194,17 @@ describe('updateOffer', () => {
 });
 
 describe('deleteOffer', () => {
-	it('DELETEs the offer with the bearer token and tolerates a 204 No Content', async () => {
+	it('DELETEs the offer with credentials and tolerates a 204 No Content', async () => {
 		const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await expect(deleteOffer('abc', 'jwt')).resolves.toBeNull();
+		await expect(deleteOffer('abc')).resolves.toBeNull();
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers/abc`,
 			expect.objectContaining({
 				method: 'DELETE',
-				headers: expect.objectContaining({ Authorization: 'Bearer jwt' })
+				credentials: 'include'
 			})
 		);
 	});
@@ -215,7 +215,7 @@ describe('deleteOffer', () => {
 			vi.fn().mockResolvedValue(jsonResponse({ key: 'offer.forbidden', statusCode: 403 }, 403))
 		);
 
-		await expect(deleteOffer('abc', 'jwt')).rejects.toMatchObject({
+		await expect(deleteOffer('abc')).rejects.toMatchObject({
 			name: 'ApiError',
 			key: 'offer.forbidden',
 			status: 403

@@ -1,5 +1,5 @@
 import { apiRequest } from '$lib/api/client';
-import type { AuthResponse, User } from '$lib/types/auth';
+import type { User } from '$lib/types/auth';
 
 interface LoginPayload {
 	email: string;
@@ -11,22 +11,33 @@ interface RegisterPayload extends LoginPayload {
 }
 
 export function login(payload: LoginPayload) {
-	return apiRequest<AuthResponse>('/auth/login', {
+	return apiRequest<User>('/auth/login', {
 		method: 'POST',
 		body: JSON.stringify(payload)
 	});
 }
 
 export function register(payload: RegisterPayload) {
-	return apiRequest<AuthResponse>('/auth/register', {
+	return apiRequest<User>('/auth/register', {
 		method: 'POST',
 		body: JSON.stringify(payload)
 	});
 }
 
-export function getCurrentUser(token: string) {
+export function getCurrentUser() {
 	return apiRequest<User>('/users/me', {
-		method: 'GET',
-		token
+		method: 'GET'
+	});
+}
+
+export function refreshSession() {
+	return apiRequest<User>('/auth/refresh', {
+		method: 'POST'
+	});
+}
+
+export function logout() {
+	return apiRequest<void>('/auth/logout', {
+		method: 'POST'
 	});
 }

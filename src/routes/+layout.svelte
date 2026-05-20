@@ -10,8 +10,12 @@
 
 	onMount(() => {
 		localeStore.initialize();
-		authStore.initialize();
-		void authStore.loadCurrentUser();
+		// loadCurrentUser triggers the cookie-based session probe. If the access
+		// cookie is expired, the API client transparently refreshes via the
+		// refresh cookie and retries; otherwise the user state stays empty.
+		void authStore.loadCurrentUser().catch(() => {
+			/* Anonymous visitor — leave the store empty. */
+		});
 	});
 </script>
 

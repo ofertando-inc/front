@@ -37,7 +37,7 @@
 </script>
 
 <Card
-	class="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white !p-0 transition-shadow hover:shadow-lg {isDimmed
+	class="flex !max-w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white !p-0 transition-shadow hover:shadow-lg {isDimmed
 		? 'opacity-75 grayscale-[0.5]'
 		: ''} {className}"
 >

@@ -30,6 +30,15 @@
 - Added a `deal` translation namespace with the detail-page strings (CTA, banners, mock comments, related and comments titles) in Spanish, English, and French
 - Added a graceful error fallback on the offer detail page that shows a localized "go back" card when the fetch fails for a reason other than `offer.not_found`, preventing a blank screen when the API is unreachable
 - Added an e2e smoke test asserting the detail page renders a usable fallback when the requested offer id cannot be loaded
+- Fixed `DealCard` and `DealCardSkeleton` to stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells
+- Updated the API client to ship `credentials: 'include'` on every request so the browser carries the `access_token` cookie set by the backend
+- Added a mutex-protected refresh-on-401 retry inside `apiRequest`: a single failing call triggers `POST /auth/refresh` (cookie-driven), retries the original request once on success, and bypasses the refresh dance for `/auth/*` endpoints so that login validation errors surface cleanly
+- Updated the offers API client to drop the explicit bearer-token parameter from every function; authentication is now carried entirely by the session cookie
+- Updated the auth API to return the `User` directly on `/auth/login` and `/auth/register` (cookies carry the tokens), and added `refreshSession()` and `logout()` helpers wired on the new `/auth/refresh` and `/auth/logout` endpoints
+- Removed the legacy `AuthResponse` type along with the `accessToken` field and the `localStorage` token persistence from the auth store; the client store is now a thin `{ user, isAuthenticated, isLoading }` shape backed by HTTP-only cookies
+- Updated the layout, profile page, and header to use the cookie-based session: the layout boots a `loadCurrentUser()` probe with a silent catch, the profile page always probes the session before deciding to redirect, and the header awaits the logout API call before navigating home
+- Documented the cookie session contract in `.env.example`, including the backend requirements (`Set-Cookie` on `access_token`/`refresh_token`, `Access-Control-Allow-Credentials: true`, frontend origin in `CORS_ORIGINS`) and the rule that no token is ever stored client-side
+- Added an e2e regression that visits the home page and asserts no key containing "token" is persisted in `localStorage`, guarding against future reintroduction of client-side token storage
 
 ## 0.1.0
 

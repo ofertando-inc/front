@@ -1,7 +1,7 @@
 import { browser } from '$app/environment';
 
 interface RequestOptions extends RequestInit {
-	token?: string;
+	_isRetry?: boolean;
 }
 
 export class ApiError extends Error {
@@ -71,18 +71,60 @@ function extractErrorDetails(payload: unknown): unknown {
 	return undefined;
 }
 
+// Single in-flight refresh promise shared across concurrent 401-driven retries.
+// Without this mutex, two simultaneous 401 responses would each trigger a refresh
+// — the second one would replay an already-rotated refresh token and trip the
+// backend reuse detection, revoking every session for the user.
+let refreshInFlight: Promise<boolean> | null = null;
+
+async function attemptRefresh(): Promise<boolean> {
+	if (refreshInFlight) return refreshInFlight;
+
+	const promise = (async () => {
+		try {
+			const response = await fetch(getApiUrl('/auth/refresh'), {
+				method: 'POST',
+				credentials: 'include'
+			});
+			return response.ok;
+		} catch {
+			return false;
+		}
+	})();
+
+	refreshInFlight = promise;
+
+	promise.finally(() => {
+		if (refreshInFlight === promise) {
+			refreshInFlight = null;
+		}
+	});
+
+	return promise;
+}
+
 export async function apiRequest<T>(path: string, options: RequestOptions = {}): Promise<T> {
-	const { token, headers, body, ...rest } = options;
+	const { _isRetry, headers, body, ...rest } = options;
 
 	const response = await fetch(getApiUrl(path), {
 		...rest,
+		credentials: 'include',
 		headers: {
 			'Content-Type': 'application/json',
-			...(token ? { Authorization: `Bearer ${token}` } : {}),
 			...headers
 		},
 		body
 	});
+
+	// Refresh on 401, retry once. Skip for /auth/* endpoints — a 401 on login is
+	// "wrong credentials", not "session expired", and refreshing during login
+	// would mask the real error.
+	if (response.status === 401 && !_isRetry && !path.startsWith('/auth/')) {
+		const refreshed = await attemptRefresh();
+		if (refreshed) {
+			return apiRequest<T>(path, { ...options, _isRetry: true });
+		}
+	}
 
 	const isJson = response.headers.get('content-type')?.includes('application/json');
 	const payload = isJson ? await response.json() : null;

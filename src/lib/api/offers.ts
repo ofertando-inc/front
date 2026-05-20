@@ -28,10 +28,9 @@ export function listOffers(query?: ListOffersQuery) {
 	});
 }
 
-export function getMyOffers(token: string, query?: ListOffersQuery) {
+export function getMyOffers(query?: ListOffersQuery) {
 	return apiRequest<PaginatedOffers>(`/offers/mine${buildQueryString(query)}`, {
-		method: 'GET',
-		token
+		method: 'GET'
 	});
 }
 
@@ -41,25 +40,22 @@ export function getOfferById(id: string) {
 	});
 }
 
-export function createOffer(payload: CreateOfferDto, token: string) {
+export function createOffer(payload: CreateOfferDto) {
 	return apiRequest<Offer>('/offers', {
 		method: 'POST',
-		token,
 		body: JSON.stringify(payload)
 	});
 }
 
-export function updateOffer(id: string, payload: UpdateOfferDto, token: string) {
+export function updateOffer(id: string, payload: UpdateOfferDto) {
 	return apiRequest<Offer>(`/offers/${encodeURIComponent(id)}`, {
 		method: 'PATCH',
-		token,
 		body: JSON.stringify(payload)
 	});
 }
 
-export function deleteOffer(id: string, token: string) {
+export function deleteOffer(id: string) {
 	return apiRequest<void>(`/offers/${encodeURIComponent(id)}`, {
-		method: 'DELETE',
-		token
+		method: 'DELETE'
 	});
 }
