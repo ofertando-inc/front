@@ -36,22 +36,18 @@ describe('apiRequest', () => {
 		expect(response).toEqual({ ok: true });
 	});
 
-	it('sends JSON and bearer token headers', async () => {
+	it('sends credentials with every request so the browser ships the session cookie', async () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ ok: true }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await apiRequest('/users/me', {
-			method: 'GET',
-			token: 'jwt-token'
-		});
+		await apiRequest('/users/me', { method: 'GET' });
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			expect.stringContaining('/users/me'),
 			expect.objectContaining({
-				headers: expect.objectContaining({
-					Authorization: 'Bearer jwt-token',
-					'Content-Type': 'application/json'
-				})
+				method: 'GET',
+				credentials: 'include',
+				headers: expect.objectContaining({ 'Content-Type': 'application/json' })
 			})
 		);
 	});
@@ -161,5 +157,108 @@ describe('apiRequest', () => {
 		const error = await captureApiError(() => apiRequest('/auth/login'));
 
 		expect(error.retryAfterSeconds).toBeNull();
+	});
+
+	it('attempts /auth/refresh on a 401 and retries the original request when refresh succeeds', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
+			.mockResolvedValueOnce(new Response(null, { status: 200 }))
+			.mockResolvedValueOnce(jsonResponse({ id: 'user-1' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const result = await apiRequest<{ id: string }>('/users/me');
+
+		expect(result).toEqual({ id: 'user-1' });
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+		expect(fetchMock.mock.calls[1]?.[0]).toContain('/auth/refresh');
+		expect(fetchMock.mock.calls[1]?.[1]).toMatchObject({
+			method: 'POST',
+			credentials: 'include'
+		});
+	});
+
+	it('propagates the 401 when /auth/refresh also fails', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
+			.mockResolvedValueOnce(new Response(null, { status: 401 }));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const error = await captureApiError(() => apiRequest('/users/me'));
+
+		expect(error.status).toBe(401);
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('does not attempt a refresh when the failing endpoint is /auth/*', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ key: 'auth.invalid_credentials', statusCode: 401 }, 401));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await captureApiError(() => apiRequest('/auth/login', { method: 'POST' }));
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('does not retry twice if the retried request also returns 401', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValueOnce(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
+			.mockResolvedValueOnce(new Response(null, { status: 200 }))
+			.mockResolvedValueOnce(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const error = await captureApiError(() => apiRequest('/users/me'));
+
+		expect(error.status).toBe(401);
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+	});
+
+	it('shares a single /auth/refresh call across concurrent 401-driven retries', async () => {
+		let resolveRefresh!: (response: Response) => void;
+		const refreshPromise = new Promise<Response>((resolve) => {
+			resolveRefresh = resolve;
+		});
+
+		const fetchMock = vi.fn().mockImplementation((url: string) => {
+			if (typeof url === 'string' && url.includes('/auth/refresh')) {
+				return refreshPromise;
+			}
+			if (typeof url === 'string' && url.includes('/users/me')) {
+				return Promise.resolve(jsonResponse({ ok: true }, 200));
+			}
+			if (typeof url === 'string' && url.includes('/offers/mine')) {
+				return Promise.resolve(jsonResponse({ items: [], nextCursor: null }, 200));
+			}
+			return Promise.resolve(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401));
+		});
+
+		// Force a 401 on the first attempt of each, then 200 on retry
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401)
+		);
+		fetchMock.mockResolvedValueOnce(
+			jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401)
+		);
+
+		vi.stubGlobal('fetch', fetchMock);
+
+		const callA = apiRequest('/users/me');
+		const callB = apiRequest('/offers/mine');
+
+		// Yield so both fetches start and both queue the refresh
+		await Promise.resolve();
+		await Promise.resolve();
+
+		resolveRefresh(new Response(null, { status: 200 }));
+
+		await Promise.all([callA, callB]);
+
+		const refreshCalls = fetchMock.mock.calls.filter(
+			(call) => typeof call[0] === 'string' && call[0].includes('/auth/refresh')
+		);
+		expect(refreshCalls).toHaveLength(1);
 	});
 });

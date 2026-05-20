@@ -24,9 +24,11 @@ export function register(payload: RegisterPayload) {
 	});
 }
 
-export function getCurrentUser(token: string) {
+// The token parameter is kept for compatibility with existing call sites and
+// will be removed in the next commit alongside the auth store refactor.
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function getCurrentUser(_token?: string) {
 	return apiRequest<User>('/users/me', {
-		method: 'GET',
-		token
+		method: 'GET'
 	});
 }

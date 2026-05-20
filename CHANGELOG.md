@@ -31,6 +31,9 @@
 - Added a graceful error fallback on the offer detail page that shows a localized "go back" card when the fetch fails for a reason other than `offer.not_found`, preventing a blank screen when the API is unreachable
 - Added an e2e smoke test asserting the detail page renders a usable fallback when the requested offer id cannot be loaded
 - Fixed `DealCard` and `DealCardSkeleton` to stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells
+- Updated the API client to ship `credentials: 'include'` on every request so the browser carries the `access_token` cookie set by the backend
+- Added a mutex-protected refresh-on-401 retry inside `apiRequest`: a single failing call triggers `POST /auth/refresh` (cookie-driven), retries the original request once on success, and bypasses the refresh dance for `/auth/*` endpoints so that login validation errors surface cleanly
+- Updated the offers API client to drop the explicit bearer-token parameter from every function; authentication is now carried entirely by the session cookie
 
 ## 0.1.0
 
