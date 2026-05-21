@@ -99,6 +99,33 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Cargar más',
 			empty: 'No hay ofertas que coincidan con tus filtros.'
 		},
+		createDeal: {
+			pageTitle: 'Compartir una oferta',
+			heading: 'Comparte una oferta',
+			intro:
+				'Publica un descuento claro para que la comunidad pueda encontrarlo, votarlo y aprovecharlo.',
+			titleLabel: 'Título',
+			titlePlaceholder: 'Ej. 40% de descuento en audífonos',
+			descriptionLabel: 'Descripción',
+			descriptionPlaceholder:
+				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
+			offerTypeLabel: 'Tipo de oferta',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Enlace de la oferta',
+			externalUrlPlaceholder: 'https://tienda.com/oferta',
+			externalUrlHint: 'Opcional para ofertas locales.',
+			storeNameLabel: 'Tienda',
+			storeNamePlaceholder: 'Nombre de la tienda',
+			cityLabel: 'Ciudad',
+			cityPlaceholder: 'Ej. Bogotá',
+			startDateLabel: 'Fecha de inicio',
+			endDateLabel: 'Fecha de fin',
+			requiredHint: 'Todos los campos marcados son obligatorios.',
+			submit: 'Publicar oferta',
+			submitting: 'Publicando...',
+			genericError: 'No pudimos publicar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
 		home: {
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
@@ -318,6 +345,32 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Load more',
 			empty: 'No offers match your filters.'
 		},
+		createDeal: {
+			pageTitle: 'Share a deal',
+			heading: 'Share a deal',
+			intro: 'Publish a clear discount so the community can find it, vote on it, and use it.',
+			titleLabel: 'Title',
+			titlePlaceholder: 'E.g. 40% off headphones',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				'Describe the deal, important conditions, availability, and steps to use it.',
+			offerTypeLabel: 'Deal type',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Deal link',
+			externalUrlPlaceholder: 'https://store.com/deal',
+			externalUrlHint: 'Optional for local deals.',
+			storeNameLabel: 'Store',
+			storeNamePlaceholder: 'Store name',
+			cityLabel: 'City',
+			cityPlaceholder: 'E.g. Bogotá',
+			startDateLabel: 'Start date',
+			endDateLabel: 'End date',
+			requiredHint: 'All marked fields are required.',
+			submit: 'Publish deal',
+			submitting: 'Publishing...',
+			genericError: 'We could not publish the deal. Check the details and try again.'
+		},
 		home: {
 			heroTitle: 'Discover the best deals in Colombia',
 			heroSubtitle:
@@ -535,6 +588,33 @@ export const messages: Record<Locale, TranslationMessages> = {
 			listingTitle: 'Toutes les offres',
 			loadMore: 'Charger plus',
 			empty: 'Aucune offre ne correspond à vos filtres.'
+		},
+		createDeal: {
+			pageTitle: 'Partager une offre',
+			heading: 'Partager une offre',
+			intro:
+				'Publiez une réduction claire pour que la communauté puisse la trouver, voter et en profiter.',
+			titleLabel: 'Titre',
+			titlePlaceholder: 'Ex. 40 % de réduction sur des écouteurs',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
+			offerTypeLabel: "Type d'offre",
+			offerTypeOnline: 'En ligne',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: "Lien de l'offre",
+			externalUrlPlaceholder: 'https://magasin.com/offre',
+			externalUrlHint: 'Optionnel pour les offres locales.',
+			storeNameLabel: 'Magasin',
+			storeNamePlaceholder: 'Nom du magasin',
+			cityLabel: 'Ville',
+			cityPlaceholder: 'Ex. Bogotá',
+			startDateLabel: 'Date de début',
+			endDateLabel: 'Date de fin',
+			requiredHint: 'Tous les champs marqués sont obligatoires.',
+			submit: "Publier l'offre",
+			submitting: 'Publication...',
+			genericError: "Nous n'avons pas pu publier l'offre. Vérifiez les informations et réessayez."
 		},
 		home: {
 			heroTitle: 'Découvrez les meilleures offres en Colombie',

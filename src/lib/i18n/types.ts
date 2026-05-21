@@ -127,6 +127,31 @@ export interface TranslationMessages {
 		loadMore: string;
 		empty: string;
 	};
+	createDeal: {
+		pageTitle: string;
+		heading: string;
+		intro: string;
+		titleLabel: string;
+		titlePlaceholder: string;
+		descriptionLabel: string;
+		descriptionPlaceholder: string;
+		offerTypeLabel: string;
+		offerTypeOnline: string;
+		offerTypeLocal: string;
+		externalUrlLabel: string;
+		externalUrlPlaceholder: string;
+		externalUrlHint: string;
+		storeNameLabel: string;
+		storeNamePlaceholder: string;
+		cityLabel: string;
+		cityPlaceholder: string;
+		startDateLabel: string;
+		endDateLabel: string;
+		requiredHint: string;
+		submit: string;
+		submitting: string;
+		genericError: string;
+	};
 	home: {
 		heroTitle: string;
 		heroSubtitle: string;
