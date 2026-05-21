@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private';
 import { error, type RequestHandler } from '@sveltejs/kit';
 
 const HOP_BY_HOP_HEADERS = new Set([
@@ -14,7 +15,7 @@ const HOP_BY_HOP_HEADERS = new Set([
 ]);
 
 const proxy: RequestHandler = async ({ request, params }) => {
-	const backUrl = process.env.BACK_URL;
+	const backUrl = env.BACK_URL;
 	if (!backUrl) {
 		error(500, 'BACK_URL is not configured on the SvelteKit server.');
 	}
