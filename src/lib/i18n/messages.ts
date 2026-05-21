@@ -198,10 +198,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
 				},
 				startDate: {
-					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).'
+					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).',
+					isInFuture: 'La fecha de inicio debe estar en el futuro.'
 				},
 				endDate: {
-					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).'
+					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).',
+					isAfterStart: 'La fecha de fin debe ser posterior a la fecha de inicio.',
+					isInFuture: 'La fecha de fin debe estar en el futuro.'
 				}
 			},
 			system: {
@@ -413,10 +416,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'The city name is too long (max 100 characters).'
 				},
 				startDate: {
-					isDateString: 'Invalid start date (ISO 8601 format expected).'
+					isDateString: 'Invalid start date (ISO 8601 format expected).',
+					isInFuture: 'The start date must be in the future.'
 				},
 				endDate: {
-					isDateString: 'Invalid end date (ISO 8601 format expected).'
+					isDateString: 'Invalid end date (ISO 8601 format expected).',
+					isAfterStart: 'The end date must be after the start date.',
+					isInFuture: 'The end date must be in the future.'
 				}
 			},
 			system: {
@@ -629,10 +635,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
 				},
 				startDate: {
-					isDateString: 'Date de début invalide (format ISO 8601 attendu).'
+					isDateString: 'Date de début invalide (format ISO 8601 attendu).',
+					isInFuture: 'La date de début doit être dans le futur.'
 				},
 				endDate: {
-					isDateString: 'Date de fin invalide (format ISO 8601 attendu).'
+					isDateString: 'Date de fin invalide (format ISO 8601 attendu).',
+					isAfterStart: 'La date de fin doit être postérieure à la date de début.',
+					isInFuture: 'La date de fin doit être dans le futur.'
 				}
 			},
 			system: {

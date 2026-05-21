@@ -27,13 +27,15 @@ describe('getFieldErrorMap', () => {
 		const details = {
 			fields: [
 				{ field: 'email', constraints: ['isEmail'] },
-				{ field: 'password', constraints: ['minLength'] }
+				{ field: 'password', constraints: ['minLength'] },
+				{ field: 'endDate', constraints: ['isAfterStart'] }
 			]
 		};
 
 		expect(getFieldErrorMap(details, t)).toEqual({
 			email: t.validation.fields.email.isEmail,
-			password: t.validation.fields.password.minLength
+			password: t.validation.fields.password.minLength,
+			endDate: t.validation.fields.endDate.isAfterStart
 		});
 	});
 
