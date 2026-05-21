@@ -39,6 +39,7 @@
 - Updated the layout, profile page, and header to use the cookie-based session: the layout boots a `loadCurrentUser()` probe with a silent catch, the profile page always probes the session before deciding to redirect, and the header awaits the logout API call before navigating home
 - Documented the cookie session contract in `.env.example`, including the backend requirements (`Set-Cookie` on `access_token`/`refresh_token`, `Access-Control-Allow-Credentials: true`, frontend origin in `CORS_ORIGINS`) and the rule that no token is ever stored client-side
 - Added an e2e regression that visits the home page and asserts no key containing "token" is persisted in `localStorage`, guarding against future reintroduction of client-side token storage
+- Added `sveltekit-superforms` and `zod` as runtime dependencies for the upcoming offer mutation forms (create, edit) with server actions and shared validation schemas
 
 ## 0.1.0
 
