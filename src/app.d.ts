@@ -8,12 +8,6 @@ declare global {
 		// interface PageState {}
 		// interface Platform {}
 	}
-
-	interface Window {
-		APP_CONFIG?: {
-			API_URL: string;
-		};
-	}
 }
 
 export {};

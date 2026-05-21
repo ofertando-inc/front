@@ -11,7 +11,7 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       PORT: ${PORT:-3000}
-      PUBLIC_API_URL: ${PUBLIC_API_URL}
+      BACK_URL: ${BACK_URL}
 
 networks:
   dokploy-network:

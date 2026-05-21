@@ -40,6 +40,11 @@
 - Documented the cookie session contract in `.env.example`, including the backend requirements (`Set-Cookie` on `access_token`/`refresh_token`, `Access-Control-Allow-Credentials: true`, frontend origin in `CORS_ORIGINS`) and the rule that no token is ever stored client-side
 - Added an e2e regression that visits the home page and asserts no key containing "token" is persisted in `localStorage`, guarding against future reintroduction of client-side token storage
 - Added `sveltekit-superforms` and `zod` as runtime dependencies for the upcoming offer mutation forms (create, edit) with server actions and shared validation schemas
+- Added a SvelteKit BFF catch-all proxy at `src/routes/api/[...path]/+server.ts` that forwards every browser request to the backend, copying request headers and cookies, and rewriting the refresh cookie `Path=/auth` to `Path=/api/auth` so the cookie scope follows the proxied path. The browser never talks to the backend directly anymore
+- Updated the API client to always target `/api/*` from the browser (the SvelteKit BFF). The runtime `window.APP_CONFIG.API_URL` mechanism is removed: `app.html` no longer loads `config.js`, the global type is dropped from `app.d.ts`, `static/config.js` is deleted, and the Docker entrypoint no longer generates a config file
+- Updated the Docker entrypoint to a minimal `exec node build` since per-environment runtime configuration moved to a server-side `BACK_URL` environment variable
+- Replaced `PUBLIC_API_URL` with `BACK_URL` in all three docker-compose files (dev, staging, prod). The variable is server-side only, never exposed to the browser. Dokploy services must rename the env var when this is merged
+- Updated `.env.example` to document the BFF pattern and the role of `BACK_URL` (server-side, never readable by JavaScript in the browser)
 
 ## 0.1.0
 
