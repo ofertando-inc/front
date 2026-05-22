@@ -8,15 +8,53 @@ function sendJson(response: import('node:http').ServerResponse, statusCode: numb
 	response.end(JSON.stringify(body));
 }
 
+function isAuthenticated(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=authenticated');
+}
+
 test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
 
-		if (url.startsWith('/users/me') || url.startsWith('/auth/refresh')) {
+		if (url.startsWith('/users/me')) {
+			if (isAuthenticated(request)) {
+				sendJson(response, 200, {
+					id: 'e2e-user-id',
+					email: 'e2e@example.com',
+					username: 'e2euser',
+					role: 'USER',
+					status: 'ACTIVE',
+					createdAt: '2026-05-01T10:00:00.000Z',
+					updatedAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
+
 			sendJson(response, 401, {
 				key: 'auth.unauthorized',
 				statusCode: 401
 			});
+			return;
+		}
+
+		if (url.startsWith('/auth/refresh')) {
+			sendJson(response, 401, {
+				key: 'auth.unauthorized',
+				statusCode: 401
+			});
+			return;
+		}
+
+		if (url === '/offers/mine' || url.startsWith('/offers/mine?')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, {
+					key: 'auth.unauthorized',
+					statusCode: 401
+				});
+				return;
+			}
+
+			sendJson(response, 200, { items: [], nextCursor: null });
 			return;
 		}
 
@@ -101,6 +139,29 @@ test('profile redirects unauthenticated users to login', async ({ page }) => {
 
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('profile offers tab renders an empty state for authenticated users without offers', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{
+			name: 'e2e_session',
+			value: 'authenticated',
+			url: 'http://127.0.0.1:4173'
+		}
+	]);
+
+	await page.goto('/profile');
+
+	const main = page.locator('main');
+	await expect(page).toHaveURL(/\/profile$/);
+	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+	await expect(main.getByText('Mis ofertas')).toBeVisible();
+	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
+	await expect(main.getByText('Publica tu primera oferta para que aparezca aquí.')).toBeVisible();
+	await expect(main.getByRole('link', { name: 'Publicar oferta' })).toBeVisible();
 });
 
 test('create deal redirects unauthenticated users to login', async ({ page }) => {
