@@ -17,6 +17,7 @@
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
+	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { Offer } from '$lib/types/offer';
 
@@ -25,6 +26,8 @@
 	let loading = $state(true);
 	let notFound = $state(false);
 	let bannerError = $state<string | null>(null);
+
+	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
 
 	let statusBanner = $derived.by(() => {
 		if (!offer) return null;
@@ -243,6 +246,16 @@
 							</div>
 						</div>
 						<div class="flex items-center gap-2">
+							{#if canEdit}
+								<Button
+									href={resolve('/deals/[id]/edit', { id: offer.id })}
+									color="alternative"
+									size="sm"
+									class="rounded-full"
+								>
+									{$translationStore.deal.edit}
+								</Button>
+							{/if}
 							<button
 								type="button"
 								aria-label={$translationStore.deal.share}

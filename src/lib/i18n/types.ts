@@ -152,6 +152,14 @@ export interface TranslationMessages {
 		submitting: string;
 		genericError: string;
 	};
+	editDeal: {
+		pageTitle: string;
+		heading: string;
+		intro: string;
+		submit: string;
+		submitting: string;
+		genericError: string;
+	};
 	home: {
 		heroTitle: string;
 		heroSubtitle: string;
@@ -164,6 +172,7 @@ export interface TranslationMessages {
 	};
 	deal: {
 		goToStore: string;
+		edit: string;
 		report: string;
 		share: string;
 		publishedBy: string;

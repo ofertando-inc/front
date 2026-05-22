@@ -6,17 +6,17 @@
 	let { data }: { data: PageData } = $props();
 
 	let labels: OfferFormLabels = $derived({
-		heading: $translationStore.createDeal.heading,
-		intro: $translationStore.createDeal.intro,
-		submit: $translationStore.createDeal.submit,
-		submitting: $translationStore.createDeal.submitting,
-		genericError: $translationStore.createDeal.genericError,
-		genericErrorKey: 'createDeal.genericError'
+		heading: $translationStore.editDeal.heading,
+		intro: $translationStore.editDeal.intro,
+		submit: $translationStore.editDeal.submit,
+		submitting: $translationStore.editDeal.submitting,
+		genericError: $translationStore.editDeal.genericError,
+		genericErrorKey: 'editDeal.genericError'
 	});
 </script>
 
 <svelte:head>
-	<title>{$translationStore.createDeal.pageTitle}</title>
+	<title>{data.offer.title} — {$translationStore.editDeal.pageTitle}</title>
 </svelte:head>
 
 <OfferForm formData={data.form} {labels} />

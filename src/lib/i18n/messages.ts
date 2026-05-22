@@ -126,6 +126,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Publicando...',
 			genericError: 'No pudimos publicar la oferta. Revisa los datos e inténtalo de nuevo.'
 		},
+		editDeal: {
+			pageTitle: 'Editar oferta',
+			heading: 'Edita tu oferta',
+			intro:
+				'Actualiza los detalles importantes para que la comunidad tenga información clara y útil.',
+			submit: 'Guardar cambios',
+			submitting: 'Guardando...',
+			genericError: 'No pudimos actualizar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
 		home: {
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
@@ -139,6 +148,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Ir a la tienda',
+			edit: 'Editar',
 			report: 'Reportar',
 			share: 'Compartir',
 			publishedBy: 'Publicado por',
@@ -371,6 +381,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Publishing...',
 			genericError: 'We could not publish the deal. Check the details and try again.'
 		},
+		editDeal: {
+			pageTitle: 'Edit deal',
+			heading: 'Edit your deal',
+			intro: 'Update the important details so the community has clear and useful information.',
+			submit: 'Save changes',
+			submitting: 'Saving...',
+			genericError: 'We could not update the deal. Check the details and try again.'
+		},
 		home: {
 			heroTitle: 'Discover the best deals in Colombia',
 			heroSubtitle:
@@ -384,6 +402,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Go to the store',
+			edit: 'Edit',
 			report: 'Report',
 			share: 'Share',
 			publishedBy: 'Posted by',
@@ -616,6 +635,16 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Publication...',
 			genericError: "Nous n'avons pas pu publier l'offre. Vérifiez les informations et réessayez."
 		},
+		editDeal: {
+			pageTitle: "Modifier l'offre",
+			heading: 'Modifier votre offre',
+			intro:
+				'Mettez à jour les informations importantes pour que la communauté dispose de détails clairs et utiles.',
+			submit: 'Enregistrer les changements',
+			submitting: 'Enregistrement...',
+			genericError:
+				"Nous n'avons pas pu mettre à jour l'offre. Vérifiez les informations et réessayez."
+		},
 		home: {
 			heroTitle: 'Découvrez les meilleures offres en Colombie',
 			heroSubtitle:
@@ -629,6 +658,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Aller au magasin',
+			edit: 'Modifier',
 			report: 'Signaler',
 			share: 'Partager',
 			publishedBy: 'Publié par',
