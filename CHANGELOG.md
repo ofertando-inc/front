@@ -45,6 +45,14 @@
 - Updated the Docker entrypoint to a minimal `exec node build` since per-environment runtime configuration moved to a server-side `BACK_URL` environment variable
 - Replaced `PUBLIC_API_URL` with `BACK_URL` in all three docker-compose files (dev, staging, prod). The variable is server-side only, never exposed to the browser. Dokploy services must rename the env var when this is merged
 - Updated `.env.example` to document the BFF pattern and the role of `BACK_URL` (server-side, never readable by JavaScript in the browser)
+- Added a shared Zod offer validation schema for create and update flows, including localized constraint keys for title, description, type, URL, store, city, and date ordering/future-date validation
+- Added the `/create-deal` server-action form with Superforms, Flowbite fields, server-side auth guard, BFF-backed `POST /api/offers`, translated validation errors, and redirect to the created offer detail page
+- Added the `/deals/[id]/edit` server-action form reusing the create form, loading the existing offer server-side through the BFF, enforcing author ownership before render and before patch, and submitting `PATCH /api/offers/[id]`
+- Added author-only edit and delete controls to the offer detail page. Delete uses a Flowbite confirmation modal, a named SvelteKit server action, `DELETE /api/offers/[id]`, translated failures, and redirects back to `/deals` after success
+- Added reusable server helpers for offer form defaults, date conversion, backend validation-error mapping, authenticated session probing, and author ownership checks
+- Added Playwright smoke coverage for unauthenticated access to `/create-deal` and `/deals/[id]/edit`, backed by a lightweight mock backend so server-side guards receive deterministic `401` responses
+- Updated the Playwright web server configuration to provide a local `BACK_URL` during e2e tests, keeping server-side BFF routes testable without the real backend
+- Updated the Docker/npm setup so `npm ci` no longer downloads Playwright browser binaries during Docker builds: `prepare` now only runs `svelte-kit sync`, e2e browser installation is explicit, and the production install uses `--ignore-scripts`
 
 ## 0.1.0
 
