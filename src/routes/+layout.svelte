@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import './layout.css';
+	import AppFooter from '$lib/components/layout/AppFooter.svelte';
 	import AppHeader from '$lib/components/layout/AppHeader.svelte';
 	import { authStore } from '$lib/stores/auth';
 	import favicon from '$lib/assets/favicon.svg';
@@ -21,9 +22,10 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 
-<div class="min-h-screen">
+<div class="flex min-h-screen flex-col">
 	<AppHeader />
-	<main class="page-shell">
+	<main class="page-shell flex-1">
 		{@render children()}
 	</main>
+	<AppFooter />
 </div>

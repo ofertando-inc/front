@@ -159,6 +159,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			popularStoresTitle: 'Tiendas populares',
 			viewAll: 'Ver todas'
 		},
+		footer: {
+			rights: 'Todos los derechos reservados.',
+			terms: 'Términos',
+			privacy: 'Privacidad',
+			contact: 'Contacto'
+		},
 		deal: {
 			goToStore: 'Ir a la tienda',
 			edit: 'Editar',
@@ -425,6 +431,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			recentDealsTitle: 'Recently added',
 			popularStoresTitle: 'Popular stores',
 			viewAll: 'View all'
+		},
+		footer: {
+			rights: 'All rights reserved.',
+			terms: 'Terms',
+			privacy: 'Privacy',
+			contact: 'Contact'
 		},
 		deal: {
 			goToStore: 'Go to the store',
@@ -694,6 +706,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			recentDealsTitle: 'Récemment ajoutées',
 			popularStoresTitle: 'Magasins populaires',
 			viewAll: 'Voir toutes'
+		},
+		footer: {
+			rights: 'Tous droits réservés.',
+			terms: 'Conditions',
+			privacy: 'Confidentialité',
+			contact: 'Contact'
 		},
 		deal: {
 			goToStore: 'Aller au magasin',

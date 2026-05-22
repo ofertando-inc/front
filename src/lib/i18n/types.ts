@@ -183,6 +183,12 @@ export interface TranslationMessages {
 		popularStoresTitle: string;
 		viewAll: string;
 	};
+	footer: {
+		rights: string;
+		terms: string;
+		privacy: string;
+		contact: string;
+	};
 	deal: {
 		goToStore: string;
 		edit: string;
