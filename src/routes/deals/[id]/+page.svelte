@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { Avatar, Button, Card, Textarea } from 'flowbite-svelte';
+	import { Avatar, Button, Card, Modal, Textarea } from 'flowbite-svelte';
 	import {
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
 		FlagOutline,
 		MapPinOutline,
 		ShareNodesOutline,
-		StoreOutline
+		StoreOutline,
+		TrashBinOutline
 	} from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
@@ -20,14 +22,21 @@
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { Offer } from '$lib/types/offer';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let offer = $state<Offer | null>(null);
 	let related = $state<Offer[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
 	let bannerError = $state<string | null>(null);
+	let deleteModalOpen = $state(false);
+	let deleting = $state(false);
+	let deleteErrorKey = $state<string | null>(null);
 
 	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
+	let visibleBannerError = $derived(
+		deleteErrorKey ? resolveDeleteError(deleteErrorKey) : bannerError
+	);
 
 	let statusBanner = $derived.by(() => {
 		if (!offer) return null;
@@ -67,6 +76,37 @@
 		return $translationStore.deal.mockCommentAge.replace('{hours}', String(hours));
 	}
 
+	function resolveDeleteError(errorKey: string): string {
+		if (errorKey === 'deleteDeal.genericError') {
+			return $translationStore.deleteDeal.genericError;
+		}
+
+		return (
+			$translationStore.errors[errorKey as keyof typeof $translationStore.errors] ??
+			$translationStore.deleteDeal.genericError
+		);
+	}
+
+	const handleDelete: SubmitFunction = () => {
+		deleting = true;
+		deleteErrorKey = null;
+		bannerError = null;
+
+		return async ({ result, update }) => {
+			deleting = false;
+
+			if (result.type === 'failure') {
+				deleteModalOpen = false;
+				const data = result.data as { deleteError?: unknown } | undefined;
+				deleteErrorKey =
+					typeof data?.deleteError === 'string' ? data.deleteError : 'deleteDeal.genericError';
+				return;
+			}
+
+			await update({ reset: false });
+		};
+	};
+
 	onMount(async () => {
 		await loadOffer(page.params.id);
 	});
@@ -80,6 +120,7 @@
 
 		loading = true;
 		bannerError = null;
+		deleteErrorKey = null;
 		notFound = false;
 
 		try {
@@ -174,12 +215,12 @@
 					</p>
 				{/if}
 
-				{#if bannerError}
+				{#if visibleBannerError}
 					<p
 						role="alert"
 						class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
 					>
-						{bannerError}
+						{visibleBannerError}
 					</p>
 				{/if}
 
@@ -254,6 +295,18 @@
 									class="rounded-full"
 								>
 									{$translationStore.deal.edit}
+								</Button>
+								<Button
+									color="red"
+									outline
+									size="sm"
+									class="rounded-full"
+									onclick={() => (deleteModalOpen = true)}
+								>
+									<span class="flex items-center gap-1.5">
+										<TrashBinOutline class="h-4 w-4" />
+										{$translationStore.deleteDeal.openButton}
+									</span>
 								</Button>
 							{/if}
 							<button
@@ -345,3 +398,45 @@
 		</div>
 	{/if}
 </section>
+
+{#if offer && canEdit}
+	<Modal bind:open={deleteModalOpen} title={$translationStore.deleteDeal.title} size="md">
+		<div class="space-y-4">
+			<div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+				<TrashBinOutline class="h-6 w-6" />
+			</div>
+			<p class="text-sm leading-6 text-slate-600">
+				{$translationStore.deleteDeal.description}
+			</p>
+			<p class="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900">
+				{offer.title}
+			</p>
+		</div>
+
+		{#snippet footer()}
+			<div class="flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+				<Button
+					color="alternative"
+					class="w-full sm:w-auto"
+					disabled={deleting}
+					onclick={() => (deleteModalOpen = false)}
+				>
+					{$translationStore.deleteDeal.cancel}
+				</Button>
+				<form method="POST" action="?/delete" use:enhance={handleDelete} class="w-full sm:w-auto">
+					<Button
+						type="submit"
+						color="red"
+						class="w-full sm:w-auto"
+						loading={deleting}
+						disabled={deleting}
+					>
+						{deleting
+							? $translationStore.deleteDeal.deleting
+							: $translationStore.deleteDeal.confirm}
+					</Button>
+				</form>
+			</div>
+		{/snippet}
+	</Modal>
+{/if}

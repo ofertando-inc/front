@@ -135,6 +135,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Guardando...',
 			genericError: 'No pudimos actualizar la oferta. Revisa los datos e inténtalo de nuevo.'
 		},
+		deleteDeal: {
+			openButton: 'Eliminar',
+			title: 'Eliminar oferta',
+			description: 'Esta acción no se puede deshacer. La oferta desaparecerá de la lista pública.',
+			cancel: 'Cancelar',
+			confirm: 'Eliminar definitivamente',
+			deleting: 'Eliminando...',
+			genericError: 'No pudimos eliminar la oferta. Inténtalo de nuevo.'
+		},
 		home: {
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
@@ -388,6 +397,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submit: 'Save changes',
 			submitting: 'Saving...',
 			genericError: 'We could not update the deal. Check the details and try again.'
+		},
+		deleteDeal: {
+			openButton: 'Delete',
+			title: 'Delete deal',
+			description: 'This action cannot be undone. The deal will disappear from the public list.',
+			cancel: 'Cancel',
+			confirm: 'Delete permanently',
+			deleting: 'Deleting...',
+			genericError: 'We could not delete the deal. Please try again.'
 		},
 		home: {
 			heroTitle: 'Discover the best deals in Colombia',
@@ -644,6 +662,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Enregistrement...',
 			genericError:
 				"Nous n'avons pas pu mettre à jour l'offre. Vérifiez les informations et réessayez."
+		},
+		deleteDeal: {
+			openButton: 'Supprimer',
+			title: "Supprimer l'offre",
+			description: "Cette action est définitive. L'offre disparaîtra de la liste publique.",
+			cancel: 'Annuler',
+			confirm: 'Supprimer définitivement',
+			deleting: 'Suppression...',
+			genericError: "Nous n'avons pas pu supprimer l'offre. Réessayez."
 		},
 		home: {
 			heroTitle: 'Découvrez les meilleures offres en Colombie',

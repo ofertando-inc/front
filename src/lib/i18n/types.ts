@@ -160,6 +160,15 @@ export interface TranslationMessages {
 		submitting: string;
 		genericError: string;
 	};
+	deleteDeal: {
+		openButton: string;
+		title: string;
+		description: string;
+		cancel: string;
+		confirm: string;
+		deleting: string;
+		genericError: string;
+	};
 	home: {
 		heroTitle: string;
 		heroSubtitle: string;

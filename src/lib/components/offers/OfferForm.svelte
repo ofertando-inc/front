@@ -74,7 +74,9 @@
 		</p>
 	</div>
 
-	<Card class="overflow-hidden max-w-full! rounded-3xl border border-slate-200 bg-white p-0 shadow-sm">
+	<Card
+		class="max-w-full! overflow-hidden rounded-3xl border border-slate-200 bg-white p-0 shadow-sm"
+	>
 		<form method="POST" use:enhance class="grid gap-6 p-5 sm:p-7 lg:grid-cols-[1.1fr_0.9fr]">
 			{#if globalErrors.length > 0}
 				<div
