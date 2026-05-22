@@ -127,6 +127,48 @@ export interface TranslationMessages {
 		loadMore: string;
 		empty: string;
 	};
+	createDeal: {
+		pageTitle: string;
+		heading: string;
+		intro: string;
+		titleLabel: string;
+		titlePlaceholder: string;
+		descriptionLabel: string;
+		descriptionPlaceholder: string;
+		offerTypeLabel: string;
+		offerTypeOnline: string;
+		offerTypeLocal: string;
+		externalUrlLabel: string;
+		externalUrlPlaceholder: string;
+		externalUrlHint: string;
+		storeNameLabel: string;
+		storeNamePlaceholder: string;
+		cityLabel: string;
+		cityPlaceholder: string;
+		startDateLabel: string;
+		endDateLabel: string;
+		requiredHint: string;
+		submit: string;
+		submitting: string;
+		genericError: string;
+	};
+	editDeal: {
+		pageTitle: string;
+		heading: string;
+		intro: string;
+		submit: string;
+		submitting: string;
+		genericError: string;
+	};
+	deleteDeal: {
+		openButton: string;
+		title: string;
+		description: string;
+		cancel: string;
+		confirm: string;
+		deleting: string;
+		genericError: string;
+	};
 	home: {
 		heroTitle: string;
 		heroSubtitle: string;
@@ -139,6 +181,7 @@ export interface TranslationMessages {
 	};
 	deal: {
 		goToStore: string;
+		edit: string;
 		report: string;
 		share: string;
 		publishedBy: string;

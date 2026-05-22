@@ -99,6 +99,51 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Cargar más',
 			empty: 'No hay ofertas que coincidan con tus filtros.'
 		},
+		createDeal: {
+			pageTitle: 'Compartir una oferta',
+			heading: 'Comparte una oferta',
+			intro:
+				'Publica un descuento claro para que la comunidad pueda encontrarlo, votarlo y aprovecharlo.',
+			titleLabel: 'Título',
+			titlePlaceholder: 'Ej. 40% de descuento en audífonos',
+			descriptionLabel: 'Descripción',
+			descriptionPlaceholder:
+				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
+			offerTypeLabel: 'Tipo de oferta',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Enlace de la oferta',
+			externalUrlPlaceholder: 'https://tienda.com/oferta',
+			externalUrlHint: 'Opcional para ofertas locales.',
+			storeNameLabel: 'Tienda',
+			storeNamePlaceholder: 'Nombre de la tienda',
+			cityLabel: 'Ciudad',
+			cityPlaceholder: 'Ej. Bogotá',
+			startDateLabel: 'Fecha de inicio',
+			endDateLabel: 'Fecha de fin',
+			requiredHint: 'Todos los campos marcados son obligatorios.',
+			submit: 'Publicar oferta',
+			submitting: 'Publicando...',
+			genericError: 'No pudimos publicar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
+		editDeal: {
+			pageTitle: 'Editar oferta',
+			heading: 'Edita tu oferta',
+			intro:
+				'Actualiza los detalles importantes para que la comunidad tenga información clara y útil.',
+			submit: 'Guardar cambios',
+			submitting: 'Guardando...',
+			genericError: 'No pudimos actualizar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
+		deleteDeal: {
+			openButton: 'Eliminar',
+			title: 'Eliminar oferta',
+			description: 'Esta acción no se puede deshacer. La oferta desaparecerá de la lista pública.',
+			cancel: 'Cancelar',
+			confirm: 'Eliminar definitivamente',
+			deleting: 'Eliminando...',
+			genericError: 'No pudimos eliminar la oferta. Inténtalo de nuevo.'
+		},
 		home: {
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
@@ -112,6 +157,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Ir a la tienda',
+			edit: 'Editar',
 			report: 'Reportar',
 			share: 'Compartir',
 			publishedBy: 'Publicado por',
@@ -198,10 +244,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
 				},
 				startDate: {
-					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).'
+					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).',
+					isInFuture: 'La fecha de inicio debe estar en el futuro.'
 				},
 				endDate: {
-					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).'
+					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).',
+					isAfterStart: 'La fecha de fin debe ser posterior a la fecha de inicio.',
+					isInFuture: 'La fecha de fin debe estar en el futuro.'
 				}
 			},
 			system: {
@@ -315,6 +364,49 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Load more',
 			empty: 'No offers match your filters.'
 		},
+		createDeal: {
+			pageTitle: 'Share a deal',
+			heading: 'Share a deal',
+			intro: 'Publish a clear discount so the community can find it, vote on it, and use it.',
+			titleLabel: 'Title',
+			titlePlaceholder: 'E.g. 40% off headphones',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				'Describe the deal, important conditions, availability, and steps to use it.',
+			offerTypeLabel: 'Deal type',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Deal link',
+			externalUrlPlaceholder: 'https://store.com/deal',
+			externalUrlHint: 'Optional for local deals.',
+			storeNameLabel: 'Store',
+			storeNamePlaceholder: 'Store name',
+			cityLabel: 'City',
+			cityPlaceholder: 'E.g. Bogotá',
+			startDateLabel: 'Start date',
+			endDateLabel: 'End date',
+			requiredHint: 'All marked fields are required.',
+			submit: 'Publish deal',
+			submitting: 'Publishing...',
+			genericError: 'We could not publish the deal. Check the details and try again.'
+		},
+		editDeal: {
+			pageTitle: 'Edit deal',
+			heading: 'Edit your deal',
+			intro: 'Update the important details so the community has clear and useful information.',
+			submit: 'Save changes',
+			submitting: 'Saving...',
+			genericError: 'We could not update the deal. Check the details and try again.'
+		},
+		deleteDeal: {
+			openButton: 'Delete',
+			title: 'Delete deal',
+			description: 'This action cannot be undone. The deal will disappear from the public list.',
+			cancel: 'Cancel',
+			confirm: 'Delete permanently',
+			deleting: 'Deleting...',
+			genericError: 'We could not delete the deal. Please try again.'
+		},
 		home: {
 			heroTitle: 'Discover the best deals in Colombia',
 			heroSubtitle:
@@ -328,6 +420,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Go to the store',
+			edit: 'Edit',
 			report: 'Report',
 			share: 'Share',
 			publishedBy: 'Posted by',
@@ -413,10 +506,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'The city name is too long (max 100 characters).'
 				},
 				startDate: {
-					isDateString: 'Invalid start date (ISO 8601 format expected).'
+					isDateString: 'Invalid start date (ISO 8601 format expected).',
+					isInFuture: 'The start date must be in the future.'
 				},
 				endDate: {
-					isDateString: 'Invalid end date (ISO 8601 format expected).'
+					isDateString: 'Invalid end date (ISO 8601 format expected).',
+					isAfterStart: 'The end date must be after the start date.',
+					isInFuture: 'The end date must be in the future.'
 				}
 			},
 			system: {
@@ -530,6 +626,52 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Charger plus',
 			empty: 'Aucune offre ne correspond à vos filtres.'
 		},
+		createDeal: {
+			pageTitle: 'Partager une offre',
+			heading: 'Partager une offre',
+			intro:
+				'Publiez une réduction claire pour que la communauté puisse la trouver, voter et en profiter.',
+			titleLabel: 'Titre',
+			titlePlaceholder: 'Ex. 40 % de réduction sur des écouteurs',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
+			offerTypeLabel: "Type d'offre",
+			offerTypeOnline: 'En ligne',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: "Lien de l'offre",
+			externalUrlPlaceholder: 'https://magasin.com/offre',
+			externalUrlHint: 'Optionnel pour les offres locales.',
+			storeNameLabel: 'Magasin',
+			storeNamePlaceholder: 'Nom du magasin',
+			cityLabel: 'Ville',
+			cityPlaceholder: 'Ex. Bogotá',
+			startDateLabel: 'Date de début',
+			endDateLabel: 'Date de fin',
+			requiredHint: 'Tous les champs marqués sont obligatoires.',
+			submit: "Publier l'offre",
+			submitting: 'Publication...',
+			genericError: "Nous n'avons pas pu publier l'offre. Vérifiez les informations et réessayez."
+		},
+		editDeal: {
+			pageTitle: "Modifier l'offre",
+			heading: 'Modifier votre offre',
+			intro:
+				'Mettez à jour les informations importantes pour que la communauté dispose de détails clairs et utiles.',
+			submit: 'Enregistrer les changements',
+			submitting: 'Enregistrement...',
+			genericError:
+				"Nous n'avons pas pu mettre à jour l'offre. Vérifiez les informations et réessayez."
+		},
+		deleteDeal: {
+			openButton: 'Supprimer',
+			title: "Supprimer l'offre",
+			description: "Cette action est définitive. L'offre disparaîtra de la liste publique.",
+			cancel: 'Annuler',
+			confirm: 'Supprimer définitivement',
+			deleting: 'Suppression...',
+			genericError: "Nous n'avons pas pu supprimer l'offre. Réessayez."
+		},
 		home: {
 			heroTitle: 'Découvrez les meilleures offres en Colombie',
 			heroSubtitle:
@@ -543,6 +685,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 		},
 		deal: {
 			goToStore: 'Aller au magasin',
+			edit: 'Modifier',
 			report: 'Signaler',
 			share: 'Partager',
 			publishedBy: 'Publié par',
@@ -629,10 +772,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
 				},
 				startDate: {
-					isDateString: 'Date de début invalide (format ISO 8601 attendu).'
+					isDateString: 'Date de début invalide (format ISO 8601 attendu).',
+					isInFuture: 'La date de début doit être dans le futur.'
 				},
 				endDate: {
-					isDateString: 'Date de fin invalide (format ISO 8601 attendu).'
+					isDateString: 'Date de fin invalide (format ISO 8601 attendu).',
+					isAfterStart: 'La date de fin doit être postérieure à la date de début.',
+					isInFuture: 'La date de fin doit être dans le futur.'
 				}
 			},
 			system: {

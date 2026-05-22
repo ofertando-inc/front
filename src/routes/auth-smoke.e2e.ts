@@ -1,4 +1,54 @@
 import { expect, test } from '@playwright/test';
+import { createServer, type Server } from 'node:http';
+
+let mockBackend: Server;
+
+function sendJson(response: import('node:http').ServerResponse, statusCode: number, body: unknown) {
+	response.writeHead(statusCode, { 'Content-Type': 'application/json' });
+	response.end(JSON.stringify(body));
+}
+
+test.beforeAll(async () => {
+	mockBackend = createServer((request, response) => {
+		const url = request.url ?? '/';
+
+		if (url.startsWith('/users/me') || url.startsWith('/auth/refresh')) {
+			sendJson(response, 401, {
+				key: 'auth.unauthorized',
+				statusCode: 401
+			});
+			return;
+		}
+
+		if (url === '/offers' || url.startsWith('/offers?')) {
+			sendJson(response, 200, { items: [], nextCursor: null });
+			return;
+		}
+
+		if (url.startsWith('/offers/')) {
+			sendJson(response, 404, {
+				key: 'offer.not_found',
+				statusCode: 404
+			});
+			return;
+		}
+
+		sendJson(response, 404, {
+			key: 'error.not_found',
+			statusCode: 404
+		});
+	});
+
+	await new Promise<void>((resolve) => {
+		mockBackend.listen(4174, '127.0.0.1', () => resolve());
+	});
+});
+
+test.afterAll(async () => {
+	await new Promise<void>((resolve, reject) => {
+		mockBackend.close((error) => (error ? reject(error) : resolve()));
+	});
+});
 
 test('home page renders the hero and section titles', async ({ page }) => {
 	await page.goto('/');
@@ -48,6 +98,20 @@ test('detail page renders a fallback when the offer cannot be loaded', async ({ 
 
 test('profile redirects unauthenticated users to login', async ({ page }) => {
 	await page.goto('/profile');
+
+	await expect(page).toHaveURL(/\/login$/);
+	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('create deal redirects unauthenticated users to login', async ({ page }) => {
+	await page.goto('/create-deal');
+
+	await expect(page).toHaveURL(/\/login$/);
+	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('edit deal redirects unauthenticated users to login', async ({ page }) => {
+	await page.goto('/deals/non-existent-id/edit');
 
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();

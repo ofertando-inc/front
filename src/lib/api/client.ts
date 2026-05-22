@@ -34,13 +34,13 @@ function parseRetryAfter(value: string | null): number | null {
 
 function getApiBaseUrl(): string {
 	if (browser) {
-		const url = window.APP_CONFIG?.API_URL;
-		if (!url) {
-			throw new Error('window.APP_CONFIG.API_URL is not defined');
-		}
-		return url;
+		// Always go through the SvelteKit BFF catch-all at /api/*. The browser
+		// never talks to the backend directly — see src/routes/api/[...path].
+		return '/api';
 	}
 
+	// Server-side path (Vitest server tests). The test setup stubs
+	// PUBLIC_API_URL via vi.stubEnv to point at a deterministic origin.
 	const url = process.env.PUBLIC_API_URL;
 	if (!url) {
 		throw new Error('PUBLIC_API_URL is not defined');
