@@ -75,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `DealCard` and `DealCardSkeleton` now stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells.
 - `DealCard` now accepts an optional actions snippet so page-specific controls can be injected without duplicating the card layout.
+- Offer create/edit form fields now use the lighter auth-form visual treatment, and the description textarea is taller and resizable for longer deal details.
 
 ## [0.1.0] - 2026-05-16
 

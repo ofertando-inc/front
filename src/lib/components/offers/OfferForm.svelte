@@ -59,6 +59,11 @@
 	}
 
 	let globalErrors = $derived(getGlobalErrors());
+
+	const fieldClass =
+		'rounded-lg border-gray-300 bg-white text-gray-900 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500';
+	const fieldErrorClass =
+		'rounded-lg border-red-400 bg-white text-gray-900 placeholder:text-gray-400 focus:border-red-500 focus:ring-red-500';
 </script>
 
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-6 py-6 sm:py-10">
@@ -66,16 +71,16 @@
 		<p class="text-sm font-semibold tracking-[0.2em] text-primary-600 uppercase">
 			{$translationStore.common.appName}
 		</p>
-		<h1 class="text-3xl font-semibold text-slate-950 sm:text-4xl">
+		<h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
 			{labels.heading}
 		</h1>
-		<p class="max-w-2xl text-base leading-7 text-slate-600">
+		<p class="max-w-2xl text-base leading-7 text-gray-600">
 			{labels.intro}
 		</p>
 	</div>
 
 	<Card
-		class="max-w-full! overflow-hidden rounded-3xl border border-slate-200 bg-white p-0 shadow-sm"
+		class="max-w-full! overflow-hidden rounded-3xl border border-gray-200 bg-white p-0 shadow-sm"
 	>
 		<form method="POST" use:enhance class="grid gap-6 p-5 sm:p-7 lg:grid-cols-[1.1fr_0.9fr]">
 			{#if globalErrors.length > 0}
@@ -91,7 +96,9 @@
 
 			<div class="space-y-5">
 				<div class="space-y-2">
-					<Label for="title">{$translationStore.createDeal.titleLabel} *</Label>
+					<Label for="title" class="text-sm font-medium text-gray-700"
+						>{$translationStore.createDeal.titleLabel} *</Label
+					>
 					<Input
 						id="title"
 						name="title"
@@ -101,6 +108,8 @@
 						required
 						maxlength={200}
 						aria-invalid={resolveFieldError('title') ? 'true' : undefined}
+						color={resolveFieldError('title') ? 'red' : undefined}
+						class={resolveFieldError('title') ? fieldErrorClass : fieldClass}
 					/>
 					{#if resolveFieldError('title')}
 						<p class="text-sm text-red-600">{resolveFieldError('title')}</p>
@@ -108,16 +117,22 @@
 				</div>
 
 				<div class="space-y-2">
-					<Label for="description">{$translationStore.createDeal.descriptionLabel} *</Label>
+					<Label for="description" class="text-sm font-medium text-gray-700"
+						>{$translationStore.createDeal.descriptionLabel} *</Label
+					>
 					<Textarea
 						id="description"
 						name="description"
-						rows={8}
+						rows={12}
 						bind:value={$form.description}
 						placeholder={$translationStore.createDeal.descriptionPlaceholder}
 						required
 						maxlength={5000}
 						aria-invalid={resolveFieldError('description') ? 'true' : undefined}
+						color={resolveFieldError('description') ? 'red' : undefined}
+						class="{resolveFieldError('description')
+							? fieldErrorClass
+							: fieldClass} min-h-64 resize-y"
 					/>
 					{#if resolveFieldError('description')}
 						<p class="text-sm text-red-600">{resolveFieldError('description')}</p>
@@ -125,15 +140,19 @@
 				</div>
 			</div>
 
-			<div class="space-y-5 rounded-3xl bg-slate-50 p-4 sm:p-5">
+			<div class="space-y-5 rounded-3xl border border-gray-100 bg-gray-50 p-4 sm:p-5">
 				<div class="space-y-2">
-					<Label for="offerType">{$translationStore.createDeal.offerTypeLabel} *</Label>
+					<Label for="offerType" class="text-sm font-medium text-gray-700"
+						>{$translationStore.createDeal.offerTypeLabel} *</Label
+					>
 					<Select
 						id="offerType"
 						name="offerType"
 						bind:value={$form.offerType}
 						required
 						aria-invalid={resolveFieldError('offerType') ? 'true' : undefined}
+						color={resolveFieldError('offerType') ? 'red' : undefined}
+						class={resolveFieldError('offerType') ? fieldErrorClass : fieldClass}
 					>
 						<option value="online">{$translationStore.createDeal.offerTypeOnline}</option>
 						<option value="local">{$translationStore.createDeal.offerTypeLocal}</option>
@@ -144,7 +163,9 @@
 				</div>
 
 				<div class="space-y-2">
-					<Label for="externalUrl">{$translationStore.createDeal.externalUrlLabel}</Label>
+					<Label for="externalUrl" class="text-sm font-medium text-gray-700"
+						>{$translationStore.createDeal.externalUrlLabel}</Label
+					>
 					<Input
 						id="externalUrl"
 						name="externalUrl"
@@ -152,8 +173,10 @@
 						bind:value={$form.externalUrl}
 						placeholder={$translationStore.createDeal.externalUrlPlaceholder}
 						aria-invalid={resolveFieldError('externalUrl') ? 'true' : undefined}
+						color={resolveFieldError('externalUrl') ? 'red' : undefined}
+						class={resolveFieldError('externalUrl') ? fieldErrorClass : fieldClass}
 					/>
-					<p class="text-sm text-slate-500">{$translationStore.createDeal.externalUrlHint}</p>
+					<p class="text-sm text-gray-500">{$translationStore.createDeal.externalUrlHint}</p>
 					{#if resolveFieldError('externalUrl')}
 						<p class="text-sm text-red-600">{resolveFieldError('externalUrl')}</p>
 					{/if}
@@ -161,7 +184,9 @@
 
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
 					<div class="space-y-2">
-						<Label for="storeName">{$translationStore.createDeal.storeNameLabel} *</Label>
+						<Label for="storeName" class="text-sm font-medium text-gray-700"
+							>{$translationStore.createDeal.storeNameLabel} *</Label
+						>
 						<Input
 							id="storeName"
 							name="storeName"
@@ -171,6 +196,8 @@
 							required
 							maxlength={100}
 							aria-invalid={resolveFieldError('storeName') ? 'true' : undefined}
+							color={resolveFieldError('storeName') ? 'red' : undefined}
+							class={resolveFieldError('storeName') ? fieldErrorClass : fieldClass}
 						/>
 						{#if resolveFieldError('storeName')}
 							<p class="text-sm text-red-600">{resolveFieldError('storeName')}</p>
@@ -178,7 +205,9 @@
 					</div>
 
 					<div class="space-y-2">
-						<Label for="city">{$translationStore.createDeal.cityLabel} *</Label>
+						<Label for="city" class="text-sm font-medium text-gray-700"
+							>{$translationStore.createDeal.cityLabel} *</Label
+						>
 						<Input
 							id="city"
 							name="city"
@@ -188,6 +217,8 @@
 							required
 							maxlength={100}
 							aria-invalid={resolveFieldError('city') ? 'true' : undefined}
+							color={resolveFieldError('city') ? 'red' : undefined}
+							class={resolveFieldError('city') ? fieldErrorClass : fieldClass}
 						/>
 						{#if resolveFieldError('city')}
 							<p class="text-sm text-red-600">{resolveFieldError('city')}</p>
@@ -197,7 +228,9 @@
 
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
 					<div class="space-y-2">
-						<Label for="startDate">{$translationStore.createDeal.startDateLabel} *</Label>
+						<Label for="startDate" class="text-sm font-medium text-gray-700"
+							>{$translationStore.createDeal.startDateLabel} *</Label
+						>
 						<Input
 							id="startDate"
 							name="startDate"
@@ -205,6 +238,8 @@
 							bind:value={$form.startDate}
 							required
 							aria-invalid={resolveFieldError('startDate') ? 'true' : undefined}
+							color={resolveFieldError('startDate') ? 'red' : undefined}
+							class={resolveFieldError('startDate') ? fieldErrorClass : fieldClass}
 						/>
 						{#if resolveFieldError('startDate')}
 							<p class="text-sm text-red-600">{resolveFieldError('startDate')}</p>
@@ -212,7 +247,9 @@
 					</div>
 
 					<div class="space-y-2">
-						<Label for="endDate">{$translationStore.createDeal.endDateLabel} *</Label>
+						<Label for="endDate" class="text-sm font-medium text-gray-700"
+							>{$translationStore.createDeal.endDateLabel} *</Label
+						>
 						<Input
 							id="endDate"
 							name="endDate"
@@ -220,6 +257,8 @@
 							bind:value={$form.endDate}
 							required
 							aria-invalid={resolveFieldError('endDate') ? 'true' : undefined}
+							color={resolveFieldError('endDate') ? 'red' : undefined}
+							class={resolveFieldError('endDate') ? fieldErrorClass : fieldClass}
 						/>
 						{#if resolveFieldError('endDate')}
 							<p class="text-sm text-red-600">{resolveFieldError('endDate')}</p>
@@ -228,7 +267,7 @@
 				</div>
 
 				<div class="space-y-4 pt-2">
-					<p class="text-sm text-slate-500">{$translationStore.createDeal.requiredHint}</p>
+					<p class="text-sm text-gray-500">{$translationStore.createDeal.requiredHint}</p>
 					<Button type="submit" size="lg" class="w-full" disabled={$submitting}>
 						{$submitting ? labels.submitting : labels.submit}
 					</Button>
