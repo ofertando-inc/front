@@ -45,6 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Author-only edit and delete controls on the offer detail page. Delete uses a Flowbite confirmation modal, a named SvelteKit server action, `DELETE /api/offers/[id]`, translated failures, and redirects back to `/deals` after success.
 - Reusable server helpers for offer form defaults, date conversion, backend validation-error mapping, authenticated session probing, and author ownership checks.
 - Playwright smoke coverage for unauthenticated access to `/create-deal` and `/deals/[id]/edit`, backed by a lightweight mock backend so server-side guards receive deterministic `401` responses.
+- Profile "My offers" tab backed by `GET /api/offers/mine`, rendering a responsive `DealCard` grid, loading skeletons, localized error retry state, and a first-offer empty state linking to `/create-deal`.
+- Author actions on profile offer cards with a kebab menu for edit and delete, plus a Flowbite confirmation modal that calls `DELETE /api/offers/[id]` and updates the grid after success.
+- Authenticated header CTA linking to `/create-deal`, available on both desktop and mobile navigation.
+- Global Flowbite footer with localized copyright, terms, privacy, and contact placeholder links.
+- Playwright smoke coverage for the authenticated empty profile offers state, using the mock backend to simulate a cookie-authenticated user without offers.
 
 ### Changed
 
@@ -69,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `DealCard` and `DealCardSkeleton` now stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells.
+- `DealCard` now accepts an optional actions snippet so page-specific controls can be injected without duplicating the card layout.
 
 ## [0.1.0] - 2026-05-16
 
