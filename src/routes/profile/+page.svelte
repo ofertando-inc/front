@@ -1,15 +1,53 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
-	import { resolveRoute } from '$app/paths';
+	import { resolve } from '$app/paths';
 	import { onMount } from 'svelte';
-	import { Avatar, Card, TabItem, Tabs } from 'flowbite-svelte';
-	import { FireSolid, MessageDotsOutline, TagSolid } from 'flowbite-svelte-icons';
+	import {
+		Avatar,
+		Button,
+		Card,
+		Dropdown,
+		DropdownItem,
+		Modal,
+		TabItem,
+		Tabs
+	} from 'flowbite-svelte';
+	import {
+		DotsVerticalOutline,
+		FireSolid,
+		MessageDotsOutline,
+		TagSolid,
+		TrashBinOutline
+	} from 'flowbite-svelte-icons';
+	import { ApiError } from '$lib/api/client';
+	import { deleteOffer, getMyOffers } from '$lib/api/offers';
+	import DealCard from '$lib/components/offers/DealCard.svelte';
+	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
+	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
+	import { resolveOfferError, type OfferContext } from '$lib/offers/offerErrors';
+	import type { Offer } from '$lib/types/offer';
 
 	let loading = $state(true);
+	let offersLoading = $state(false);
 	let selectedTab = $state('offers');
+	let myOffers = $state<Offer[]>([]);
+	let offersError = $state<{ error: unknown; context: OfferContext } | null>(null);
+	let deleteModalOpen = $state(false);
+	let deleteTarget = $state<Offer | null>(null);
+	let deletingOfferId = $state<string | null>(null);
+
+	const offerSkeletons = [0, 1, 2];
+
+	let offerCount = $derived(myOffers.length);
+	let isDeletingTarget = $derived(Boolean(deleteTarget && deletingOfferId === deleteTarget.id));
+	let offersErrorMessage = $derived(
+		offersError
+			? resolveOfferError(offersError.error, $translationStore, offersError.context).bannerMessage
+			: null
+	);
 
 	let memberDate = $derived(
 		$authStore.user
@@ -20,6 +58,65 @@
 			: ''
 	);
 
+	async function redirectIfAuthError(error: unknown): Promise<boolean> {
+		if (
+			error instanceof ApiError &&
+			(error.key === ErrorKey.AuthUnauthorized || error.key === ErrorKey.AuthForbidden)
+		) {
+			await goto(resolve('/login'));
+			return true;
+		}
+
+		return false;
+	}
+
+	async function loadMyOffers() {
+		offersLoading = true;
+		offersError = null;
+
+		try {
+			const response = await getMyOffers({ limit: 20, sort: 'date' });
+			myOffers = response.items;
+		} catch (error) {
+			if (await redirectIfAuthError(error)) return;
+			offersError = { error, context: 'browse' };
+		} finally {
+			offersLoading = false;
+		}
+	}
+
+	function openDeleteModal(offer: Offer) {
+		deleteTarget = offer;
+		deleteModalOpen = true;
+	}
+
+	function closeDeleteModal() {
+		if (deletingOfferId) return;
+		deleteModalOpen = false;
+		deleteTarget = null;
+	}
+
+	async function handleDeleteOffer() {
+		if (!deleteTarget || deletingOfferId) return;
+
+		const deletedId = deleteTarget.id;
+		deletingOfferId = deletedId;
+		offersError = null;
+
+		try {
+			await deleteOffer(deletedId);
+			myOffers = myOffers.filter((offer) => offer.id !== deletedId);
+			deleteModalOpen = false;
+			deleteTarget = null;
+		} catch (error) {
+			if (await redirectIfAuthError(error)) return;
+			offersError = { error, context: 'delete' };
+			deleteModalOpen = false;
+		} finally {
+			deletingOfferId = null;
+		}
+	}
+
 	onMount(async () => {
 		if (!browser) return;
 
@@ -28,11 +125,11 @@
 		// or expired (and the refresh also fails), redirect to login.
 		try {
 			await authStore.loadCurrentUser();
-		} catch {
-			await goto(resolveRoute('/login'));
-			return;
-		} finally {
 			loading = false;
+			void loadMyOffers();
+		} catch {
+			await goto(resolve('/login'));
+			return;
 		}
 	});
 </script>
@@ -110,7 +207,7 @@
 						class="mx-auto mt-6 grid w-full max-w-md grid-cols-3 gap-3 sm:gap-6 md:mx-0 md:max-w-lg"
 					>
 						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-							<span class="block text-2xl font-bold text-gray-900">0</span>
+							<span class="block text-2xl font-bold text-gray-900">{offerCount}</span>
 							<span class="text-sm text-gray-500">{$translationStore.profile.offers}</span>
 						</div>
 						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
@@ -142,13 +239,69 @@
 						</span>
 					{/snippet}
 
-					<Card
-						size="xl"
-						class="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center shadow-none"
-					>
-						<p class="font-medium text-gray-700">{$translationStore.profile.noOffers}</p>
-						<p class="mt-2 text-sm text-gray-500">{$translationStore.profile.comingSoon}</p>
-					</Card>
+					{#if offersLoading}
+						<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+							{#each offerSkeletons as skeleton (skeleton)}
+								<DealCardSkeleton class="h-full" />
+							{/each}
+						</div>
+					{:else if offersErrorMessage}
+						<Card
+							size="xl"
+							class="rounded-xl border border-red-200 bg-red-50 p-6 text-center shadow-none"
+							role="alert"
+						>
+							<p class="font-medium text-red-700">{offersErrorMessage}</p>
+							<Button color="red" class="mt-4 rounded-full" onclick={loadMyOffers}>
+								{$translationStore.profile.retry}
+							</Button>
+						</Card>
+					{:else if myOffers.length > 0}
+						<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+							{#each myOffers as offer, index (offer.id)}
+								<DealCard {offer} class="h-full">
+									{#snippet actions()}
+										<Button
+											id={`profile-offer-actions-${index}`}
+											color="light"
+											size="xs"
+											class="h-8 w-8 rounded-full !p-0"
+											aria-label={$translationStore.profile.offerActions}
+										>
+											<DotsVerticalOutline class="h-4 w-4" />
+										</Button>
+										<Dropdown
+											triggeredBy={`#profile-offer-actions-${index}`}
+											placement="bottom-end"
+										>
+											<DropdownItem
+												href={resolve('/deals/[id]/edit', { id: offer.id })}
+												liClass="list-none"
+											>
+												{$translationStore.deal.edit}
+											</DropdownItem>
+											<DropdownItem onclick={() => openDeleteModal(offer)} liClass="list-none">
+												{$translationStore.deleteDeal.openButton}
+											</DropdownItem>
+										</Dropdown>
+									{/snippet}
+								</DealCard>
+							{/each}
+						</div>
+					{:else}
+						<Card
+							size="xl"
+							class="rounded-xl border border-gray-200 bg-gray-50 p-6 text-center shadow-none"
+						>
+							<p class="font-medium text-gray-700">{$translationStore.profile.noOffers}</p>
+							<p class="mt-2 text-sm text-gray-500">
+								{$translationStore.profile.noOffersDescription}
+							</p>
+							<Button href={resolve('/create-deal')} class="mt-5 rounded-full">
+								{$translationStore.profile.publishOffer}
+							</Button>
+						</Card>
+					{/if}
 				</TabItem>
 
 				<TabItem key="comments">
@@ -187,4 +340,44 @@
 			</Tabs>
 		</div>
 	</section>
+{/if}
+
+{#if deleteTarget}
+	<Modal bind:open={deleteModalOpen} title={$translationStore.deleteDeal.title} size="md">
+		<div class="space-y-4">
+			<div class="flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+				<TrashBinOutline class="h-6 w-6" />
+			</div>
+			<p class="text-sm leading-6 text-slate-600">
+				{$translationStore.deleteDeal.description}
+			</p>
+			<p class="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-900">
+				{deleteTarget.title}
+			</p>
+		</div>
+
+		{#snippet footer()}
+			<div class="flex w-full flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+				<Button
+					color="alternative"
+					class="w-full sm:w-auto"
+					disabled={Boolean(deletingOfferId)}
+					onclick={closeDeleteModal}
+				>
+					{$translationStore.deleteDeal.cancel}
+				</Button>
+				<Button
+					color="red"
+					class="w-full sm:w-auto"
+					loading={isDeletingTarget}
+					disabled={Boolean(deletingOfferId)}
+					onclick={handleDeleteOffer}
+				>
+					{isDeletingTarget
+						? $translationStore.deleteDeal.deleting
+						: $translationStore.deleteDeal.confirm}
+				</Button>
+			</div>
+		{/snippet}
+	</Modal>
 {/if}

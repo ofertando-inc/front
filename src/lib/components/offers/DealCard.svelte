@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import type { Snippet } from 'svelte';
 	import { Card } from 'flowbite-svelte';
 	import {
 		CalendarMonthOutline,
@@ -15,9 +16,10 @@
 	interface Props {
 		offer: Offer;
 		class?: string;
+		actions?: Snippet;
 	}
 
-	let { offer, class: className = '' }: Props = $props();
+	let { offer, class: className = '', actions }: Props = $props();
 
 	let detailHref = $derived(resolve('/deals/[id]', { id: offer.id }));
 
@@ -45,7 +47,12 @@
 		<div class="mb-3 flex items-start justify-between gap-4">
 			<VotePanel initialScore={offer.score} size="md" />
 			<div class="flex flex-col items-end gap-2">
-				<DealStatusBadge status={offer.status} />
+				<div class="flex items-center gap-2">
+					<DealStatusBadge status={offer.status} />
+					{#if actions}
+						{@render actions()}
+					{/if}
+				</div>
 				{#if isOnline}
 					<span
 						class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"

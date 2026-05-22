@@ -88,9 +88,13 @@ export interface TranslationMessages {
 		myComments: string;
 		myVotes: string;
 		noOffers: string;
+		noOffersDescription: string;
 		noComments: string;
 		noVotes: string;
 		comingSoon: string;
+		publishOffer: string;
+		offerActions: string;
+		retry: string;
 	};
 	offer: {
 		genericBrowseError: string;
