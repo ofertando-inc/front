@@ -132,7 +132,7 @@
 						color={resolveFieldError('description') ? 'red' : undefined}
 						class="{resolveFieldError('description')
 							? fieldErrorClass
-							: fieldClass} min-h-64 resize-y"
+							: fieldClass} block w-full min-h-80 resize-y leading-relaxed"
 					/>
 					{#if resolveFieldError('description')}
 						<p class="text-sm text-red-600">{resolveFieldError('description')}</p>
