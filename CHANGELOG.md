@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-05-26
 
 ### Added
 
@@ -66,6 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.env.example` now documents the BFF pattern and the role of `BACK_URL` (server-side, never readable by JavaScript in the browser).
 - Playwright web server configuration provides a local `BACK_URL` during e2e tests, keeping server-side BFF routes testable without the real backend.
 - Docker/npm setup: `npm ci` no longer downloads Playwright browser binaries during Docker builds. `prepare` only runs `svelte-kit sync`, e2e browser installation is explicit, and the production install uses `--ignore-scripts`.
+- Migrated Flowbite Svelte components off deprecated props: `DropdownItem` (`liClass`), `FooterLink` (`liClass`, `aClass`), and `FooterCopyright` (`aClass`, `spanClass`) now use the canonical `class` / `classes={{ ... }}` API across `AppHeader`, `AppFooter`, and the profile page.
+- Migrated Tailwind classes to the v4 canonical syntax: `!important` modifiers moved from the prefix form (`!max-w-full`, `!p-0`) to the suffix form (`max-w-full!`, `p-0!`), and `flex-grow` was renamed to `grow` across `DealCard`, `DealCardSkeleton`, `AuthForm`, the offer detail page, and the profile page.
 
 ### Removed
 
@@ -76,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DealCard` and `DealCardSkeleton` now stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells.
 - `DealCard` now accepts an optional actions snippet so page-specific controls can be injected without duplicating the card layout.
 - Offer create/edit form fields now use the lighter auth-form visual treatment, and the description textarea is taller and resizable for longer deal details.
+- Offer description textarea now matches the title input width by forcing `block w-full`, working around the Flowbite `Textarea` not inheriting the same wrapper as `Input`.
 
 ## [0.1.0] - 2026-05-16
 
@@ -165,4 +168,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ofertando-inc/front/releases/tag/v0.1.0
