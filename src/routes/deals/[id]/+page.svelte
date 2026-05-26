@@ -251,7 +251,7 @@
 					<div
 						class="mb-8 flex flex-col items-stretch justify-between gap-6 rounded-xl border border-gray-100 bg-gray-50 p-4 sm:flex-row sm:items-center"
 					>
-						<VotePanel initialScore={offer.score} size="lg" />
+						<VotePanel offerId={offer.id} initialScore={offer.score} size="lg" />
 						{#if offer.externalUrl}
 							<Button
 								href={offer.externalUrl}

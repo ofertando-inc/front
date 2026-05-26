@@ -45,7 +45,7 @@
 >
 	<div class="flex grow flex-col p-4">
 		<div class="mb-3 flex items-start justify-between gap-4">
-			<VotePanel initialScore={offer.score} size="md" />
+			<VotePanel offerId={offer.id} initialScore={offer.score} size="md" />
 			<div class="flex flex-col items-end gap-2">
 				<div class="flex items-center gap-2">
 					<DealStatusBadge status={offer.status} />
