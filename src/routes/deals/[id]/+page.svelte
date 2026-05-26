@@ -15,6 +15,7 @@
 	} from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
+	import { getMyVote } from '$lib/api/votes';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
@@ -22,9 +23,11 @@
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { Offer } from '$lib/types/offer';
+	import type { VoteType } from '$lib/types/vote';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let offer = $state<Offer | null>(null);
+	let initialUserVote = $state<VoteType | null>(null);
 	let related = $state<Offer[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -124,8 +127,13 @@
 		notFound = false;
 
 		try {
-			offer = await getOfferById(id);
-			void loadRelated(offer);
+			const [fetchedOffer, fetchedVote] = await Promise.all([
+				getOfferById(id),
+				loadInitialUserVote(id)
+			]);
+			initialUserVote = fetchedVote;
+			offer = fetchedOffer;
+			void loadRelated(fetchedOffer);
 		} catch (err) {
 			if (err instanceof ApiError && err.key === ErrorKey.OfferNotFound) {
 				notFound = true;
@@ -135,6 +143,16 @@
 			}
 		} finally {
 			loading = false;
+		}
+	}
+
+	async function loadInitialUserVote(id: string): Promise<VoteType | null> {
+		if (!$authStore.isAuthenticated) return null;
+		try {
+			const res = await getMyVote(id);
+			return res.type;
+		} catch {
+			return null;
 		}
 	}
 
@@ -251,7 +269,7 @@
 					<div
 						class="mb-8 flex flex-col items-stretch justify-between gap-6 rounded-xl border border-gray-100 bg-gray-50 p-4 sm:flex-row sm:items-center"
 					>
-						<VotePanel offerId={offer.id} initialScore={offer.score} size="lg" />
+						<VotePanel offerId={offer.id} initialScore={offer.score} {initialUserVote} size="lg" />
 						{#if offer.externalUrl}
 							<Button
 								href={offer.externalUrl}
