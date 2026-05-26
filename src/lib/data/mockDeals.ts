@@ -17,7 +17,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-25T10:00:00.000Z',
 		updatedAt: '2026-04-25T10:00:00.000Z',
-		createdById: 'mock-user-carlos'
+		createdById: 'mock-user-carlos',
+		createdByUsername: 'Carlos',
+		userVote: null
 	},
 	{
 		id: '2',
@@ -35,7 +37,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-26T08:30:00.000Z',
 		updatedAt: '2026-04-26T08:30:00.000Z',
-		createdById: 'mock-user-gamer'
+		createdById: 'mock-user-gamer',
+		createdByUsername: 'Gamer',
+		userVote: null
 	},
 	{
 		id: '3',
@@ -53,7 +57,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-27T12:15:00.000Z',
 		updatedAt: '2026-04-27T12:15:00.000Z',
-		createdById: 'mock-user-foodie'
+		createdById: 'mock-user-foodie',
+		createdByUsername: 'Foodie',
+		userVote: null
 	},
 	{
 		id: '4',
@@ -71,7 +77,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-27T09:00:00.000Z',
 		updatedAt: '2026-04-27T09:00:00.000Z',
-		createdById: 'mock-user-viajero'
+		createdById: 'mock-user-viajero',
+		createdByUsername: 'Viajero',
+		userVote: null
 	},
 	{
 		id: '5',
@@ -89,7 +97,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-15T14:20:00.000Z',
 		updatedAt: '2026-04-20T23:59:59.000Z',
-		createdById: 'mock-user-tech'
+		createdById: 'mock-user-tech',
+		createdByUsername: 'Tech',
+		userVote: null
 	},
 	{
 		id: '6',
@@ -107,7 +117,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 3,
 		createdAt: '2026-04-26T16:45:00.000Z',
 		updatedAt: '2026-04-26T16:45:00.000Z',
-		createdById: 'mock-user-sneakerhead'
+		createdById: 'mock-user-sneakerhead',
+		createdByUsername: 'Sneakerhead',
+		userVote: null
 	},
 	{
 		id: '7',
@@ -125,7 +137,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-27T10:30:00.000Z',
 		updatedAt: '2026-04-27T10:30:00.000Z',
-		createdById: 'mock-user-ahorrador'
+		createdById: 'mock-user-ahorrador',
+		createdByUsername: 'Ahorrador',
+		userVote: null
 	},
 	{
 		id: '8',
@@ -143,7 +157,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 0,
 		createdAt: '2026-04-20T08:00:00.000Z',
 		updatedAt: '2026-04-20T08:00:00.000Z',
-		createdById: 'mock-user-music'
+		createdById: 'mock-user-music',
+		createdByUsername: 'Music',
+		userVote: null
 	},
 	{
 		id: '9',
@@ -161,7 +177,9 @@ export const MOCK_OFFERS: Offer[] = [
 		reportCount: 12,
 		createdAt: '2026-04-27T07:00:00.000Z',
 		updatedAt: '2026-04-28T10:00:00.000Z',
-		createdById: 'mock-user-new'
+		createdById: 'mock-user-new',
+		createdByUsername: 'New',
+		userVote: null
 	}
 ];
 
