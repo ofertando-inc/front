@@ -73,6 +73,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: 'No pudimos crear la oferta en este momento.',
 			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
+			genericVoteError: 'No pudimos registrar tu voto en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
 		offerStatus: {
@@ -349,6 +350,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: 'We could not create the offer right now.',
 			genericUpdateError: 'We could not update the offer right now.',
 			genericDeleteError: 'We could not delete the offer right now.',
+			genericVoteError: 'We could not register your vote right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
 		offerStatus: {
@@ -622,6 +624,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: "Nous n'avons pas pu créer l'offre pour le moment.",
 			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
+			genericVoteError: "Nous n'avons pas pu enregistrer votre vote pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		offerStatus: {

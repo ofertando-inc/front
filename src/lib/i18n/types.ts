@@ -102,6 +102,7 @@ export interface TranslationMessages {
 		genericCreateError: string;
 		genericUpdateError: string;
 		genericDeleteError: string;
+		genericVoteError: string;
 		serverError: string;
 	};
 	offerStatus: {
