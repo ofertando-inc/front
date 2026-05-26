@@ -39,11 +39,11 @@
 </script>
 
 <Card
-	class="flex !max-w-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white !p-0 transition-shadow hover:shadow-lg {isDimmed
+	class="flex max-w-full! flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-0! transition-shadow hover:shadow-lg {isDimmed
 		? 'opacity-75 grayscale-[0.5]'
 		: ''} {className}"
 >
-	<div class="flex flex-grow flex-col p-4">
+	<div class="flex grow flex-col p-4">
 		<div class="mb-3 flex items-start justify-between gap-4">
 			<VotePanel initialScore={offer.score} size="md" />
 			<div class="flex flex-col items-end gap-2">
@@ -71,7 +71,7 @@
 			</div>
 		</div>
 
-		<a href={detailHref} class="group flex-grow">
+		<a href={detailHref} class="group grow">
 			<h3
 				class="mb-2 line-clamp-2 text-lg leading-tight font-bold text-gray-900 transition-colors group-hover:text-primary-600"
 			>

@@ -265,7 +265,7 @@
 											id={`profile-offer-actions-${index}`}
 											color="light"
 											size="xs"
-											class="h-8 w-8 rounded-full !p-0"
+											class="h-8 w-8 rounded-full p-0!"
 											aria-label={$translationStore.profile.offerActions}
 										>
 											<DotsVerticalOutline class="h-4 w-4" />
