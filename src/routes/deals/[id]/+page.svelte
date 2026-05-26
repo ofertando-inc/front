@@ -15,7 +15,6 @@
 	} from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
-	import { getMyVote } from '$lib/api/votes';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
@@ -23,11 +22,9 @@
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { Offer } from '$lib/types/offer';
-	import type { VoteType } from '$lib/types/vote';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let offer = $state<Offer | null>(null);
-	let initialUserVote = $state<VoteType | null>(null);
 	let related = $state<Offer[]>([]);
 	let loading = $state(true);
 	let notFound = $state(false);
@@ -127,11 +124,7 @@
 		notFound = false;
 
 		try {
-			const [fetchedOffer, fetchedVote] = await Promise.all([
-				getOfferById(id),
-				loadInitialUserVote(id)
-			]);
-			initialUserVote = fetchedVote;
+			const fetchedOffer = await getOfferById(id);
 			offer = fetchedOffer;
 			void loadRelated(fetchedOffer);
 		} catch (err) {
@@ -143,16 +136,6 @@
 			}
 		} finally {
 			loading = false;
-		}
-	}
-
-	async function loadInitialUserVote(id: string): Promise<VoteType | null> {
-		if (!$authStore.isAuthenticated) return null;
-		try {
-			const res = await getMyVote(id);
-			return res.type;
-		} catch {
-			return null;
 		}
 	}
 
@@ -269,7 +252,12 @@
 					<div
 						class="mb-8 flex flex-col items-stretch justify-between gap-6 rounded-xl border border-gray-100 bg-gray-50 p-4 sm:flex-row sm:items-center"
 					>
-						<VotePanel offerId={offer.id} initialScore={offer.score} {initialUserVote} size="lg" />
+						<VotePanel
+							offerId={offer.id}
+							initialScore={offer.score}
+							initialUserVote={offer.userVote}
+							size="lg"
+						/>
 						{#if offer.externalUrl}
 							<Button
 								href={offer.externalUrl}
@@ -294,12 +282,12 @@
 					>
 						<div class="flex items-center gap-3">
 							<Avatar cornerStyle="circular" class="bg-primary-100 text-primary-600">
-								{offer.createdById.slice(0, 1).toUpperCase()}
+								{offer.createdByUsername.slice(0, 1).toUpperCase()}
 							</Avatar>
 							<div>
 								<p class="text-sm font-medium text-gray-900">
 									{$translationStore.deal.publishedBy}
-									{offer.createdById}
+									{offer.createdByUsername}
 								</p>
 								<p class="text-xs text-gray-500">{publishedLabel}</p>
 							</div>

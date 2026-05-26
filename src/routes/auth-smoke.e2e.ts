@@ -101,7 +101,9 @@ test.beforeAll(async () => {
 				reportCount: 0,
 				createdAt: '2026-05-01T10:00:00.000Z',
 				updatedAt: '2026-05-01T10:00:00.000Z',
-				createdById: 'other-author'
+				createdById: 'other-author',
+				createdByUsername: 'other-author',
+				userVote: null
 			});
 			return;
 		}
