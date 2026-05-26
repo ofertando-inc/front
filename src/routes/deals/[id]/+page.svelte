@@ -124,8 +124,9 @@
 		notFound = false;
 
 		try {
-			offer = await getOfferById(id);
-			void loadRelated(offer);
+			const fetchedOffer = await getOfferById(id);
+			offer = fetchedOffer;
+			void loadRelated(fetchedOffer);
 		} catch (err) {
 			if (err instanceof ApiError && err.key === ErrorKey.OfferNotFound) {
 				notFound = true;
@@ -251,7 +252,12 @@
 					<div
 						class="mb-8 flex flex-col items-stretch justify-between gap-6 rounded-xl border border-gray-100 bg-gray-50 p-4 sm:flex-row sm:items-center"
 					>
-						<VotePanel initialScore={offer.score} size="lg" />
+						<VotePanel
+							offerId={offer.id}
+							initialScore={offer.score}
+							initialUserVote={offer.userVote}
+							size="lg"
+						/>
 						{#if offer.externalUrl}
 							<Button
 								href={offer.externalUrl}
@@ -276,12 +282,12 @@
 					>
 						<div class="flex items-center gap-3">
 							<Avatar cornerStyle="circular" class="bg-primary-100 text-primary-600">
-								{offer.createdById.slice(0, 1).toUpperCase()}
+								{offer.createdByUsername.slice(0, 1).toUpperCase()}
 							</Avatar>
 							<div>
 								<p class="text-sm font-medium text-gray-900">
 									{$translationStore.deal.publishedBy}
-									{offer.createdById}
+									{offer.createdByUsername}
 								</p>
 								<p class="text-xs text-gray-500">{publishedLabel}</p>
 							</div>

@@ -123,6 +123,22 @@ describe('resolveOfferError', () => {
 		});
 	});
 
+	it('maps vote.offer_not_voteable to a banner message in the vote context', () => {
+		const error = new ApiError('vote.offer_not_voteable', 400);
+
+		expect(resolveOfferError(error, t, 'vote')).toEqual({
+			bannerMessage: t.errors['vote.offer_not_voteable'],
+			fieldErrors: {}
+		});
+	});
+
+	it('falls back to the contextual vote message for non-ApiError', () => {
+		expect(resolveOfferError(new Error('network'), t, 'vote')).toEqual({
+			bannerMessage: t.offer.genericVoteError,
+			fieldErrors: {}
+		});
+	});
+
 	it('falls back to the contextual generic for unknown ApiError keys', () => {
 		const error = new ApiError('something.brand_new', 418);
 

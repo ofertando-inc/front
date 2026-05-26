@@ -13,6 +13,7 @@ export interface ErrorMessages {
 	'offer.forbidden': string;
 	'offer.invalid_dates': string;
 	'offer.invalid_status_transition': string;
+	'vote.offer_not_voteable': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -101,6 +102,7 @@ export interface TranslationMessages {
 		genericCreateError: string;
 		genericUpdateError: string;
 		genericDeleteError: string;
+		genericVoteError: string;
 		serverError: string;
 	};
 	offerStatus: {

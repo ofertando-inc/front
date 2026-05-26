@@ -1,3 +1,5 @@
+import type { VoteType } from '$lib/types/vote';
+
 export const OFFER_STATUSES = ['ACTIVE', 'REPORTED', 'DISABLED', 'DELETED', 'EXPIRED'] as const;
 export const OFFER_SORTS = ['date', 'score'] as const;
 export const OFFER_PERIODS = ['all', 'day', 'week', 'month', 'year'] as const;
@@ -22,6 +24,8 @@ export interface Offer {
 	createdAt: string;
 	updatedAt: string;
 	createdById: string;
+	createdByUsername: string;
+	userVote: VoteType | null;
 }
 
 export interface PaginatedOffers {

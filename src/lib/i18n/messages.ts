@@ -73,6 +73,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: 'No pudimos crear la oferta en este momento.',
 			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
+			genericVoteError: 'No pudimos registrar tu voto en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
 		offerStatus: {
@@ -199,6 +200,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -348,6 +350,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: 'We could not create the offer right now.',
 			genericUpdateError: 'We could not update the offer right now.',
 			genericDeleteError: 'We could not delete the offer right now.',
+			genericVoteError: 'We could not register your vote right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
 		offerStatus: {
@@ -472,6 +475,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -620,6 +624,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericCreateError: "Nous n'avons pas pu créer l'offre pour le moment.",
 			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
+			genericVoteError: "Nous n'avons pas pu enregistrer votre vote pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		offerStatus: {
@@ -747,6 +752,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'vote.offer_not_voteable':
+				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',

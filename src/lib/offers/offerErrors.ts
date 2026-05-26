@@ -3,7 +3,7 @@ import { ErrorKey, isKnownErrorKey } from '$lib/errors/errorKeys';
 import { getFieldErrorMap } from '$lib/errors/getErrorMessage';
 import type { TranslationMessages } from '$lib/i18n/types';
 
-export type OfferContext = 'browse' | 'create' | 'update' | 'delete';
+export type OfferContext = 'browse' | 'create' | 'update' | 'delete' | 'vote';
 
 export interface ResolvedOfferError {
 	bannerMessage: string | null;
@@ -48,5 +48,7 @@ function genericFallback(t: TranslationMessages, context: OfferContext): string 
 			return t.offer.genericUpdateError;
 		case 'delete':
 			return t.offer.genericDeleteError;
+		case 'vote':
+			return t.offer.genericVoteError;
 	}
 }

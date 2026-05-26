@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-27
+
+### Added
+
+- Vote domain types (`VoteType`, `OfferVoteResponse`, `MyVoteResponse`) aligned with the backend `/offers/:id/votes*` contract, plus a new `vote.offer_not_voteable` error key with localized messages in Spanish, English, and French.
+- Votes API client (`src/lib/api/votes.ts`) exposing `castVote`, `removeVote`, and `getMyVote`, with cookie-based auth and offer-id URL encoding. Unit tests cover request shape, response parsing, error propagation, and id encoding.
+- Localized `offer.genericVoteError` fallback for the new `vote` context of `resolveOfferError`.
+- Offers now expose `userVote` in listing and detail responses so every `DealCard` and detail `VotePanel` mounts with the authenticated visitor's current vote.
+- E2E smoke coverage for the vote flow: authenticated user toggles their up-vote (15° → 16° → 15° with `aria-pressed` switching), anonymous visitor sees the localized auth error and the score stays unchanged.
+
+### Changed
+
+- `VotePanel` switched from local-only optimistic state to backend-driven votes. The component now takes `offerId` and `initialUserVote`, applies an optimistic update on click, calls `POST /offers/:id/votes` (or `DELETE` to toggle off), reconciles with the server-returned `{ score, userVote }`, and rolls back with a localized inline error when the request fails. Buttons are disabled while a vote request is in flight. Anonymous clicks short-circuit with the `auth.unauthorized` message without firing a request.
+- Offer detail now uses `createdByUsername` for author display and reads `userVote` directly from the offer payload, removing the parallel `getMyVote` fetch during detail loading.
+
 ## [0.2.0] - 2026-05-26
 
 ### Added
@@ -168,5 +183,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.3.0]: https://github.com/ofertando-inc/front/releases/tag/v0.3.0
 [0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ofertando-inc/front/releases/tag/v0.1.0

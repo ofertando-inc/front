@@ -63,6 +63,51 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		const voteMatch = url.match(/^\/offers\/([^/?]+)\/votes(\/me)?(?:\?.*)?$/);
+		if (voteMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+
+			const isMe = Boolean(voteMatch[2]);
+			if (isMe) {
+				sendJson(response, 200, { type: null });
+				return;
+			}
+
+			if (request.method === 'DELETE') {
+				sendJson(response, 200, { score: 15, userVote: null });
+				return;
+			}
+
+			sendJson(response, 200, { score: 16, userVote: 'UP' });
+			return;
+		}
+
+		if (url === '/offers/e2e-vote-offer' || url.startsWith('/offers/e2e-vote-offer?')) {
+			sendJson(response, 200, {
+				id: 'e2e-vote-offer',
+				title: 'Oferta de prueba de votación',
+				description: 'Descripción de la oferta para el test de votación.',
+				offerType: 'online',
+				externalUrl: 'https://example.com/promo',
+				storeName: 'TestStore',
+				city: 'Bogotá',
+				startDate: '2026-05-01T00:00:00.000Z',
+				endDate: '2026-12-31T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 15,
+				reportCount: 0,
+				createdAt: '2026-05-01T10:00:00.000Z',
+				updatedAt: '2026-05-01T10:00:00.000Z',
+				createdById: 'other-author',
+				createdByUsername: 'other-author',
+				userVote: null
+			});
+			return;
+		}
+
 		if (url.startsWith('/offers/')) {
 			sendJson(response, 404, {
 				key: 'offer.not_found',
@@ -176,6 +221,43 @@ test('edit deal redirects unauthenticated users to login', async ({ page }) => {
 
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('offer detail lets an authenticated user toggle their up-vote', async ({ page, context }) => {
+	await context.addCookies([
+		{
+			name: 'e2e_session',
+			value: 'authenticated',
+			url: 'http://127.0.0.1:4173'
+		}
+	]);
+
+	await page.goto('/deals/e2e-vote-offer');
+
+	const upButton = page.getByRole('button', { name: 'Votar positivo' });
+	await expect(upButton).toBeVisible();
+	await expect(page.getByText('15°')).toBeVisible();
+
+	await upButton.click();
+	await expect(page.getByText('16°')).toBeVisible();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'true');
+
+	await upButton.click();
+	await expect(page.getByText('15°')).toBeVisible();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('offer detail shows an auth error when an anonymous visitor tries to vote', async ({
+	page
+}) => {
+	await page.goto('/deals/e2e-vote-offer');
+
+	const upButton = page.getByRole('button', { name: 'Votar positivo' });
+	await expect(upButton).toBeVisible();
+
+	await upButton.click();
+	await expect(page.getByRole('alert')).toContainText('Tu sesión ha expirado');
+	await expect(page.getByText('15°')).toBeVisible();
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {

@@ -11,6 +11,10 @@ describe('getErrorMessage', () => {
 		);
 	});
 
+	it('resolves the vote.offer_not_voteable key', () => {
+		expect(getErrorMessage('vote.offer_not_voteable', t)).toBe(t.errors['vote.offer_not_voteable']);
+	});
+
 	it('returns the fallback for an unknown key', () => {
 		expect(getErrorMessage('user.suspended', t)).toBe(t.errors.fallback);
 	});
