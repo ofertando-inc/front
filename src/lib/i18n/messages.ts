@@ -199,6 +199,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -472,6 +473,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -747,6 +749,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'vote.offer_not_voteable':
+				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',
