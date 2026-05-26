@@ -60,9 +60,131 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'Mis comentarios',
 			myVotes: 'Mis votos',
 			noOffers: 'Aún no has publicado ofertas.',
+			noOffersDescription: 'Publica tu primera oferta para que aparezca aquí.',
 			noComments: 'Aún no has comentado ninguna oferta.',
 			noVotes: 'Historial de votos no disponible.',
-			comingSoon: 'Disponible cuando conectemos los datos de actividad.'
+			comingSoon: 'Disponible cuando conectemos los datos de actividad.',
+			publishOffer: 'Publicar oferta',
+			offerActions: 'Acciones de la oferta',
+			retry: 'Reintentar'
+		},
+		offer: {
+			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
+			genericCreateError: 'No pudimos crear la oferta en este momento.',
+			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
+			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
+			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
+		},
+		offerStatus: {
+			ACTIVE: 'Activa',
+			REPORTED: 'Reportada',
+			DISABLED: 'Desactivada',
+			DELETED: 'Eliminada',
+			EXPIRED: 'Expirada'
+		},
+		deals: {
+			voteUp: 'Votar positivo',
+			voteDown: 'Votar negativo',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expira',
+			filterCity: 'Ciudad',
+			filterType: 'Tipo',
+			allCities: 'Todas las ciudades',
+			allTypes: 'Todos los tipos',
+			sortRecent: 'Más recientes',
+			sortPopular: 'Más populares',
+			periodAll: 'Siempre',
+			periodDay: 'Hoy',
+			periodWeek: 'Esta semana',
+			periodMonth: 'Este mes',
+			periodYear: 'Este año',
+			listingTitle: 'Todas las ofertas',
+			loadMore: 'Cargar más',
+			empty: 'No hay ofertas que coincidan con tus filtros.'
+		},
+		createDeal: {
+			pageTitle: 'Compartir una oferta',
+			heading: 'Comparte una oferta',
+			intro:
+				'Publica un descuento claro para que la comunidad pueda encontrarlo, votarlo y aprovecharlo.',
+			titleLabel: 'Título',
+			titlePlaceholder: 'Ej. 40% de descuento en audífonos',
+			descriptionLabel: 'Descripción',
+			descriptionPlaceholder:
+				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
+			offerTypeLabel: 'Tipo de oferta',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Enlace de la oferta',
+			externalUrlPlaceholder: 'https://tienda.com/oferta',
+			externalUrlHint: 'Opcional para ofertas locales.',
+			storeNameLabel: 'Tienda',
+			storeNamePlaceholder: 'Nombre de la tienda',
+			cityLabel: 'Ciudad',
+			cityPlaceholder: 'Ej. Bogotá',
+			startDateLabel: 'Fecha de inicio',
+			endDateLabel: 'Fecha de fin',
+			requiredHint: 'Todos los campos marcados son obligatorios.',
+			submit: 'Publicar oferta',
+			submitting: 'Publicando...',
+			genericError: 'No pudimos publicar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
+		editDeal: {
+			pageTitle: 'Editar oferta',
+			heading: 'Edita tu oferta',
+			intro:
+				'Actualiza los detalles importantes para que la comunidad tenga información clara y útil.',
+			submit: 'Guardar cambios',
+			submitting: 'Guardando...',
+			genericError: 'No pudimos actualizar la oferta. Revisa los datos e inténtalo de nuevo.'
+		},
+		deleteDeal: {
+			openButton: 'Eliminar',
+			title: 'Eliminar oferta',
+			description: 'Esta acción no se puede deshacer. La oferta desaparecerá de la lista pública.',
+			cancel: 'Cancelar',
+			confirm: 'Eliminar definitivamente',
+			deleting: 'Eliminando...',
+			genericError: 'No pudimos eliminar la oferta. Inténtalo de nuevo.'
+		},
+		home: {
+			heroTitle: 'Descubre las mejores ofertas en Colombia',
+			heroSubtitle:
+				'Únete a la comunidad de ahorradores más grande del país. Encuentra, comparte y vota por los mejores descuentos en tiendas físicas y online.',
+			exploreCta: 'Explorar ofertas',
+			publishCta: 'Compartir un descuento',
+			hotDealsTitle: 'Ofertas calientes',
+			recentDealsTitle: 'Agregadas recientemente',
+			popularStoresTitle: 'Tiendas populares',
+			viewAll: 'Ver todas'
+		},
+		footer: {
+			rights: 'Todos los derechos reservados.',
+			terms: 'Términos',
+			privacy: 'Privacidad',
+			contact: 'Contacto'
+		},
+		deal: {
+			goToStore: 'Ir a la tienda',
+			edit: 'Editar',
+			report: 'Reportar',
+			share: 'Compartir',
+			publishedBy: 'Publicado por',
+			relatedTitle: 'Ofertas relacionadas',
+			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
+			commentsTitle: 'Comentarios',
+			commentPlaceholder: 'Añade un comentario...',
+			commentSubmit: 'Comentar',
+			commentDisabledHint: 'Disponible próximamente.',
+			expiredBanner: 'Esta oferta ya expiró.',
+			disabledBanner: 'Esta oferta fue desactivada por un administrador.',
+			reportedBanner: 'Esta oferta está siendo revisada por la moderación.',
+			mockComment1:
+				'¡Excelente oferta! Pude pedirla esta mañana sin problema, el descuento se aplica al pagar.',
+			mockComment2: 'Confirmo el precio en la tienda física, todavía quedaban unidades.',
+			mockComment3: 'OJO: el precio sube si pagas con otra tarjeta. Revisen bien.',
+			mockCommentAge: 'hace {hours}h'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -72,6 +194,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Tu cuenta está deshabilitada. Contacta con el soporte.',
 			'user.email_taken': 'Ese correo ya está registrado. Usa otro o inicia sesión.',
 			'user.username_taken': 'Ese nombre de usuario ya existe. Elige uno diferente.',
+			'offer.not_found': 'No encontramos esa oferta. Puede haber sido eliminada.',
+			'offer.forbidden': 'No tienes permiso para modificar esta oferta.',
+			'offer.invalid_dates':
+				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
+			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
 			'db.not_found': 'No encontramos lo que buscas.',
@@ -95,6 +223,44 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'La contraseña debe ser una cadena de texto.',
 					minLength: 'La contraseña debe tener al menos 8 caracteres.'
+				},
+				title: {
+					isString: 'El título debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa un título.',
+					maxLength: 'El título es demasiado largo (máximo 200 caracteres).'
+				},
+				description: {
+					isString: 'La descripción debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa una descripción.',
+					maxLength: 'La descripción es demasiado larga (máximo 5000 caracteres).'
+				},
+				offerType: {
+					isString: 'El tipo de oferta debe ser una cadena de texto.',
+					isNotEmpty: 'Selecciona un tipo de oferta.',
+					maxLength: 'El tipo de oferta es demasiado largo (máximo 50 caracteres).'
+				},
+				externalUrl: {
+					isString: 'El enlace debe ser una cadena de texto.',
+					isUrl: 'Ingresa una URL válida.'
+				},
+				storeName: {
+					isString: 'El nombre de la tienda debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa el nombre de la tienda.',
+					maxLength: 'El nombre de la tienda es demasiado largo (máximo 100 caracteres).'
+				},
+				city: {
+					isString: 'La ciudad debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa una ciudad.',
+					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
+				},
+				startDate: {
+					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).',
+					isInFuture: 'La fecha de inicio debe estar en el futuro.'
+				},
+				endDate: {
+					isDateString: 'Fecha de fin inválida (formato ISO 8601 esperado).',
+					isAfterStart: 'La fecha de fin debe ser posterior a la fecha de inicio.',
+					isInFuture: 'La fecha de fin debe estar en el futuro.'
 				}
 			},
 			system: {
@@ -169,9 +335,129 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'My comments',
 			myVotes: 'My votes',
 			noOffers: 'You have not published any offers yet.',
+			noOffersDescription: 'Publish your first deal so it appears here.',
 			noComments: 'You have not commented on any offer yet.',
 			noVotes: 'Vote history is not available yet.',
-			comingSoon: 'Available when activity data is connected.'
+			comingSoon: 'Available when activity data is connected.',
+			publishOffer: 'Publish deal',
+			offerActions: 'Deal actions',
+			retry: 'Try again'
+		},
+		offer: {
+			genericBrowseError: 'We could not load the offers right now.',
+			genericCreateError: 'We could not create the offer right now.',
+			genericUpdateError: 'We could not update the offer right now.',
+			genericDeleteError: 'We could not delete the offer right now.',
+			serverError: 'The server is unavailable right now. Please try again later.'
+		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Reported',
+			DISABLED: 'Disabled',
+			DELETED: 'Deleted',
+			EXPIRED: 'Expired'
+		},
+		deals: {
+			voteUp: 'Vote up',
+			voteDown: 'Vote down',
+			typeOnline: 'Online',
+			typeLocal: 'Local',
+			expiresOn: 'Expires',
+			filterCity: 'City',
+			filterType: 'Type',
+			allCities: 'All cities',
+			allTypes: 'All types',
+			sortRecent: 'Most recent',
+			sortPopular: 'Most popular',
+			periodAll: 'All time',
+			periodDay: 'Today',
+			periodWeek: 'This week',
+			periodMonth: 'This month',
+			periodYear: 'This year',
+			listingTitle: 'All offers',
+			loadMore: 'Load more',
+			empty: 'No offers match your filters.'
+		},
+		createDeal: {
+			pageTitle: 'Share a deal',
+			heading: 'Share a deal',
+			intro: 'Publish a clear discount so the community can find it, vote on it, and use it.',
+			titleLabel: 'Title',
+			titlePlaceholder: 'E.g. 40% off headphones',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				'Describe the deal, important conditions, availability, and steps to use it.',
+			offerTypeLabel: 'Deal type',
+			offerTypeOnline: 'Online',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: 'Deal link',
+			externalUrlPlaceholder: 'https://store.com/deal',
+			externalUrlHint: 'Optional for local deals.',
+			storeNameLabel: 'Store',
+			storeNamePlaceholder: 'Store name',
+			cityLabel: 'City',
+			cityPlaceholder: 'E.g. Bogotá',
+			startDateLabel: 'Start date',
+			endDateLabel: 'End date',
+			requiredHint: 'All marked fields are required.',
+			submit: 'Publish deal',
+			submitting: 'Publishing...',
+			genericError: 'We could not publish the deal. Check the details and try again.'
+		},
+		editDeal: {
+			pageTitle: 'Edit deal',
+			heading: 'Edit your deal',
+			intro: 'Update the important details so the community has clear and useful information.',
+			submit: 'Save changes',
+			submitting: 'Saving...',
+			genericError: 'We could not update the deal. Check the details and try again.'
+		},
+		deleteDeal: {
+			openButton: 'Delete',
+			title: 'Delete deal',
+			description: 'This action cannot be undone. The deal will disappear from the public list.',
+			cancel: 'Cancel',
+			confirm: 'Delete permanently',
+			deleting: 'Deleting...',
+			genericError: 'We could not delete the deal. Please try again.'
+		},
+		home: {
+			heroTitle: 'Discover the best deals in Colombia',
+			heroSubtitle:
+				'Join the largest community of bargain hunters in the country. Find, share, and vote on the best discounts in physical stores and online.',
+			exploreCta: 'Explore offers',
+			publishCta: 'Share a discount',
+			hotDealsTitle: 'Hot deals',
+			recentDealsTitle: 'Recently added',
+			popularStoresTitle: 'Popular stores',
+			viewAll: 'View all'
+		},
+		footer: {
+			rights: 'All rights reserved.',
+			terms: 'Terms',
+			privacy: 'Privacy',
+			contact: 'Contact'
+		},
+		deal: {
+			goToStore: 'Go to the store',
+			edit: 'Edit',
+			report: 'Report',
+			share: 'Share',
+			publishedBy: 'Posted by',
+			relatedTitle: 'Related offers',
+			relatedEmpty: 'No related offers at the moment.',
+			commentsTitle: 'Comments',
+			commentPlaceholder: 'Add a comment...',
+			commentSubmit: 'Comment',
+			commentDisabledHint: 'Coming soon.',
+			expiredBanner: 'This offer has expired.',
+			disabledBanner: 'This offer was disabled by an administrator.',
+			reportedBanner: 'This offer is being reviewed by the moderation team.',
+			mockComment1:
+				'Great deal! I just ordered this morning without any issue, the discount applies at checkout.',
+			mockComment2: 'Confirmed the price at the physical store, there were still units left.',
+			mockComment3: 'Heads up: the price goes up if you pay with another card. Check carefully.',
+			mockCommentAge: '{hours}h ago'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -181,6 +467,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Your account is disabled. Please contact support.',
 			'user.email_taken': 'That email is already registered. Use another one or sign in.',
 			'user.username_taken': 'That username already exists. Choose a different one.',
+			'offer.not_found': 'We could not find that offer. It may have been removed.',
+			'offer.forbidden': 'You do not have permission to modify this offer.',
+			'offer.invalid_dates':
+				'Invalid dates: the end date must be after the start date and in the future.',
+			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
 			'db.not_found': 'We could not find what you are looking for.',
@@ -203,6 +495,44 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'The password must be a string.',
 					minLength: 'Password must be at least 8 characters long.'
+				},
+				title: {
+					isString: 'The title must be a string.',
+					isNotEmpty: 'Enter a title.',
+					maxLength: 'The title is too long (max 200 characters).'
+				},
+				description: {
+					isString: 'The description must be a string.',
+					isNotEmpty: 'Enter a description.',
+					maxLength: 'The description is too long (max 5000 characters).'
+				},
+				offerType: {
+					isString: 'The offer type must be a string.',
+					isNotEmpty: 'Select an offer type.',
+					maxLength: 'The offer type is too long (max 50 characters).'
+				},
+				externalUrl: {
+					isString: 'The link must be a string.',
+					isUrl: 'Enter a valid URL.'
+				},
+				storeName: {
+					isString: 'The store name must be a string.',
+					isNotEmpty: 'Enter the store name.',
+					maxLength: 'The store name is too long (max 100 characters).'
+				},
+				city: {
+					isString: 'The city must be a string.',
+					isNotEmpty: 'Enter a city.',
+					maxLength: 'The city name is too long (max 100 characters).'
+				},
+				startDate: {
+					isDateString: 'Invalid start date (ISO 8601 format expected).',
+					isInFuture: 'The start date must be in the future.'
+				},
+				endDate: {
+					isDateString: 'Invalid end date (ISO 8601 format expected).',
+					isAfterStart: 'The end date must be after the start date.',
+					isInFuture: 'The end date must be in the future.'
 				}
 			},
 			system: {
@@ -277,9 +607,132 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'Mes commentaires',
 			myVotes: 'Mes votes',
 			noOffers: "Vous n'avez pas encore publié d'offres.",
+			noOffersDescription: 'Publiez votre première offre pour la voir apparaître ici.',
 			noComments: "Vous n'avez encore commenté aucune offre.",
 			noVotes: "L'historique des votes n'est pas encore disponible.",
-			comingSoon: "Disponible lorsque les données d'activité seront connectées."
+			comingSoon: "Disponible lorsque les données d'activité seront connectées.",
+			publishOffer: 'Publier une offre',
+			offerActions: "Actions de l'offre",
+			retry: 'Réessayer'
+		},
+		offer: {
+			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
+			genericCreateError: "Nous n'avons pas pu créer l'offre pour le moment.",
+			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
+			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
+			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
+		},
+		offerStatus: {
+			ACTIVE: 'Active',
+			REPORTED: 'Signalée',
+			DISABLED: 'Désactivée',
+			DELETED: 'Supprimée',
+			EXPIRED: 'Expirée'
+		},
+		deals: {
+			voteUp: 'Voter positif',
+			voteDown: 'Voter négatif',
+			typeOnline: 'En ligne',
+			typeLocal: 'Local',
+			expiresOn: 'Expire',
+			filterCity: 'Ville',
+			filterType: 'Type',
+			allCities: 'Toutes les villes',
+			allTypes: 'Tous les types',
+			sortRecent: 'Plus récentes',
+			sortPopular: 'Plus populaires',
+			periodAll: 'Toujours',
+			periodDay: "Aujourd'hui",
+			periodWeek: 'Cette semaine',
+			periodMonth: 'Ce mois-ci',
+			periodYear: 'Cette année',
+			listingTitle: 'Toutes les offres',
+			loadMore: 'Charger plus',
+			empty: 'Aucune offre ne correspond à vos filtres.'
+		},
+		createDeal: {
+			pageTitle: 'Partager une offre',
+			heading: 'Partager une offre',
+			intro:
+				'Publiez une réduction claire pour que la communauté puisse la trouver, voter et en profiter.',
+			titleLabel: 'Titre',
+			titlePlaceholder: 'Ex. 40 % de réduction sur des écouteurs',
+			descriptionLabel: 'Description',
+			descriptionPlaceholder:
+				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
+			offerTypeLabel: "Type d'offre",
+			offerTypeOnline: 'En ligne',
+			offerTypeLocal: 'Local',
+			externalUrlLabel: "Lien de l'offre",
+			externalUrlPlaceholder: 'https://magasin.com/offre',
+			externalUrlHint: 'Optionnel pour les offres locales.',
+			storeNameLabel: 'Magasin',
+			storeNamePlaceholder: 'Nom du magasin',
+			cityLabel: 'Ville',
+			cityPlaceholder: 'Ex. Bogotá',
+			startDateLabel: 'Date de début',
+			endDateLabel: 'Date de fin',
+			requiredHint: 'Tous les champs marqués sont obligatoires.',
+			submit: "Publier l'offre",
+			submitting: 'Publication...',
+			genericError: "Nous n'avons pas pu publier l'offre. Vérifiez les informations et réessayez."
+		},
+		editDeal: {
+			pageTitle: "Modifier l'offre",
+			heading: 'Modifier votre offre',
+			intro:
+				'Mettez à jour les informations importantes pour que la communauté dispose de détails clairs et utiles.',
+			submit: 'Enregistrer les changements',
+			submitting: 'Enregistrement...',
+			genericError:
+				"Nous n'avons pas pu mettre à jour l'offre. Vérifiez les informations et réessayez."
+		},
+		deleteDeal: {
+			openButton: 'Supprimer',
+			title: "Supprimer l'offre",
+			description: "Cette action est définitive. L'offre disparaîtra de la liste publique.",
+			cancel: 'Annuler',
+			confirm: 'Supprimer définitivement',
+			deleting: 'Suppression...',
+			genericError: "Nous n'avons pas pu supprimer l'offre. Réessayez."
+		},
+		home: {
+			heroTitle: 'Découvrez les meilleures offres en Colombie',
+			heroSubtitle:
+				'Rejoignez la plus grande communauté de chasseurs de bonnes affaires du pays. Trouvez, partagez et votez pour les meilleurs rabais en magasin et en ligne.',
+			exploreCta: 'Explorer les offres',
+			publishCta: 'Partager une réduction',
+			hotDealsTitle: 'Offres en feu',
+			recentDealsTitle: 'Récemment ajoutées',
+			popularStoresTitle: 'Magasins populaires',
+			viewAll: 'Voir toutes'
+		},
+		footer: {
+			rights: 'Tous droits réservés.',
+			terms: 'Conditions',
+			privacy: 'Confidentialité',
+			contact: 'Contact'
+		},
+		deal: {
+			goToStore: 'Aller au magasin',
+			edit: 'Modifier',
+			report: 'Signaler',
+			share: 'Partager',
+			publishedBy: 'Publié par',
+			relatedTitle: 'Offres similaires',
+			relatedEmpty: "Pas d'offres similaires pour le moment.",
+			commentsTitle: 'Commentaires',
+			commentPlaceholder: 'Ajoutez un commentaire...',
+			commentSubmit: 'Commenter',
+			commentDisabledHint: 'Bientôt disponible.',
+			expiredBanner: 'Cette offre a expiré.',
+			disabledBanner: 'Cette offre a été désactivée par un administrateur.',
+			reportedBanner: 'Cette offre est en cours de vérification par la modération.',
+			mockComment1:
+				"Super offre ! Je viens de commander ce matin sans problème, la réduction s'applique au paiement.",
+			mockComment2: 'Prix confirmé en magasin physique, il restait encore des unités.',
+			mockComment3: 'Attention : le prix augmente si vous payez avec une autre carte. À vérifier.',
+			mockCommentAge: 'il y a {hours}h'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
@@ -289,6 +742,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Votre compte est désactivé. Contactez le support.',
 			'user.email_taken': 'Cet e-mail est déjà enregistré. Utilisez-en un autre ou connectez-vous.',
 			'user.username_taken': "Ce nom d'utilisateur existe déjà. Choisissez-en un autre.",
+			'offer.not_found': "Nous n'avons pas trouvé cette offre. Elle a peut-être été supprimée.",
+			'offer.forbidden': "Vous n'avez pas la permission de modifier cette offre.",
+			'offer.invalid_dates':
+				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
+			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'pagination.invalid_cursor':
+				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',
 			'db.unique_violation': 'Un enregistrement avec ces données existe déjà.',
 			'db.not_found': "Nous n'avons pas trouvé ce que vous cherchez.",
@@ -311,6 +771,44 @@ export const messages: Record<Locale, TranslationMessages> = {
 				password: {
 					isString: 'Le mot de passe doit être une chaîne de caractères.',
 					minLength: 'Le mot de passe doit faire au moins 8 caractères.'
+				},
+				title: {
+					isString: 'Le titre doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez un titre.',
+					maxLength: 'Le titre est trop long (200 caractères maximum).'
+				},
+				description: {
+					isString: 'La description doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez une description.',
+					maxLength: 'La description est trop longue (5000 caractères maximum).'
+				},
+				offerType: {
+					isString: "Le type d'offre doit être une chaîne de caractères.",
+					isNotEmpty: "Sélectionnez un type d'offre.",
+					maxLength: "Le type d'offre est trop long (50 caractères maximum)."
+				},
+				externalUrl: {
+					isString: 'Le lien doit être une chaîne de caractères.',
+					isUrl: 'Saisissez une URL valide.'
+				},
+				storeName: {
+					isString: 'Le nom du magasin doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez le nom du magasin.',
+					maxLength: 'Le nom du magasin est trop long (100 caractères maximum).'
+				},
+				city: {
+					isString: 'La ville doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez une ville.',
+					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
+				},
+				startDate: {
+					isDateString: 'Date de début invalide (format ISO 8601 attendu).',
+					isInFuture: 'La date de début doit être dans le futur.'
+				},
+				endDate: {
+					isDateString: 'Date de fin invalide (format ISO 8601 attendu).',
+					isAfterStart: 'La date de fin doit être postérieure à la date de début.',
+					isInFuture: 'La date de fin doit être dans le futur.'
 				}
 			},
 			system: {

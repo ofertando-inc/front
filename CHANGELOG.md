@@ -1,78 +1,172 @@
 # Changelog
 
-## 0.1.0
+All notable changes to this project will be documented in this file.
 
-- Added a SvelteKit + TypeScript application scaffold with Tailwind v4, Flowbite Svelte, Vitest, and Playwright
-- Added a typed i18n store supporting Spanish, English, and French with locale persistence in `localStorage`
-- Added Spanish as the default UI locale with proper accents across every translated string
-- Added domain types (`User`, `AuthResponse`, `UserRole`, `UserStatus`) aligned with the backend contract
-- Added a fetch-based API client with typed `ApiError`, JSON helpers, and `PUBLIC_API_URL` resolution
-- Added an auth Svelte store handling login, register, logout, current-user loading, and token persistence in `localStorage` with SSR-safe initialization
-- Added an `AppHeader` Flowbite navbar with brand, language switcher, responsive search input, and an auth-aware user menu
-- Added a shared `AuthForm` component composing the Flowbite `Input`, `Label`, and `Button` primitives
-- Added a `/login` page connected to the live dev backend with loading and error states
-- Added a `/register` page connected to the live dev backend with duplicate email, duplicate username, and validation error handling
-- Added a `/profile` page protected on the client side that displays the authenticated user and placeholder activity tabs
-- Added auth session restore on page refresh
-- Added redirect of already-authenticated visitors away from `/login` and `/register`
-- Added redirect to the home page after logout
-- Added an error key catalog synced with the backend `error-keys.ts` covering the `auth.*`, `user.*`, `validation.*`, `db.*`, and `error.*` namespaces
-- Added localized error messages in Spanish, English, and French for every known error key, with a generic fallback for unknown keys
-- Added a per-field validation dictionary mapping `(field, constraint)` tuples to localized text, including the system `whitelistValidation` constraint
-- Added `getErrorMessage` and `getFieldErrorMap` helpers to translate the structured `{ key, statusCode, details }` backend error contract
-- Updated the API client and `ApiError` to parse the structured `{ key, statusCode, details }` backend error contract instead of the legacy `message` field
-- Added a `resolveAuthError` helper that turns an `ApiError` into a banner message and per-field errors, routing `user.email_taken` and `user.username_taken` to the matching input
-- Added unit tests for the auth error resolver covering invalid credentials, taken email and username, validation details, and unknown-key fallbacks
-- Updated the shared `AuthForm` to accept a `fieldErrors` map and render the offending input in red with a localized message below it
-- Updated the login and register pages to consume `resolveAuthError`, replacing the legacy English-string matching with key-based handling
-- Replaced the `registerErrors` helper with the key-based `authErrors` resolver shared between login and register
-- Added a rate-limit cooldown on the login and register forms: on a 429 `error.too_many_requests` the submit button is disabled, the banner shows a localized countdown, and the wait honors the backend `Retry-After` header (falling back to 60 seconds)
-- Added `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both
-- Updated the auth store to stop storing a redundant `error` field; pages own error translation via `resolveAuthError` and the i18n catalog
-- Removed the dead error banner from the profile page; failures during current-user loading now redirect silently to `/login` and the page no longer carries a never-rendered error state
-- Updated the API client to read the backend URL from `window.APP_CONFIG.API_URL` at runtime (with a `process.env.PUBLIC_API_URL` fallback for SSR and tests), unlocking image-promotion across environments
-- Added `static/config.js` as the local-development placeholder shipped to the browser; the Docker entrypoint overwrites the file at container boot with the value of the `PUBLIC_API_URL` environment variable
-- Updated the Dockerfile to align with the backend pattern: explicit `production` target, non-root `node` user, container healthcheck on the home page, and a dedicated `docker/entrypoint.sh` that injects the runtime config and starts the node server
-- Updated `.env.example` to document the runtime variables consumed by the container (`NODE_ENV`, `PORT`, `FRONTEND_PORT`, `PUBLIC_API_URL`)
-- Added per-environment Docker Compose files (`docker-compose.dev.yml`, `docker-compose.staging.yml`, `docker-compose.prod.yml`) aligned with the backend convention: image pinned per environment (`ghcr.io/ofertando-inc/front:<env>`), attached to the external `dokploy-network`, runtime env vars supplied by the Dokploy service configuration
-- Updated the CI workflow to align with the backend: trigger on `v*` tag pushes (required for the staging release flow), explicit `permissions: contents: read`, job renamed `ci` / `Validate Frontend`, dropped the `PUBLIC_API_URL` env and the build-arg from `docker build` now that the URL is consumed at runtime
-- Updated the `deploy-dev` GitHub Actions workflow to wait for a successful `CI` workflow run on `dev`, then build and deploy the exact commit validated by CI
-- Updated the deployment workflow to use only `dev` and `main` as long-lived branches; CI no longer targets a long-lived `staging` branch
-- Updated the staging release workflow so every stable or prerelease semantic Git tag from `main` builds an immutable versioned image such as `ghcr.io/ofertando-inc/front:v0.1.1` or `ghcr.io/ofertando-inc/front:v0.1.1-rc.1`, validates that the tag belongs to `main`, retags that image as `:staging`, and triggers Dokploy staging
-- Updated the production workflow so manual `workflow_dispatch` deployments validate an existing stable semantic tag, verify the matching versioned GHCR image exists, retag that image as `:prod`, and trigger Dokploy production without rebuilding from source
-- Documented the dev, staging, production, normal release, and hotfix workflows in the README, including the rule that stable Dokploy tags (`staging` and `prod`) are only updated from immutable versioned images and never from `dev`
-- Fixed the Docker healthcheck to honor the `PORT` environment variable so it does not break when the container is started on a non-default port, and dropped the stale `EXPOSE 3000` directive that no longer reflects the runtime port
-- Updated `docker/build-push-action` from `v6` to `v7` in the dev deploy workflow to run on the Node 24 runtime and silence the GitHub Actions Node 20 deprecation warning
-- Fixed the Docker healthcheck so it targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD
-- Updated the staging release workflow to chain after a successful `CI` workflow run on a `v*` tag via `workflow_run`, so a release tag never produces a deployed image without first passing lint, typecheck, unit tests, e2e smoke tests, and the Docker build
-- Updated the production deploy workflow to run under the `production` GitHub Environment, gating manual dispatches behind the configured reviewer approval and branch/tag protection rules
-- Updated the auth form and header search inputs to use a lighter `gray-400` placeholder color so the example text no longer competes with the typed value
-- Updated the home landing to hide the login and register call-to-action buttons when the visitor is already authenticated, avoiding the duplicate of the header user menu
-- Fixed the document root language to Spanish (`<html lang="es">`) to match the default UI locale and stop misleading screen readers and search engines
-- Updated the auth form submit button to display a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance
-- Added a localized 404 and generic-error page (`src/routes/+error.svelte`) that displays the HTTP status, a context-appropriate Spanish/English/French message, and a `Volver al inicio` action button
-- Updated the profile page loading state to render a pulse skeleton mirroring the final avatar, identity, and stats grid (with `aria-busy` and a localized `aria-label`) instead of the previous bare `Cargando...` text
-- Added a `Confirmar contraseña` field to the register form with client-only validation that surfaces a localized error under the field when the two passwords do not match, without sending the extra field to the backend (which forbids non-whitelisted properties)
-- Updated the register e2e smoke test to assert both password fields and use an exact-match label query so the new confirmation input does not collide with the original password input
-- Updated the README to replace the default `sv` template content with a project header, local setup steps, environment variables, npm scripts, and the catalog of available routes
-- Fixed the login and register pages to redirect authenticated visitors to `/profile` when reached via direct URL: an `$effect` watching `$authStore.user` replaces the previous `onMount` hook that fired before the layout had restored the token from `localStorage`
-- Added unit tests for the API client error handling
-- Added unit tests for the auth store covering initialize, login, register, logout, and current-user loading
-- Added unit tests for the error key catalog and the validation message helpers
-- Added a Playwright auth smoke e2e test exercising the login flow end-to-end
-- Added a Dockerfile and `docker-compose.yml` for the local frontend
-- Added a GitHub Actions CI workflow that runs formatting, lint, type-check, unit tests, e2e tests, and build on every PR
-- Configured Tailwind CSS v4 with a warm primary orange palette and the Flowbite plugin
-- Configured ESLint, Prettier, `prettier-plugin-svelte`, and `prettier-plugin-tailwindcss` for the project
-- Configured `PUBLIC_API_URL` injection at Docker build time so deployed images resolve the backend URL
-- Configured the deployed image to fall back to a static backend URL when no environment override is provided
-- Replaced the SvelteKit starter homepage with an auth-focused landing
-- Updated register error messages to react live to locale changes
-- Updated the header layout for better responsiveness across breakpoints
-- Updated the auth and profile pages to align with the UX model reference
-- Updated the profile page to display the member-since date using the full localized month
-- Fixed Docker port conflicts via an environment-driven port mapping
-- Fixed dropdown items showing stray list markers
-- Fixed `resolveRoute` calls to satisfy SvelteKit type checks
-- Fixed build pipeline reliability for the SvelteKit + Flowbite combination
-- Fixed frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.2.0] - 2026-05-26
+
+### Added
+
+- Offer domain types (`Offer`, `OfferStatus`, `OfferSort`, `OfferPeriod`, `PaginatedOffers`, `CreateOfferDto`, `UpdateOfferDto`, `ListOffersQuery`) aligned with the backend `/offers/*` contract.
+- New error keys for the offers and pagination namespaces (`offer.not_found`, `offer.forbidden`, `offer.invalid_dates`, `offer.invalid_status_transition`, `pagination.invalid_cursor`) plus their localized messages in Spanish, English, and French.
+- Validation dictionaries for the offer fields (`title`, `description`, `offerType`, `externalUrl`, `storeName`, `city`, `startDate`, `endDate`) covering the `isString`, `isNotEmpty`, `maxLength`, `isUrl`, and `isDateString` constraints in the three locales.
+- Offers API client (`src/lib/api/offers.ts`) exposing `listOffers`, `getMyOffers`, `getOfferById`, `createOffer`, `updateOffer`, and `deleteOffer` on the `/offers/*` backend contract, with cursor-aware query serialization and `204 No Content` tolerance for delete.
+- Unit tests for the offers API client covering query serialization, id encoding, payload bodies, `offer.not_found` / `offer.invalid_dates` / `offer.forbidden` error propagation, and the 204 delete path.
+- Offer error resolver (`src/lib/offers/offerErrors.ts`) that turns an `ApiError` into a banner message and per-field errors for the `browse`, `create`, `update`, and `delete` contexts, mirroring the auth error resolver pattern.
+- Localized `offer` translation namespace with contextual generic and server-error fallbacks for offer browse, create, update, and delete failures.
+- Unit tests for the offer error resolver covering each offer key, validation details, 5xx fallbacks, unknown keys, and non-`ApiError` throws per context.
+- Localized `offerStatus` namespace mapping each `OfferStatus` value to its Spanish, English, and French label.
+- Offer mock dataset (`src/lib/data/mockDeals.ts`) of nine `Offer` records spanning every status, used for local development, fakes on the detail page, and the popular-stores section.
+- `DealStatusBadge` component wrapping Flowbite `Badge`, mapping each `OfferStatus` to a coherent color (green/yellow/red/gray/secondary) and the locale-aware label from the `offerStatus` namespace.
+- `VotePanel` component with optimistic local toggle state for up/down votes (state-only, no backend persistence yet), three sizes, hot-deal coloring above 100, and localized `aria-label`s for screen readers.
+- `DealCard` component composing Flowbite `Card`, `DealStatusBadge`, and `VotePanel` with a localized type badge (online/local), store and city footer, and an expiration date formatted via `Intl.DateTimeFormat` in the current locale.
+- `DealFilters` component composing Flowbite `Select` and `ButtonGroup`: city and offer-type dropdowns (with an "all" option), a recent/popular sort toggle, and a contextual period dropdown that appears only when sorting by popularity. Values are exposed via `$bindable` props.
+- `home` translation namespace and extended `deals` namespace with the listing title, load-more, and empty-state copy in Spanish, English, and French.
+- `DealCardSkeleton` component that mirrors the `DealCard` layout with pulse-animated gray blocks (vote column, badges, title, description, footer) and an `aria-busy` flag for screen readers.
+- Placeholder `/deals/[id]`, `/deals`, and `/create-deal` routes so the typed `resolve()` helper accepts the deal detail link from `DealCard` and the home CTAs while the full pages were being built.
+- Full `/deals` listing page composing `DealFilters` and a `DealCard` grid backed by cursor pagination. Filter changes reset the cursor through an `$effect`, the load-more button is hidden when the next cursor is null, expired sessions and unknown errors surface via `resolveOfferError`, and a `pagination.invalid_cursor` response silently refetches the first page.
+- E2E smoke test that visits `/deals` and asserts the listing heading plus the recent/popular sort buttons.
+- Full `/deals/[id]` detail page with a localized two-column layout (status badge, store/city/expiration meta, vote panel, external store CTA, description, author and share/report icons), a moderated status banner for `EXPIRED` / `DISABLED` / `REPORTED` offers, mocked comments, and a related-offers sidebar that filters out the current offer.
+- `offer.not_found` 404 fallback on the detail page with a back-to-listing button, plus loading skeletons for both the main card and the related sidebar.
+- `deal` translation namespace with the detail-page strings (CTA, banners, mock comments, related and comments titles) in Spanish, English, and French.
+- Graceful error fallback on the offer detail page that shows a localized "go back" card when the fetch fails for a reason other than `offer.not_found`, preventing a blank screen when the API is unreachable.
+- E2E smoke test asserting the detail page renders a usable fallback when the requested offer id cannot be loaded.
+- Mutex-protected refresh-on-401 retry inside `apiRequest`: a single failing call triggers `POST /auth/refresh` (cookie-driven), retries the original request once on success, and bypasses the refresh dance for `/auth/*` endpoints so that login validation errors surface cleanly.
+- `refreshSession()` and `logout()` helpers in the auth API wired on the new `/auth/refresh` and `/auth/logout` endpoints.
+- Cookie session contract documentation in `.env.example`, including the backend requirements (`Set-Cookie` on `access_token`/`refresh_token`, `Access-Control-Allow-Credentials: true`, frontend origin in `CORS_ORIGINS`) and the rule that no token is ever stored client-side.
+- E2E regression that visits the home page and asserts no key containing "token" is persisted in `localStorage`, guarding against future reintroduction of client-side token storage.
+- `sveltekit-superforms` and `zod` as runtime dependencies for the offer mutation forms.
+- SvelteKit BFF catch-all proxy at `src/routes/api/[...path]/+server.ts` that forwards every browser request to the backend, copying request headers and cookies, and rewriting the refresh cookie `Path=/auth` to `Path=/api/auth` so the cookie scope follows the proxied path. The browser never talks to the backend directly anymore.
+- Shared Zod offer validation schema for create and update flows, including localized constraint keys for title, description, type, URL, store, city, and date ordering/future-date validation.
+- `/create-deal` server-action form with Superforms, Flowbite fields, server-side auth guard, BFF-backed `POST /api/offers`, translated validation errors, and redirect to the created offer detail page.
+- `/deals/[id]/edit` server-action form reusing the create form, loading the existing offer server-side through the BFF, enforcing author ownership before render and before patch, and submitting `PATCH /api/offers/[id]`.
+- Author-only edit and delete controls on the offer detail page. Delete uses a Flowbite confirmation modal, a named SvelteKit server action, `DELETE /api/offers/[id]`, translated failures, and redirects back to `/deals` after success.
+- Reusable server helpers for offer form defaults, date conversion, backend validation-error mapping, authenticated session probing, and author ownership checks.
+- Playwright smoke coverage for unauthenticated access to `/create-deal` and `/deals/[id]/edit`, backed by a lightweight mock backend so server-side guards receive deterministic `401` responses.
+- Profile "My offers" tab backed by `GET /api/offers/mine`, rendering a responsive `DealCard` grid, loading skeletons, localized error retry state, and a first-offer empty state linking to `/create-deal`.
+- Author actions on profile offer cards with a kebab menu for edit and delete, plus a Flowbite confirmation modal that calls `DELETE /api/offers/[id]` and updates the grid after success.
+- Authenticated header CTA linking to `/create-deal`, available on both desktop and mobile navigation.
+- Global Flowbite footer with localized copyright, terms, privacy, and contact placeholder links.
+- Playwright smoke coverage for the authenticated empty profile offers state, using the mock backend to simulate a cookie-authenticated user without offers.
+
+### Changed
+
+- Dev and staging deploy workflows now run under dedicated `dev` and `staging` GitHub Environments, surfacing every deployment in the repo's Deployments tab alongside production and unlocking per-environment secrets, variables, and reviewer rules.
+- Rewrote the home page with a localized hero (title, subtitle, explore and publish CTAs), a hot-deals row fetched with `sort=score&period=week&limit=3`, a recent-deals row fetched with `sort=date&limit=6`, and a popular-stores chip section. Skeletons cover the fetch latency and failures degrade silently to empty grids.
+- Home e2e smoke test now asserts the new hero heading and the hot/recent section titles while keeping the header-driven login/register link assertions.
+- API client now ships `credentials: 'include'` on every request so the browser carries the `access_token` cookie set by the backend.
+- Offers API client drops the explicit bearer-token parameter from every function; authentication is carried entirely by the session cookie.
+- Auth API now returns the `User` directly on `/auth/login` and `/auth/register`; cookies carry the tokens.
+- Layout, profile page, and header use the cookie-based session: the layout boots a `loadCurrentUser()` probe with a silent catch, the profile page always probes the session before deciding to redirect, and the header awaits the logout API call before navigating home.
+- API client always targets `/api/*` from the browser (the SvelteKit BFF). The runtime `window.APP_CONFIG.API_URL` mechanism is removed: `app.html` no longer loads `config.js`, the global type is dropped from `app.d.ts`, `static/config.js` is deleted, and the Docker entrypoint no longer generates a config file.
+- Docker entrypoint reduced to a minimal `exec node build` since per-environment runtime configuration moved to a server-side `BACK_URL` environment variable.
+- All three docker-compose files (dev, staging, prod) now use `BACK_URL` instead of `PUBLIC_API_URL`. The variable is server-side only, never exposed to the browser. Dokploy services must rename the env var when this is merged.
+- `.env.example` now documents the BFF pattern and the role of `BACK_URL` (server-side, never readable by JavaScript in the browser).
+- Playwright web server configuration provides a local `BACK_URL` during e2e tests, keeping server-side BFF routes testable without the real backend.
+- Docker/npm setup: `npm ci` no longer downloads Playwright browser binaries during Docker builds. `prepare` only runs `svelte-kit sync`, e2e browser installation is explicit, and the production install uses `--ignore-scripts`.
+- Migrated Flowbite Svelte components off deprecated props: `DropdownItem` (`liClass`), `FooterLink` (`liClass`, `aClass`), and `FooterCopyright` (`aClass`, `spanClass`) now use the canonical `class` / `classes={{ ... }}` API across `AppHeader`, `AppFooter`, and the profile page.
+- Migrated Tailwind classes to the v4 canonical syntax: `!important` modifiers moved from the prefix form (`!max-w-full`, `!p-0`) to the suffix form (`max-w-full!`, `p-0!`), and `flex-grow` was renamed to `grow` across `DealCard`, `DealCardSkeleton`, `AuthForm`, the offer detail page, and the profile page.
+
+### Removed
+
+- Legacy `AuthResponse` type along with the `accessToken` field and the `localStorage` token persistence from the auth store; the client store is now a thin `{ user, isAuthenticated, isLoading }` shape backed by HTTP-only cookies.
+
+### Fixed
+
+- `DealCard` and `DealCardSkeleton` now stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells.
+- `DealCard` now accepts an optional actions snippet so page-specific controls can be injected without duplicating the card layout.
+- Offer create/edit form fields now use the lighter auth-form visual treatment, and the description textarea is taller and resizable for longer deal details.
+- Offer description textarea now matches the title input width by forcing `block w-full`, working around the Flowbite `Textarea` not inheriting the same wrapper as `Input`.
+
+## [0.1.0] - 2026-05-16
+
+### Added
+
+- SvelteKit + TypeScript application scaffold with Tailwind v4, Flowbite Svelte, Vitest, and Playwright.
+- Typed i18n store supporting Spanish, English, and French with locale persistence in `localStorage`.
+- Spanish as the default UI locale with proper accents across every translated string.
+- Domain types (`User`, `AuthResponse`, `UserRole`, `UserStatus`) aligned with the backend contract.
+- Fetch-based API client with typed `ApiError`, JSON helpers, and `PUBLIC_API_URL` resolution.
+- Auth Svelte store handling login, register, logout, current-user loading, and token persistence in `localStorage` with SSR-safe initialization.
+- `AppHeader` Flowbite navbar with brand, language switcher, responsive search input, and an auth-aware user menu.
+- Shared `AuthForm` component composing the Flowbite `Input`, `Label`, and `Button` primitives.
+- `/login` page connected to the live dev backend with loading and error states.
+- `/register` page connected to the live dev backend with duplicate email, duplicate username, and validation error handling.
+- `/profile` page protected on the client side that displays the authenticated user and placeholder activity tabs.
+- Auth session restore on page refresh.
+- Redirect of already-authenticated visitors away from `/login` and `/register`.
+- Redirect to the home page after logout.
+- Error key catalog synced with the backend `error-keys.ts` covering the `auth.*`, `user.*`, `validation.*`, `db.*`, and `error.*` namespaces.
+- Localized error messages in Spanish, English, and French for every known error key, with a generic fallback for unknown keys.
+- Per-field validation dictionary mapping `(field, constraint)` tuples to localized text, including the system `whitelistValidation` constraint.
+- `getErrorMessage` and `getFieldErrorMap` helpers to translate the structured `{ key, statusCode, details }` backend error contract.
+- `resolveAuthError` helper that turns an `ApiError` into a banner message and per-field errors, routing `user.email_taken` and `user.username_taken` to the matching input.
+- Unit tests for the auth error resolver covering invalid credentials, taken email and username, validation details, and unknown-key fallbacks.
+- Rate-limit cooldown on the login and register forms: on a 429 `error.too_many_requests` the submit button is disabled, the banner shows a localized countdown, and the wait honors the backend `Retry-After` header (falling back to 60 seconds).
+- `Retry-After` parsing on `ApiError.retryAfterSeconds` and a `formatRateLimitedMessage` helper with unit tests covering both.
+- `static/config.js` as the local-development placeholder shipped to the browser; the Docker entrypoint overwrites the file at container boot with the value of the `PUBLIC_API_URL` environment variable.
+- Per-environment Docker Compose files (`docker-compose.dev.yml`, `docker-compose.staging.yml`, `docker-compose.prod.yml`) aligned with the backend convention: image pinned per environment, attached to the external `dokploy-network`, runtime env vars supplied by the Dokploy service configuration.
+- Localized 404 and generic-error page (`src/routes/+error.svelte`) that displays the HTTP status, a context-appropriate Spanish/English/French message, and a `Volver al inicio` action button.
+- `Confirmar contraseña` field on the register form with client-only validation that surfaces a localized error under the field when the two passwords do not match, without sending the extra field to the backend.
+- Unit tests for the API client error handling.
+- Unit tests for the auth store covering initialize, login, register, logout, and current-user loading.
+- Unit tests for the error key catalog and the validation message helpers.
+- Playwright auth smoke e2e test exercising the login flow end-to-end.
+- Dockerfile and `docker-compose.yml` for the local frontend.
+- GitHub Actions CI workflow that runs formatting, lint, type-check, unit tests, e2e tests, and build on every PR.
+- Documented the dev, staging, production, normal release, and hotfix workflows in the README, including the rule that stable Dokploy tags (`staging` and `prod`) are only updated from immutable versioned images and never from `dev`.
+- Tailwind CSS v4 with a warm primary orange palette and the Flowbite plugin.
+- ESLint, Prettier, `prettier-plugin-svelte`, and `prettier-plugin-tailwindcss` for the project.
+- `PUBLIC_API_URL` injection at Docker build time so deployed images resolve the backend URL.
+- Deployed image fallback to a static backend URL when no environment override is provided.
+
+### Changed
+
+- API client and `ApiError` parse the structured `{ key, statusCode, details }` backend error contract instead of the legacy `message` field.
+- Shared `AuthForm` accepts a `fieldErrors` map and renders the offending input in red with a localized message below it.
+- Login and register pages consume `resolveAuthError`, replacing the legacy English-string matching with key-based handling.
+- Replaced the `registerErrors` helper with the key-based `authErrors` resolver shared between login and register.
+- Auth store no longer stores a redundant `error` field; pages own error translation via `resolveAuthError` and the i18n catalog.
+- API client reads the backend URL from `window.APP_CONFIG.API_URL` at runtime (with a `process.env.PUBLIC_API_URL` fallback for SSR and tests), unlocking image-promotion across environments.
+- Dockerfile aligned with the backend pattern: explicit `production` target, non-root `node` user, container healthcheck on the home page, and a dedicated `docker/entrypoint.sh` that injects the runtime config and starts the node server.
+- `.env.example` documents the runtime variables consumed by the container (`NODE_ENV`, `PORT`, `FRONTEND_PORT`, `PUBLIC_API_URL`).
+- CI workflow aligned with the backend: triggers on `v*` tag pushes (required for the staging release flow), explicit `permissions: contents: read`, job renamed `ci` / `Validate Frontend`, dropped the `PUBLIC_API_URL` env and the build-arg from `docker build`.
+- `deploy-dev` workflow now waits for a successful `CI` workflow run on `dev`, then builds and deploys the exact commit validated by CI.
+- Deployment workflow uses only `dev` and `main` as long-lived branches; CI no longer targets a long-lived `staging` branch.
+- Staging release workflow: every stable or prerelease semantic Git tag from `main` builds an immutable versioned image such as `ghcr.io/ofertando-inc/front:v0.1.1` or `…:v0.1.1-rc.1`, validates that the tag belongs to `main`, retags that image as `:staging`, and triggers Dokploy staging.
+- Production workflow: manual `workflow_dispatch` deployments validate an existing stable semantic tag, verify the matching versioned GHCR image exists, retag that image as `:prod`, and trigger Dokploy production without rebuilding from source.
+- `docker/build-push-action` updated from `v6` to `v7` in the dev deploy workflow to run on the Node 24 runtime and silence the GitHub Actions Node 20 deprecation warning.
+- Staging release workflow chains after a successful `CI` workflow run on a `v*` tag via `workflow_run`, so a release tag never produces a deployed image without first passing lint, typecheck, unit tests, e2e smoke tests, and the Docker build.
+- Production deploy workflow runs under the `production` GitHub Environment, gating manual dispatches behind the configured reviewer approval and branch/tag protection rules.
+- Auth form and header search inputs use a lighter `gray-400` placeholder color so the example text no longer competes with the typed value.
+- Home landing hides the login and register call-to-action buttons when the visitor is already authenticated, avoiding the duplicate of the header user menu.
+- Auth form submit button displays a Flowbite spinner alongside the label while a request is in flight, replacing the previous trailing-dots affordance.
+- Profile page loading state renders a pulse skeleton mirroring the final avatar, identity, and stats grid (with `aria-busy` and a localized `aria-label`) instead of the previous bare `Cargando...` text.
+- Register e2e smoke test asserts both password fields and uses an exact-match label query so the new confirmation input does not collide with the original password input.
+- README replaces the default `sv` template content with a project header, local setup steps, environment variables, npm scripts, and the catalog of available routes.
+- Replaced the SvelteKit starter homepage with an auth-focused landing.
+- Register error messages react live to locale changes.
+- Header layout improved for responsiveness across breakpoints.
+- Auth and profile pages aligned with the UX model reference.
+- Profile page displays the member-since date using the full localized month.
+
+### Removed
+
+- Dead error banner from the profile page; failures during current-user loading now redirect silently to `/login` and the page no longer carries a never-rendered error state.
+
+### Fixed
+
+- Docker healthcheck honors the `PORT` environment variable so it does not break when the container is started on a non-default port. Dropped the stale `EXPOSE 3000` directive that no longer reflects the runtime port.
+- Docker healthcheck targets `127.0.0.1` instead of `localhost` (BusyBox `wget` resolves the latter to `::1` while the node server only listens on IPv4), and switched from a HEAD `--spider` probe to a `-O /dev/null` GET to stay compatible with routes that do not advertise HEAD.
+- Document root language set to Spanish (`<html lang="es">`) to match the default UI locale and stop misleading screen readers and search engines.
+- Login and register pages redirect authenticated visitors to `/profile` when reached via direct URL: an `$effect` watching `$authStore.user` replaces the previous `onMount` hook that fired before the layout had restored the token from `localStorage`.
+- Docker port conflicts via an environment-driven port mapping.
+- Dropdown items no longer show stray list markers.
+- `resolveRoute` calls satisfy SvelteKit type checks.
+- Build pipeline reliability for the SvelteKit + Flowbite combination.
+- Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
+
+[0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
+[0.1.0]: https://github.com/ofertando-inc/front/releases/tag/v0.1.0

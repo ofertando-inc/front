@@ -22,7 +22,7 @@ ENV NODE_ENV=production
 
 COPY package*.json ./
 
-RUN npm ci --omit=dev \
+RUN npm ci --omit=dev --ignore-scripts \
  && npm cache clean --force
 
 COPY --from=build /app/build ./build

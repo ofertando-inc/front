@@ -18,7 +18,7 @@ Prerequisites: Node.js 24+, npm 10+.
 git clone https://github.com/ofertando-inc/front.git
 cd front
 cp .env.example .env
-# adjust PUBLIC_API_URL in .env if you run the backend on a different host or port
+# adjust BACK_URL in .env if your backend runs on a different host or port
 npm install
 npm run dev
 ```
@@ -27,14 +27,16 @@ The dev server listens on http://localhost:5173 and reloads on file changes.
 
 ## Environment variables
 
-| Variable         | Purpose                                                       | Default                 |
-| ---------------- | ------------------------------------------------------------- | ----------------------- |
-| `NODE_ENV`       | Node runtime mode (`development`, `production`)               | `development`           |
-| `PORT`           | Port the node server listens on inside the container          | `3000`                  |
-| `FRONTEND_PORT`  | Host port the docker-compose service exposes                  | `5173`                  |
-| `PUBLIC_API_URL` | Backend base URL, consumed at runtime via `window.APP_CONFIG` | `http://localhost:3000` |
+| Variable        | Purpose                                                                                | Default                 |
+| --------------- | -------------------------------------------------------------------------------------- | ----------------------- |
+| `NODE_ENV`      | Node runtime mode (`development`, `production`)                                        | `development`           |
+| `PORT`          | Port the node server listens on inside the container                                   | `3000`                  |
+| `FRONTEND_PORT` | Host port the docker-compose service exposes                                           | `5173`                  |
+| `BACK_URL`      | Backend base URL, read server-side by the SvelteKit BFF. Never exposed to the browser. | `http://localhost:3000` |
 
-In the deployed image, `PUBLIC_API_URL` is injected at container boot by `docker/entrypoint.sh`, which writes `build/client/config.js`. The committed `static/config.js` only serves local development, where Vite serves it directly.
+Auth and API calls flow through a SvelteKit BFF at `/api/*`: the browser only talks to the SvelteKit server, which forwards requests to `BACK_URL` and pipes cookies in both directions. There is no client-side token storage and no `PUBLIC_*` URL injected at build time — the production image is environment-agnostic and configured at boot via `BACK_URL`.
+
+When running the front in Docker on Linux, set `BACK_URL=http://host.docker.internal:3000` so the BFF inside the container can reach a backend exposed on the Docker host (the `docker-compose.yml` already maps `host.docker.internal` to the host gateway).
 
 ## Scripts
 
@@ -53,13 +55,18 @@ In the deployed image, `PUBLIC_API_URL` is injected at container boot by `docker
 
 ## Routes
 
-| Path            | Description                                                                                 | Auth required                         |
-| --------------- | ------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `/`             | Home — branding hero with login/register call-to-action buttons (hidden when authenticated) | No                                    |
-| `/login`        | Sign-in form, calls `POST /auth/login`, stores the JWT and redirects to `/profile`          | No                                    |
-| `/register`     | Account creation form with client-side password confirmation, calls `POST /auth/register`   | No                                    |
-| `/profile`      | Current user info from `GET /users/me`, with placeholder offers / comments / votes tabs     | Yes (redirects to `/login` otherwise) |
-| _Anything else_ | Localized 404 / generic error page rendered by `src/routes/+error.svelte`                   | —                                     |
+| Path               | Description                                                                                                                                                               | Auth required                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `/`                | Home — hero, hot deals, recent deals, and popular stores. Login and register CTAs are hidden when authenticated.                                                          | No                                           |
+| `/login`           | Sign-in form. Calls `POST /api/auth/login` through the BFF; the backend sets the session cookies and the page redirects to `/profile`.                                    | No                                           |
+| `/register`        | Account creation form with client-side password confirmation. Calls `POST /api/auth/register` through the BFF.                                                            | No                                           |
+| `/profile`         | Current user info from `GET /api/users/me`. The "My offers" tab is backed by `GET /api/offers/mine` with edit / delete actions; comments and votes tabs are placeholders. | Yes (redirects to `/login` otherwise)        |
+| `/deals`           | Cursor-paginated offer listing with city, offer type, sort, and period filters.                                                                                           | No                                           |
+| `/deals/[id]`      | Offer detail page with status banners, vote panel, related offers, mocked comments. Author-only edit and delete buttons (delete via confirm modal).                       | No                                           |
+| `/deals/[id]/edit` | Edit form pre-filled with the existing offer. SvelteKit server action `PATCH /api/offers/[id]` with Superforms + Zod validation.                                          | Yes (must be the author)                     |
+| `/create-deal`     | Create form. SvelteKit server action `POST /api/offers` with Superforms + Zod validation.                                                                                 | Yes (redirects to `/login` otherwise)        |
+| `/api/*`           | BFF catch-all proxy: forwards every browser request to `BACK_URL`, rewriting the refresh cookie path so it stays scoped under `/api/auth`.                                | Whatever the targeted backend route requires |
+| _Anything else_    | Localized 404 / generic error page rendered by `src/routes/+error.svelte`.                                                                                                | —                                            |
 
 ## Deployment Workflow
 
