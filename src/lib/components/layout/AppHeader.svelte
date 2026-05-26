@@ -72,11 +72,11 @@
 						<p class="font-medium text-slate-900">{$authStore.user.username}</p>
 						<p class="truncate text-slate-500">{$authStore.user.email}</p>
 					</div>
-					<DropdownItem href={resolve('/profile')} liClass="list-none"
+					<DropdownItem href={resolve('/profile')} classes={{ li: 'list-none' }}
 						>{$translationStore.common.profile}</DropdownItem
 					>
 					<DropdownDivider />
-					<DropdownItem onclick={handleLogout} liClass="list-none"
+					<DropdownItem onclick={handleLogout} classes={{ li: 'list-none' }}
 						>{$translationStore.common.logout}</DropdownItem
 					>
 				</Dropdown>

@@ -22,22 +22,22 @@
 			<FooterLinkGroup class="flex flex-wrap gap-x-5 gap-y-2">
 				<FooterLink
 					href="#"
-					liClass="list-none"
-					aClass="text-sm font-medium text-gray-500 hover:text-primary-600"
+					class="list-none"
+					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
 				>
 					{$translationStore.footer.terms}
 				</FooterLink>
 				<FooterLink
 					href="#"
-					liClass="list-none"
-					aClass="text-sm font-medium text-gray-500 hover:text-primary-600"
+					class="list-none"
+					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
 				>
 					{$translationStore.footer.privacy}
 				</FooterLink>
 				<FooterLink
 					href="#"
-					liClass="list-none"
-					aClass="text-sm font-medium text-gray-500 hover:text-primary-600"
+					class="list-none"
+					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
 				>
 					{$translationStore.footer.contact}
 				</FooterLink>
@@ -51,8 +51,8 @@
 			by={$translationStore.common.appName}
 			year={currentYear}
 			copyrightMessage={$translationStore.footer.rights}
-			spanClass="text-sm text-gray-500"
-			aClass="text-gray-600 hover:text-primary-600"
+			class="text-sm text-gray-500"
+			classes={{ link: 'text-gray-600 hover:text-primary-600' }}
 		/>
 	</div>
 </Footer>

@@ -276,11 +276,14 @@
 										>
 											<DropdownItem
 												href={resolve('/deals/[id]/edit', { id: offer.id })}
-												liClass="list-none"
+												classes={{ li: 'list-none' }}
 											>
 												{$translationStore.deal.edit}
 											</DropdownItem>
-											<DropdownItem onclick={() => openDeleteModal(offer)} liClass="list-none">
+											<DropdownItem
+												onclick={() => openDeleteModal(offer)}
+												classes={{ li: 'list-none' }}
+											>
 												{$translationStore.deleteDeal.openButton}
 											</DropdownItem>
 										</Dropdown>
