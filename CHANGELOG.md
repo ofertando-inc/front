@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2026-05-26
 
 ### Added
 
@@ -45,6 +45,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Author-only edit and delete controls on the offer detail page. Delete uses a Flowbite confirmation modal, a named SvelteKit server action, `DELETE /api/offers/[id]`, translated failures, and redirects back to `/deals` after success.
 - Reusable server helpers for offer form defaults, date conversion, backend validation-error mapping, authenticated session probing, and author ownership checks.
 - Playwright smoke coverage for unauthenticated access to `/create-deal` and `/deals/[id]/edit`, backed by a lightweight mock backend so server-side guards receive deterministic `401` responses.
+- Profile "My offers" tab backed by `GET /api/offers/mine`, rendering a responsive `DealCard` grid, loading skeletons, localized error retry state, and a first-offer empty state linking to `/create-deal`.
+- Author actions on profile offer cards with a kebab menu for edit and delete, plus a Flowbite confirmation modal that calls `DELETE /api/offers/[id]` and updates the grid after success.
+- Authenticated header CTA linking to `/create-deal`, available on both desktop and mobile navigation.
+- Global Flowbite footer with localized copyright, terms, privacy, and contact placeholder links.
+- Playwright smoke coverage for the authenticated empty profile offers state, using the mock backend to simulate a cookie-authenticated user without offers.
 
 ### Changed
 
@@ -61,6 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `.env.example` now documents the BFF pattern and the role of `BACK_URL` (server-side, never readable by JavaScript in the browser).
 - Playwright web server configuration provides a local `BACK_URL` during e2e tests, keeping server-side BFF routes testable without the real backend.
 - Docker/npm setup: `npm ci` no longer downloads Playwright browser binaries during Docker builds. `prepare` only runs `svelte-kit sync`, e2e browser installation is explicit, and the production install uses `--ignore-scripts`.
+- Migrated Flowbite Svelte components off deprecated props: `DropdownItem` (`liClass`), `FooterLink` (`liClass`, `aClass`), and `FooterCopyright` (`aClass`, `spanClass`) now use the canonical `class` / `classes={{ ... }}` API across `AppHeader`, `AppFooter`, and the profile page.
+- Migrated Tailwind classes to the v4 canonical syntax: `!important` modifiers moved from the prefix form (`!max-w-full`, `!p-0`) to the suffix form (`max-w-full!`, `p-0!`), and `flex-grow` was renamed to `grow` across `DealCard`, `DealCardSkeleton`, `AuthForm`, the offer detail page, and the profile page.
 
 ### Removed
 
@@ -69,6 +76,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `DealCard` and `DealCardSkeleton` now stretch to the full width of their grid cell so the card layout stays robust when the listing grid switches to fewer columns or wider cells.
+- `DealCard` now accepts an optional actions snippet so page-specific controls can be injected without duplicating the card layout.
+- Offer create/edit form fields now use the lighter auth-form visual treatment, and the description textarea is taller and resizable for longer deal details.
+- Offer description textarea now matches the title input width by forcing `block w-full`, working around the Flowbite `Textarea` not inheriting the same wrapper as `Input`.
 
 ## [0.1.0] - 2026-05-16
 
@@ -158,4 +168,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ofertando-inc/front/releases/tag/v0.1.0

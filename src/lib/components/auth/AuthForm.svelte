@@ -96,7 +96,7 @@
 
 	<Button type="submit" class="w-full rounded-xl py-3" disabled={loading || disabled}>
 		{#if loading}
-			<Spinner class="me-3 !fill-white !text-white/30" size="4" />
+			<Spinner class="me-3 fill-white! text-white/30!" size="4" />
 		{/if}
 		{submitLabel}
 	</Button>

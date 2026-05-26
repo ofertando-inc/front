@@ -62,17 +62,21 @@
 			</div>
 
 			{#if $authStore.isAuthenticated && $authStore.user}
+				<Button href={resolve('/create-deal')} class="hidden rounded-full px-4 md:inline-flex">
+					<TagSolid class="mr-2 h-4 w-4 -rotate-90" />
+					{$translationStore.profile.publishOffer}
+				</Button>
 				<Avatar id="user-menu" class="cursor-pointer" cornerStyle="rounded" />
 				<Dropdown triggeredBy="#user-menu">
 					<div class="px-4 py-3 text-sm">
 						<p class="font-medium text-slate-900">{$authStore.user.username}</p>
 						<p class="truncate text-slate-500">{$authStore.user.email}</p>
 					</div>
-					<DropdownItem href={resolve('/profile')} liClass="list-none"
+					<DropdownItem href={resolve('/profile')} classes={{ li: 'list-none' }}
 						>{$translationStore.common.profile}</DropdownItem
 					>
 					<DropdownDivider />
-					<DropdownItem onclick={handleLogout} liClass="list-none"
+					<DropdownItem onclick={handleLogout} classes={{ li: 'list-none' }}
 						>{$translationStore.common.logout}</DropdownItem
 					>
 				</Dropdown>
@@ -133,6 +137,12 @@
 			</li>
 			<NavLi href={resolve('/')}>{$translationStore.common.home}</NavLi>
 			{#if $authStore.isAuthenticated}
+				<li class="list-none px-3 pt-2">
+					<Button href={resolve('/create-deal')} class="w-full justify-center rounded-full">
+						<TagSolid class="mr-2 h-4 w-4 -rotate-90" />
+						{$translationStore.profile.publishOffer}
+					</Button>
+				</li>
 				<NavLi href={resolve('/profile')}>{$translationStore.common.profile}</NavLi>
 				<li class="list-none px-3 pt-2">
 					<Button color="light" class="w-full justify-center rounded-full" onclick={handleLogout}>

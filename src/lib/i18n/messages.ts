@@ -60,9 +60,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'Mis comentarios',
 			myVotes: 'Mis votos',
 			noOffers: 'Aún no has publicado ofertas.',
+			noOffersDescription: 'Publica tu primera oferta para que aparezca aquí.',
 			noComments: 'Aún no has comentado ninguna oferta.',
 			noVotes: 'Historial de votos no disponible.',
-			comingSoon: 'Disponible cuando conectemos los datos de actividad.'
+			comingSoon: 'Disponible cuando conectemos los datos de actividad.',
+			publishOffer: 'Publicar oferta',
+			offerActions: 'Acciones de la oferta',
+			retry: 'Reintentar'
 		},
 		offer: {
 			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
@@ -154,6 +158,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			recentDealsTitle: 'Agregadas recientemente',
 			popularStoresTitle: 'Tiendas populares',
 			viewAll: 'Ver todas'
+		},
+		footer: {
+			rights: 'Todos los derechos reservados.',
+			terms: 'Términos',
+			privacy: 'Privacidad',
+			contact: 'Contacto'
 		},
 		deal: {
 			goToStore: 'Ir a la tienda',
@@ -325,9 +335,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'My comments',
 			myVotes: 'My votes',
 			noOffers: 'You have not published any offers yet.',
+			noOffersDescription: 'Publish your first deal so it appears here.',
 			noComments: 'You have not commented on any offer yet.',
 			noVotes: 'Vote history is not available yet.',
-			comingSoon: 'Available when activity data is connected.'
+			comingSoon: 'Available when activity data is connected.',
+			publishOffer: 'Publish deal',
+			offerActions: 'Deal actions',
+			retry: 'Try again'
 		},
 		offer: {
 			genericBrowseError: 'We could not load the offers right now.',
@@ -417,6 +431,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			recentDealsTitle: 'Recently added',
 			popularStoresTitle: 'Popular stores',
 			viewAll: 'View all'
+		},
+		footer: {
+			rights: 'All rights reserved.',
+			terms: 'Terms',
+			privacy: 'Privacy',
+			contact: 'Contact'
 		},
 		deal: {
 			goToStore: 'Go to the store',
@@ -587,9 +607,13 @@ export const messages: Record<Locale, TranslationMessages> = {
 			myComments: 'Mes commentaires',
 			myVotes: 'Mes votes',
 			noOffers: "Vous n'avez pas encore publié d'offres.",
+			noOffersDescription: 'Publiez votre première offre pour la voir apparaître ici.',
 			noComments: "Vous n'avez encore commenté aucune offre.",
 			noVotes: "L'historique des votes n'est pas encore disponible.",
-			comingSoon: "Disponible lorsque les données d'activité seront connectées."
+			comingSoon: "Disponible lorsque les données d'activité seront connectées.",
+			publishOffer: 'Publier une offre',
+			offerActions: "Actions de l'offre",
+			retry: 'Réessayer'
 		},
 		offer: {
 			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
@@ -682,6 +706,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			recentDealsTitle: 'Récemment ajoutées',
 			popularStoresTitle: 'Magasins populaires',
 			viewAll: 'Voir toutes'
+		},
+		footer: {
+			rights: 'Tous droits réservés.',
+			terms: 'Conditions',
+			privacy: 'Confidentialité',
+			contact: 'Contact'
 		},
 		deal: {
 			goToStore: 'Aller au magasin',

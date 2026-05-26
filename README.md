@@ -55,18 +55,18 @@ When running the front in Docker on Linux, set `BACK_URL=http://host.docker.inte
 
 ## Routes
 
-| Path               | Description                                                                                                                                         | Auth required                                |
-| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `/`                | Home — hero, hot deals, recent deals, and popular stores. Login and register CTAs are hidden when authenticated.                                    | No                                           |
-| `/login`           | Sign-in form. Calls `POST /api/auth/login` through the BFF; the backend sets the session cookies and the page redirects to `/profile`.              | No                                           |
-| `/register`        | Account creation form with client-side password confirmation. Calls `POST /api/auth/register` through the BFF.                                      | No                                           |
-| `/profile`         | Current user info from `GET /api/users/me`, with placeholder offers / comments / votes tabs.                                                        | Yes (redirects to `/login` otherwise)        |
-| `/deals`           | Cursor-paginated offer listing with city, offer type, sort, and period filters.                                                                     | No                                           |
-| `/deals/[id]`      | Offer detail page with status banners, vote panel, related offers, mocked comments. Author-only edit and delete buttons (delete via confirm modal). | No                                           |
-| `/deals/[id]/edit` | Edit form pre-filled with the existing offer. SvelteKit server action `PATCH /api/offers/[id]` with Superforms + Zod validation.                    | Yes (must be the author)                     |
-| `/create-deal`     | Create form. SvelteKit server action `POST /api/offers` with Superforms + Zod validation.                                                           | Yes (redirects to `/login` otherwise)        |
-| `/api/*`           | BFF catch-all proxy: forwards every browser request to `BACK_URL`, rewriting the refresh cookie path so it stays scoped under `/api/auth`.          | Whatever the targeted backend route requires |
-| _Anything else_    | Localized 404 / generic error page rendered by `src/routes/+error.svelte`.                                                                          | —                                            |
+| Path               | Description                                                                                                                                                               | Auth required                                |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| `/`                | Home — hero, hot deals, recent deals, and popular stores. Login and register CTAs are hidden when authenticated.                                                          | No                                           |
+| `/login`           | Sign-in form. Calls `POST /api/auth/login` through the BFF; the backend sets the session cookies and the page redirects to `/profile`.                                    | No                                           |
+| `/register`        | Account creation form with client-side password confirmation. Calls `POST /api/auth/register` through the BFF.                                                            | No                                           |
+| `/profile`         | Current user info from `GET /api/users/me`. The "My offers" tab is backed by `GET /api/offers/mine` with edit / delete actions; comments and votes tabs are placeholders. | Yes (redirects to `/login` otherwise)        |
+| `/deals`           | Cursor-paginated offer listing with city, offer type, sort, and period filters.                                                                                           | No                                           |
+| `/deals/[id]`      | Offer detail page with status banners, vote panel, related offers, mocked comments. Author-only edit and delete buttons (delete via confirm modal).                       | No                                           |
+| `/deals/[id]/edit` | Edit form pre-filled with the existing offer. SvelteKit server action `PATCH /api/offers/[id]` with Superforms + Zod validation.                                          | Yes (must be the author)                     |
+| `/create-deal`     | Create form. SvelteKit server action `POST /api/offers` with Superforms + Zod validation.                                                                                 | Yes (redirects to `/login` otherwise)        |
+| `/api/*`           | BFF catch-all proxy: forwards every browser request to `BACK_URL`, rewriting the refresh cookie path so it stays scoped under `/api/auth`.                                | Whatever the targeted backend route requires |
+| _Anything else_    | Localized 404 / generic error page rendered by `src/routes/+error.svelte`.                                                                                                | —                                            |
 
 ## Deployment Workflow
 

@@ -88,9 +88,13 @@ export interface TranslationMessages {
 		myComments: string;
 		myVotes: string;
 		noOffers: string;
+		noOffersDescription: string;
 		noComments: string;
 		noVotes: string;
 		comingSoon: string;
+		publishOffer: string;
+		offerActions: string;
+		retry: string;
 	};
 	offer: {
 		genericBrowseError: string;
@@ -178,6 +182,12 @@ export interface TranslationMessages {
 		recentDealsTitle: string;
 		popularStoresTitle: string;
 		viewAll: string;
+	};
+	footer: {
+		rights: string;
+		terms: string;
+		privacy: string;
+		contact: string;
 	};
 	deal: {
 		goToStore: string;

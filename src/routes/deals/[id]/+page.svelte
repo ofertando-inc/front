@@ -159,7 +159,7 @@
 	{#if loading}
 		<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 			<div class="space-y-6 lg:col-span-2">
-				<Card class="!max-w-full !p-6 sm:!p-8">
+				<Card class="max-w-full! p-6! sm:p-8!">
 					<div class="animate-pulse space-y-4">
 						<div class="h-5 w-32 rounded bg-gray-200"></div>
 						<div class="h-8 w-3/4 rounded bg-gray-200"></div>
@@ -170,7 +170,7 @@
 				</Card>
 			</div>
 			<div class="space-y-6">
-				<Card class="!max-w-full !p-6">
+				<Card class="max-w-full! p-6!">
 					<div class="animate-pulse space-y-3">
 						<div class="h-5 w-1/2 rounded bg-gray-200"></div>
 						<div class="h-3 w-full rounded bg-gray-200"></div>
@@ -180,7 +180,7 @@
 			</div>
 		</div>
 	{:else if notFound}
-		<Card class="mx-auto max-w-md !p-8 text-center">
+		<Card class="mx-auto max-w-md p-8! text-center">
 			<p class="text-6xl font-extrabold text-primary-500">404</p>
 			<h1 class="mt-4 text-2xl font-bold text-gray-900">
 				{$translationStore.errors['offer.not_found']}
@@ -192,7 +192,7 @@
 			</div>
 		</Card>
 	{:else if bannerError && !offer}
-		<Card class="mx-auto max-w-md !p-8 text-center">
+		<Card class="mx-auto max-w-md p-8! text-center">
 			<h1 class="text-2xl font-bold text-gray-900">
 				{$translationStore.errorPage.genericTitle}
 			</h1>
@@ -224,7 +224,7 @@
 					</p>
 				{/if}
 
-				<Card class="!max-w-full !p-6 sm:!p-8">
+				<Card class="max-w-full! p-6! sm:p-8!">
 					<div class="mb-4 flex flex-wrap items-center gap-3">
 						<DealStatusBadge status={offer.status} />
 						<span class="flex items-center gap-1 text-sm text-gray-500">
@@ -328,14 +328,14 @@
 					</div>
 				</Card>
 
-				<Card class="!max-w-full !p-6 sm:!p-8">
+				<Card class="max-w-full! p-6! sm:p-8!">
 					<h2 class="mb-6 text-xl font-bold text-gray-900">
 						{$translationStore.deal.commentsTitle} ({MOCK_COMMENTS.length})
 					</h2>
 
 					<div class="mb-8 flex gap-4">
 						<Avatar cornerStyle="circular" class="bg-gray-200 text-gray-500" />
-						<div class="flex-grow space-y-2">
+						<div class="grow space-y-2">
 							<Textarea rows={3} placeholder={$translationStore.deal.commentPlaceholder} disabled />
 							<div class="flex items-center justify-between">
 								<span class="text-xs text-gray-500"
@@ -368,7 +368,7 @@
 			</div>
 
 			<aside class="space-y-6">
-				<Card class="!max-w-full !p-6">
+				<Card class="max-w-full! p-6!">
 					<h3 class="mb-4 font-bold text-gray-900">{$translationStore.deal.relatedTitle}</h3>
 					{#if related.length === 0}
 						<p class="text-sm text-gray-500">{$translationStore.deal.relatedEmpty}</p>
