@@ -46,6 +46,13 @@ export interface TranslationMessages {
 		profile: string;
 		logout: string;
 		loading: string;
+		admin: string;
+	};
+	admin: {
+		title: string;
+		subtitle: string;
+		tabOffers: string;
+		tabReports: string;
 	};
 	auth: {
 		loginTitle: string;

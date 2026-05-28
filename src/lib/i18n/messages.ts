@@ -14,7 +14,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			register: 'Crear cuenta',
 			profile: 'Mi perfil',
 			logout: 'Cerrar sesión',
-			loading: 'Cargando...'
+			loading: 'Cargando...',
+			admin: 'Administración'
+		},
+		admin: {
+			title: 'Panel de administración',
+			subtitle: 'Modera las ofertas y revisa los reportes de la comunidad.',
+			tabOffers: 'Ofertas',
+			tabReports: 'Reportes'
 		},
 		auth: {
 			loginTitle: 'Inicia sesión',
@@ -314,7 +321,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			register: 'Create account',
 			profile: 'My profile',
 			logout: 'Log out',
-			loading: 'Loading...'
+			loading: 'Loading...',
+			admin: 'Administration'
+		},
+		admin: {
+			title: 'Administration panel',
+			subtitle: 'Moderate offers and review community reports.',
+			tabOffers: 'Offers',
+			tabReports: 'Reports'
 		},
 		auth: {
 			loginTitle: 'Log in',
@@ -611,7 +625,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			register: 'Créer un compte',
 			profile: 'Mon profil',
 			logout: 'Se déconnecter',
-			loading: 'Chargement...'
+			loading: 'Chargement...',
+			admin: 'Administration'
+		},
+		admin: {
+			title: "Panneau d'administration",
+			subtitle: 'Modérez les offres et examinez les signalements de la communauté.',
+			tabOffers: 'Offres',
+			tabReports: 'Signalements'
 		},
 		auth: {
 			loginTitle: 'Se connecter',
