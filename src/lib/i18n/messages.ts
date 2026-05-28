@@ -74,6 +74,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericUpdateError: 'No pudimos actualizar la oferta en este momento.',
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
 			genericVoteError: 'No pudimos registrar tu voto en este momento.',
+			genericReportError: 'No pudimos registrar tu reporte en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
 		offerStatus: {
@@ -166,6 +167,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			privacy: 'Privacidad',
 			contact: 'Contacto'
 		},
+		report: {
+			modalTitle: 'Reportar oferta',
+			modalDescription: 'Indícanos por qué crees que esta oferta debería ser revisada.',
+			reasonLabel: 'Motivo',
+			reasonPlaceholder: 'Selecciona un motivo',
+			commentLabel: 'Comentario',
+			commentPlaceholder: 'Añade detalles que ayuden a la moderación (opcional)',
+			commentHint: 'Opcional',
+			submit: 'Enviar reporte',
+			submitting: 'Enviando...',
+			cancel: 'Cancelar',
+			alreadyReported: 'Ya reportada',
+			genericError: 'No pudimos enviar el reporte. Inténtalo de nuevo.',
+			reasons: {
+				EXPIRED: 'Oferta expirada',
+				UNAVAILABLE: 'Producto no disponible',
+				INCORRECT_INFO: 'Información incorrecta',
+				SCAM: 'Estafa',
+				OTHER: 'Otro'
+			}
+		},
 		deal: {
 			goToStore: 'Ir a la tienda',
 			edit: 'Editar',
@@ -201,6 +223,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
 			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
+			'report.offer_not_reportable': 'No puedes reportar esta oferta porque ya no está activa.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -351,6 +374,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericUpdateError: 'We could not update the offer right now.',
 			genericDeleteError: 'We could not delete the offer right now.',
 			genericVoteError: 'We could not register your vote right now.',
+			genericReportError: 'We could not register your report right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
 		offerStatus: {
@@ -441,6 +465,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			privacy: 'Privacy',
 			contact: 'Contact'
 		},
+		report: {
+			modalTitle: 'Report offer',
+			modalDescription: 'Tell us why you think this offer should be reviewed.',
+			reasonLabel: 'Reason',
+			reasonPlaceholder: 'Select a reason',
+			commentLabel: 'Comment',
+			commentPlaceholder: 'Add details to help the moderation team (optional)',
+			commentHint: 'Optional',
+			submit: 'Send report',
+			submitting: 'Sending...',
+			cancel: 'Cancel',
+			alreadyReported: 'Already reported',
+			genericError: 'We could not submit the report. Please try again.',
+			reasons: {
+				EXPIRED: 'Offer expired',
+				UNAVAILABLE: 'Product unavailable',
+				INCORRECT_INFO: 'Incorrect information',
+				SCAM: 'Scam',
+				OTHER: 'Other'
+			}
+		},
 		deal: {
 			goToStore: 'Go to the store',
 			edit: 'Edit',
@@ -476,6 +521,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
 			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
+			'report.offer_not_reportable': 'You cannot report this offer because it is no longer active.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -625,6 +671,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericUpdateError: "Nous n'avons pas pu mettre à jour l'offre pour le moment.",
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
 			genericVoteError: "Nous n'avons pas pu enregistrer votre vote pour le moment.",
+			genericReportError: "Nous n'avons pas pu enregistrer votre signalement pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		offerStatus: {
@@ -718,6 +765,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			privacy: 'Confidentialité',
 			contact: 'Contact'
 		},
+		report: {
+			modalTitle: 'Signaler cette offre',
+			modalDescription: 'Indiquez-nous pourquoi cette offre devrait être examinée.',
+			reasonLabel: 'Motif',
+			reasonPlaceholder: 'Sélectionnez un motif',
+			commentLabel: 'Commentaire',
+			commentPlaceholder: 'Ajoutez des détails utiles à la modération (optionnel)',
+			commentHint: 'Optionnel',
+			submit: 'Envoyer le signalement',
+			submitting: 'Envoi...',
+			cancel: 'Annuler',
+			alreadyReported: 'Déjà signalée',
+			genericError: "Nous n'avons pas pu envoyer le signalement. Réessayez.",
+			reasons: {
+				EXPIRED: 'Offre expirée',
+				UNAVAILABLE: 'Produit indisponible',
+				INCORRECT_INFO: 'Informations incorrectes',
+				SCAM: 'Arnaque',
+				OTHER: 'Autre'
+			}
+		},
 		deal: {
 			goToStore: 'Aller au magasin',
 			edit: 'Modifier',
@@ -754,6 +822,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
 			'vote.offer_not_voteable':
 				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
+			'report.offer_not_reportable':
+				"Vous ne pouvez pas signaler cette offre car elle n'est plus active.",
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',

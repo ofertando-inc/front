@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-28
+
+### Added
+
+- Report domain types (`ReportReason`, `CreateReportDto`, `OfferReportResponse`, `MyReportResponse`) aligned with the backend `/offers/:id/reports*` contract, plus a new `report.offer_not_reportable` error key with localized messages in Spanish, English, and French.
+- Reports API client (`src/lib/api/reports.ts`) exposing `submitReport` and `getMyReport`, with cookie-based auth and offer-id URL encoding. Unit tests cover request shape (with and without the optional comment), response parsing, error propagation, and id encoding.
+- Localized `offer.genericReportError` fallback for the new `report` context of `resolveOfferError`.
+- Localized `report` translation namespace with the modal copy (title, description, reason label/placeholder, comment label/placeholder/hint, submit, cancel, already-reported, generic error) and the five `ReportReason` labels (`EXPIRED`, `UNAVAILABLE`, `INCORRECT_INFO`, `SCAM`, `OTHER`) in Spanish, English, and French.
+- `ReportModal` component composing Flowbite `Modal`, `Select`, and `Textarea`, with optimistic submit, disabled state while in flight, inline error banner for `report.offer_not_reportable`, and a server-status callback so the page can update `offer.status` immediately when the moderation threshold is hit.
+- Offer detail page wires the existing `FlagOutline` action to the `ReportModal`, gated to authenticated visitors (the button is hidden for anonymous ones).
+- Initial user-report load on the offer detail page: `loadOffer` parallelizes `getOfferById` and `getMyReport` so the report button mounts already reflecting the authenticated visitor's prior report. Anonymous visitors and 401 responses fall back silently.
+- When the visitor has already reported the offer, the action swaps to a filled-red `FlagSolid` icon, becomes `disabled`, and exposes the localized "already reported" label via `aria-label` and `title`.
+- E2E smoke coverage for the report flow: authenticated user opens the modal, picks a reason, submits, sees the REPORTED banner appear and the action switch to the already-reported state. Anonymous visitor never sees the report button.
+
+### Changed
+
+- CI now caches Playwright browser binaries under `~/.cache/ms-playwright`, keyed by the `@playwright/test` version resolved at runtime. The browser-binary install runs only on cache miss with a 10-minute timeout, and the system-dependency install runs on every job (apt is not cachable) with a 5-minute timeout. Replaces the single `npx playwright install --with-deps chromium` step that occasionally hung silently after the download finished and was never bounded by a step timeout.
+
 ## [0.3.0] - 2026-05-27
 
 ### Added
@@ -183,6 +201,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.4.0]: https://github.com/ofertando-inc/front/releases/tag/v0.4.0
 [0.3.0]: https://github.com/ofertando-inc/front/releases/tag/v0.3.0
 [0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
 [0.1.0]: https://github.com/ofertando-inc/front/releases/tag/v0.1.0
