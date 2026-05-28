@@ -53,6 +53,26 @@ export interface TranslationMessages {
 		subtitle: string;
 		tabOffers: string;
 		tabReports: string;
+		filterStatusLabel: string;
+		filterStatusAll: string;
+		thOffer: string;
+		thAuthor: string;
+		thStatus: string;
+		thScore: string;
+		thReports: string;
+		thActions: string;
+		actionDisable: string;
+		actionRestore: string;
+		actionDisableAuthor: string;
+		offersEmpty: string;
+		loadMore: string;
+		actionError: string;
+		disableAuthorTitle: string;
+		disableAuthorDescription: string;
+		disableAuthorConfirm: string;
+		disableAuthorCancel: string;
+		disablingAuthor: string;
+		authorDisabledFeedback: string;
 	};
 	auth: {
 		loginTitle: string;
