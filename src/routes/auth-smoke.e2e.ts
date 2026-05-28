@@ -9,7 +9,12 @@ function sendJson(response: import('node:http').ServerResponse, statusCode: numb
 }
 
 function isAuthenticated(request: import('node:http').IncomingMessage) {
-	return (request.headers.cookie ?? '').includes('e2e_session=authenticated');
+	const cookie = request.headers.cookie ?? '';
+	return cookie.includes('e2e_session=authenticated') || cookie.includes('e2e_session=admin');
+}
+
+function isAdmin(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=admin');
 }
 
 test.beforeAll(async () => {
@@ -18,11 +23,12 @@ test.beforeAll(async () => {
 
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
+				const admin = isAdmin(request);
 				sendJson(response, 200, {
-					id: 'e2e-user-id',
-					email: 'e2e@example.com',
-					username: 'e2euser',
-					role: 'USER',
+					id: admin ? 'e2e-admin-id' : 'e2e-user-id',
+					email: admin ? 'admin@example.com' : 'e2e@example.com',
+					username: admin ? 'e2eadmin' : 'e2euser',
+					role: admin ? 'ADMIN' : 'USER',
 					status: 'ACTIVE',
 					createdAt: '2026-05-01T10:00:00.000Z',
 					updatedAt: '2026-05-01T10:00:00.000Z'
@@ -154,6 +160,82 @@ test.beforeAll(async () => {
 				statusCode: 404
 			});
 			return;
+		}
+
+		if (url.startsWith('/admin/')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (!isAdmin(request)) {
+				sendJson(response, 403, { key: 'auth.forbidden', statusCode: 403 });
+				return;
+			}
+
+			const adminOffer = {
+				id: 'e2e-admin-offer',
+				title: 'Oferta moderable',
+				description: 'Oferta usada por el test admin.',
+				offerType: 'online',
+				externalUrl: 'https://example.com/promo',
+				storeName: 'TestStore',
+				city: 'Bogotá',
+				startDate: '2026-05-01T00:00:00.000Z',
+				endDate: '2026-12-31T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 4,
+				reportCount: 2,
+				createdAt: '2026-05-01T10:00:00.000Z',
+				updatedAt: '2026-05-01T10:00:00.000Z',
+				createdById: 'author-id',
+				createdByUsername: 'autor-test',
+				userVote: null
+			};
+
+			if (url === '/admin/offers' || url.startsWith('/admin/offers?')) {
+				sendJson(response, 200, { items: [adminOffer], nextCursor: null });
+				return;
+			}
+
+			if (/^\/admin\/offers\/[^/]+\/disable$/.test(url)) {
+				sendJson(response, 200, { ...adminOffer, status: 'DISABLED' });
+				return;
+			}
+
+			if (/^\/admin\/offers\/[^/]+\/restore$/.test(url)) {
+				sendJson(response, 200, { ...adminOffer, status: 'ACTIVE', reportCount: 0 });
+				return;
+			}
+
+			if (url === '/admin/reports' || url.startsWith('/admin/reports?')) {
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'report-1',
+							reason: 'SCAM',
+							comment: 'Parece una estafa',
+							createdAt: '2026-05-20T10:00:00.000Z',
+							user: { id: 'reporter-id', username: 'reportante' },
+							offer: { id: 'e2e-admin-offer', title: 'Oferta moderable' }
+						}
+					],
+					nextCursor: null
+				});
+				return;
+			}
+
+			if (/^\/admin\/users\/[^/]+\/(disable|restore)$/.test(url)) {
+				const disabling = url.endsWith('/disable');
+				sendJson(response, 200, {
+					id: 'author-id',
+					username: 'autor-test',
+					role: 'USER',
+					status: disabling ? 'DISABLED' : 'ACTIVE',
+					createdAt: '2026-05-01T10:00:00.000Z',
+					updatedAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
 		}
 
 		sendJson(response, 404, {
@@ -331,6 +413,44 @@ test('offer detail hides the report button for anonymous visitors', async ({ pag
 	await expect(page.getByRole('button', { name: 'Compartir' })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Reportar' })).toHaveCount(0);
 	await expect(page.getByRole('button', { name: 'Ya reportada' })).toHaveCount(0);
+});
+
+test('admin panel redirects anonymous visitors to login', async ({ page }) => {
+	await page.goto('/admin');
+
+	await expect(page).toHaveURL(/\/login$/);
+});
+
+test('admin panel returns 403 for authenticated non-admins', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	const response = await page.goto('/admin');
+
+	expect(response?.status()).toBe(403);
+});
+
+test('admin offers tab lists offers and disables one for an admin', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin');
+
+	await expect(page.getByRole('heading', { name: 'Panel de administración' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
+
+	await page.getByRole('button', { name: 'Desactivar', exact: true }).click();
+	await expect(page.getByRole('button', { name: 'Restaurar' })).toBeVisible();
+});
+
+test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/reports');
+
+	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
+	await expect(page.getByText('Parece una estafa')).toBeVisible();
+	await expect(page.getByText('reportante')).toBeVisible();
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {
