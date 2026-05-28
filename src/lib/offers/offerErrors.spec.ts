@@ -139,6 +139,22 @@ describe('resolveOfferError', () => {
 		});
 	});
 
+	it('maps report.offer_not_reportable to a banner message in the report context', () => {
+		const error = new ApiError('report.offer_not_reportable', 400);
+
+		expect(resolveOfferError(error, t, 'report')).toEqual({
+			bannerMessage: t.errors['report.offer_not_reportable'],
+			fieldErrors: {}
+		});
+	});
+
+	it('falls back to the contextual report message for non-ApiError', () => {
+		expect(resolveOfferError(new Error('network'), t, 'report')).toEqual({
+			bannerMessage: t.offer.genericReportError,
+			fieldErrors: {}
+		});
+	});
+
 	it('falls back to the contextual generic for unknown ApiError keys', () => {
 		const error = new ApiError('something.brand_new', 418);
 
