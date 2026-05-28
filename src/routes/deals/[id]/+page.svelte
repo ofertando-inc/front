@@ -16,6 +16,7 @@
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
+	import ReportModal from '$lib/components/offers/ReportModal.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
@@ -32,6 +33,7 @@
 	let deleteModalOpen = $state(false);
 	let deleting = $state(false);
 	let deleteErrorKey = $state<string | null>(null);
+	let reportModalOpen = $state(false);
 
 	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
 	let visibleBannerError = $derived(
@@ -322,14 +324,16 @@
 							>
 								<ShareNodesOutline class="h-5 w-5" />
 							</button>
-							<button
-								type="button"
-								aria-label={$translationStore.deal.report}
-								title={$translationStore.deal.commentDisabledHint}
-								class="rounded-full p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
-							>
-								<FlagOutline class="h-5 w-5" />
-							</button>
+							{#if $authStore.isAuthenticated}
+								<button
+									type="button"
+									aria-label={$translationStore.deal.report}
+									onclick={() => (reportModalOpen = true)}
+									class="rounded-full p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
+								>
+									<FlagOutline class="h-5 w-5" />
+								</button>
+							{/if}
 						</div>
 					</div>
 				</Card>
@@ -445,4 +449,14 @@
 			</div>
 		{/snippet}
 	</Modal>
+{/if}
+
+{#if offer && $authStore.isAuthenticated}
+	<ReportModal
+		offerId={offer.id}
+		bind:open={reportModalOpen}
+		onSuccess={(status) => {
+			if (offer) offer.status = status;
+		}}
+	/>
 {/if}
