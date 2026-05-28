@@ -8,6 +8,7 @@
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
 		FlagOutline,
+		FlagSolid,
 		MapPinOutline,
 		ShareNodesOutline,
 		StoreOutline,
@@ -15,6 +16,7 @@
 	} from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
+	import { getMyReport } from '$lib/api/reports';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
 	import ReportModal from '$lib/components/offers/ReportModal.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
@@ -23,6 +25,7 @@
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { Offer } from '$lib/types/offer';
+	import type { ReportReason } from '$lib/types/report';
 	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let offer = $state<Offer | null>(null);
@@ -34,6 +37,7 @@
 	let deleting = $state(false);
 	let deleteErrorKey = $state<string | null>(null);
 	let reportModalOpen = $state(false);
+	let alreadyReported = $state(false);
 
 	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
 	let visibleBannerError = $derived(
@@ -126,7 +130,11 @@
 		notFound = false;
 
 		try {
-			const fetchedOffer = await getOfferById(id);
+			const [fetchedOffer, fetchedReport] = await Promise.all([
+				getOfferById(id),
+				loadInitialUserReport(id)
+			]);
+			alreadyReported = fetchedReport !== null;
 			offer = fetchedOffer;
 			void loadRelated(fetchedOffer);
 		} catch (err) {
@@ -138,6 +146,16 @@
 			}
 		} finally {
 			loading = false;
+		}
+	}
+
+	async function loadInitialUserReport(id: string): Promise<ReportReason | null> {
+		if (!$authStore.isAuthenticated) return null;
+		try {
+			const res = await getMyReport(id);
+			return res.reason;
+		} catch {
+			return null;
 		}
 	}
 
@@ -325,14 +343,26 @@
 								<ShareNodesOutline class="h-5 w-5" />
 							</button>
 							{#if $authStore.isAuthenticated}
-								<button
-									type="button"
-									aria-label={$translationStore.deal.report}
-									onclick={() => (reportModalOpen = true)}
-									class="rounded-full p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
-								>
-									<FlagOutline class="h-5 w-5" />
-								</button>
+								{#if alreadyReported}
+									<button
+										type="button"
+										aria-label={$translationStore.report.alreadyReported}
+										title={$translationStore.report.alreadyReported}
+										disabled
+										class="rounded-full p-2 text-red-500 disabled:cursor-not-allowed"
+									>
+										<FlagSolid class="h-5 w-5" />
+									</button>
+								{:else}
+									<button
+										type="button"
+										aria-label={$translationStore.deal.report}
+										onclick={() => (reportModalOpen = true)}
+										class="rounded-full p-2 text-gray-500 transition-colors hover:bg-red-50 hover:text-red-600"
+									>
+										<FlagOutline class="h-5 w-5" />
+									</button>
+								{/if}
 							{/if}
 						</div>
 					</div>
@@ -457,6 +487,7 @@
 		bind:open={reportModalOpen}
 		onSuccess={(status) => {
 			if (offer) offer.status = status;
+			alreadyReported = true;
 		}}
 	/>
 {/if}
