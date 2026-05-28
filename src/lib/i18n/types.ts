@@ -14,6 +14,7 @@ export interface ErrorMessages {
 	'offer.invalid_dates': string;
 	'offer.invalid_status_transition': string;
 	'vote.offer_not_voteable': string;
+	'report.offer_not_reportable': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -103,6 +104,7 @@ export interface TranslationMessages {
 		genericUpdateError: string;
 		genericDeleteError: string;
 		genericVoteError: string;
+		genericReportError: string;
 		serverError: string;
 	};
 	offerStatus: {
@@ -190,6 +192,28 @@ export interface TranslationMessages {
 		terms: string;
 		privacy: string;
 		contact: string;
+	};
+	report: {
+		modalTitle: string;
+		modalDescription: string;
+		reasonLabel: string;
+		reasonPlaceholder: string;
+		commentLabel: string;
+		commentPlaceholder: string;
+		commentHint: string;
+		submit: string;
+		submitting: string;
+		cancel: string;
+		alreadyReported: string;
+		genericError: string;
+		reasons: {
+			SPAM: string;
+			INAPPROPRIATE: string;
+			FAKE: string;
+			EXPIRED: string;
+			OFFENSIVE: string;
+			OTHER: string;
+		};
 	};
 	deal: {
 		goToStore: string;
