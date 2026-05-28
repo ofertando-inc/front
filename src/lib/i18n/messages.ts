@@ -42,7 +42,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			disableAuthorConfirm: 'Desactivar autor',
 			disableAuthorCancel: 'Cancelar',
 			disablingAuthor: 'Desactivando...',
-			authorDisabledFeedback: 'Autor desactivado.'
+			authorDisabledFeedback: 'Autor desactivado.',
+			thReason: 'Motivo',
+			thComment: 'Comentario',
+			thReporter: 'Reportado por',
+			thReportedOffer: 'Oferta',
+			thDate: 'Fecha',
+			reportsEmpty: 'No hay reportes pendientes.',
+			noComment: 'Sin comentario'
 		},
 		auth: {
 			loginTitle: 'Inicia sesión',
@@ -370,7 +377,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			disableAuthorConfirm: 'Disable author',
 			disableAuthorCancel: 'Cancel',
 			disablingAuthor: 'Disabling...',
-			authorDisabledFeedback: 'Author disabled.'
+			authorDisabledFeedback: 'Author disabled.',
+			thReason: 'Reason',
+			thComment: 'Comment',
+			thReporter: 'Reported by',
+			thReportedOffer: 'Offer',
+			thDate: 'Date',
+			reportsEmpty: 'No pending reports.',
+			noComment: 'No comment'
 		},
 		auth: {
 			loginTitle: 'Log in',
@@ -695,7 +709,14 @@ export const messages: Record<Locale, TranslationMessages> = {
 			disableAuthorConfirm: "Désactiver l'auteur",
 			disableAuthorCancel: 'Annuler',
 			disablingAuthor: 'Désactivation...',
-			authorDisabledFeedback: 'Auteur désactivé.'
+			authorDisabledFeedback: 'Auteur désactivé.',
+			thReason: 'Motif',
+			thComment: 'Commentaire',
+			thReporter: 'Signalé par',
+			thReportedOffer: 'Offre',
+			thDate: 'Date',
+			reportsEmpty: 'Aucun signalement en attente.',
+			noComment: 'Sans commentaire'
 		},
 		auth: {
 			loginTitle: 'Se connecter',

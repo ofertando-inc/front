@@ -73,6 +73,13 @@ export interface TranslationMessages {
 		disableAuthorCancel: string;
 		disablingAuthor: string;
 		authorDisabledFeedback: string;
+		thReason: string;
+		thComment: string;
+		thReporter: string;
+		thReportedOffer: string;
+		thDate: string;
+		reportsEmpty: string;
+		noComment: string;
 	};
 	auth: {
 		loginTitle: string;
