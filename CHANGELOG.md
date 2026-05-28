@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - When the visitor has already reported the offer, the action swaps to a filled-red `FlagSolid` icon, becomes `disabled`, and exposes the localized "already reported" label via `aria-label` and `title`.
 - E2E smoke coverage for the report flow: authenticated user opens the modal, picks a reason, submits, sees the REPORTED banner appear and the action switch to the already-reported state. Anonymous visitor never sees the report button.
 
+### Changed
+
+- CI now caches Playwright browser binaries under `~/.cache/ms-playwright`, keyed by the `@playwright/test` version resolved at runtime. The browser-binary install runs only on cache miss with a 10-minute timeout, and the system-dependency install runs on every job (apt is not cachable) with a 5-minute timeout. Replaces the single `npx playwright install --with-deps chromium` step that occasionally hung silently after the download finished and was never bounded by a step timeout.
+
 ## [0.3.0] - 2026-05-27
 
 ### Added
