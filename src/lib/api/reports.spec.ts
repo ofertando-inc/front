@@ -25,7 +25,7 @@ describe('submitReport', () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ status: 'ACTIVE' }, 201));
 		vi.stubGlobal('fetch', fetchMock);
 
-		const res = await submitReport('abc', { reason: 'SPAM' });
+		const res = await submitReport('abc', { reason: 'SCAM' });
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers/abc/reports`,
@@ -33,7 +33,7 @@ describe('submitReport', () => {
 				method: 'POST',
 				credentials: 'include',
 				headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
-				body: JSON.stringify({ reason: 'SPAM' })
+				body: JSON.stringify({ reason: 'SCAM' })
 			})
 		);
 		expect(res).toEqual({ status: 'ACTIVE' });
@@ -43,12 +43,12 @@ describe('submitReport', () => {
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ status: 'REPORTED' }, 201));
 		vi.stubGlobal('fetch', fetchMock);
 
-		await submitReport('abc', { reason: 'FAKE', comment: 'Suspicious wording' });
+		await submitReport('abc', { reason: 'INCORRECT_INFO', comment: 'Suspicious wording' });
 
 		expect(fetchMock).toHaveBeenCalledWith(
 			`${BASE_URL}/offers/abc/reports`,
 			expect.objectContaining({
-				body: JSON.stringify({ reason: 'FAKE', comment: 'Suspicious wording' })
+				body: JSON.stringify({ reason: 'INCORRECT_INFO', comment: 'Suspicious wording' })
 			})
 		);
 	});
@@ -75,7 +75,7 @@ describe('submitReport', () => {
 				)
 		);
 
-		await expect(submitReport('abc', { reason: 'SPAM' })).rejects.toMatchObject({
+		await expect(submitReport('abc', { reason: 'SCAM' })).rejects.toMatchObject({
 			name: 'ApiError',
 			key: 'report.offer_not_reportable',
 			status: 400
@@ -88,13 +88,13 @@ describe('submitReport', () => {
 			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
 		);
 
-		await expect(submitReport('abc', { reason: 'SPAM' })).rejects.toBeInstanceOf(ApiError);
+		await expect(submitReport('abc', { reason: 'SCAM' })).rejects.toBeInstanceOf(ApiError);
 	});
 });
 
 describe('getMyReport', () => {
 	it('GETs the current user report with credentials', async () => {
-		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ reason: 'SPAM' }, 200));
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ reason: 'SCAM' }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
 		const res = await getMyReport('abc');
@@ -106,7 +106,7 @@ describe('getMyReport', () => {
 				credentials: 'include'
 			})
 		);
-		expect(res).toEqual({ reason: 'SPAM' });
+		expect(res).toEqual({ reason: 'SCAM' });
 	});
 
 	it('returns null when the user has not reported the offer', async () => {

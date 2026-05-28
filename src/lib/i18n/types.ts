@@ -207,11 +207,10 @@ export interface TranslationMessages {
 		alreadyReported: string;
 		genericError: string;
 		reasons: {
-			SPAM: string;
-			INAPPROPRIATE: string;
-			FAKE: string;
 			EXPIRED: string;
-			OFFENSIVE: string;
+			UNAVAILABLE: string;
+			INCORRECT_INFO: string;
+			SCAM: string;
 			OTHER: string;
 		};
 	};

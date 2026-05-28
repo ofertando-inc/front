@@ -181,11 +181,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			alreadyReported: 'Ya reportada',
 			genericError: 'No pudimos enviar el reporte. Inténtalo de nuevo.',
 			reasons: {
-				SPAM: 'Spam',
-				INAPPROPRIATE: 'Contenido inapropiado',
-				FAKE: 'Oferta falsa o engañosa',
 				EXPIRED: 'Oferta expirada',
-				OFFENSIVE: 'Lenguaje ofensivo',
+				UNAVAILABLE: 'Producto no disponible',
+				INCORRECT_INFO: 'Información incorrecta',
+				SCAM: 'Estafa',
 				OTHER: 'Otro'
 			}
 		},
@@ -480,11 +479,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			alreadyReported: 'Already reported',
 			genericError: 'We could not submit the report. Please try again.',
 			reasons: {
-				SPAM: 'Spam',
-				INAPPROPRIATE: 'Inappropriate content',
-				FAKE: 'Fake or misleading offer',
 				EXPIRED: 'Offer expired',
-				OFFENSIVE: 'Offensive language',
+				UNAVAILABLE: 'Product unavailable',
+				INCORRECT_INFO: 'Incorrect information',
+				SCAM: 'Scam',
 				OTHER: 'Other'
 			}
 		},
@@ -781,11 +779,10 @@ export const messages: Record<Locale, TranslationMessages> = {
 			alreadyReported: 'Déjà signalée',
 			genericError: "Nous n'avons pas pu envoyer le signalement. Réessayez.",
 			reasons: {
-				SPAM: 'Spam',
-				INAPPROPRIATE: 'Contenu inapproprié',
-				FAKE: 'Offre fausse ou trompeuse',
 				EXPIRED: 'Offre expirée',
-				OFFENSIVE: 'Langage offensant',
+				UNAVAILABLE: 'Produit indisponible',
+				INCORRECT_INFO: 'Informations incorrectes',
+				SCAM: 'Arnaque',
 				OTHER: 'Autre'
 			}
 		},

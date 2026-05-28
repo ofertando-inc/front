@@ -1,11 +1,10 @@
 import type { OfferStatus } from '$lib/types/offer';
 
 export const REPORT_REASONS = [
-	'SPAM',
-	'INAPPROPRIATE',
-	'FAKE',
 	'EXPIRED',
-	'OFFENSIVE',
+	'UNAVAILABLE',
+	'INCORRECT_INFO',
+	'SCAM',
 	'OTHER'
 ] as const;
 

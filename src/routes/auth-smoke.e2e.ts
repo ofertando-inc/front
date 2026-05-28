@@ -317,7 +317,7 @@ test('offer detail lets an authenticated user submit a report', async ({ page, c
 	await reportButton.click();
 	await expect(page.getByRole('heading', { name: 'Reportar oferta' })).toBeVisible();
 
-	await page.getByLabel('Motivo *').selectOption('SPAM');
+	await page.getByLabel('Motivo *').selectOption('SCAM');
 	await page.getByRole('button', { name: 'Enviar reporte' }).click();
 
 	await expect(page.getByRole('heading', { name: 'Reportar oferta' })).toBeHidden();
