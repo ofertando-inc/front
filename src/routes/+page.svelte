@@ -8,17 +8,29 @@
 	import { listOffers } from '$lib/api/offers';
 	import { MOCK_POPULAR_STORES } from '$lib/data/mockDeals';
 	import { translationStore } from '$lib/i18n';
+	import { isOfferExpired } from '$lib/offers/expiration';
 	import type { Offer } from '$lib/types/offer';
+
+	const HOT_DISPLAY = 3;
+	const RECENT_DISPLAY = 6;
 
 	let hotDeals = $state<Offer[]>([]);
 	let recentDeals = $state<Offer[]>([]);
 	let hotLoading = $state(true);
 	let recentLoading = $state(true);
 
+	// The public list now returns EXPIRED offers (and ACTIVE ones whose endDate
+	// just passed but whose status has not been flipped yet). The curated home
+	// rows should only surface live deals, so we over-fetch, drop anything
+	// expired by the OR-date rule, then trim to the display count.
+	function liveOffers(offers: Offer[], count: number): Offer[] {
+		return offers.filter((offer) => !isOfferExpired(offer)).slice(0, count);
+	}
+
 	onMount(async () => {
 		try {
-			const hot = await listOffers({ sort: 'score', period: 'week', limit: 3 });
-			hotDeals = hot.items;
+			const hot = await listOffers({ sort: 'score', period: 'week', limit: HOT_DISPLAY * 4 });
+			hotDeals = liveOffers(hot.items, HOT_DISPLAY);
 		} catch {
 			hotDeals = [];
 		} finally {
@@ -26,8 +38,8 @@
 		}
 
 		try {
-			const recent = await listOffers({ sort: 'date', limit: 6 });
-			recentDeals = recent.items;
+			const recent = await listOffers({ sort: 'date', limit: RECENT_DISPLAY * 3 });
+			recentDeals = liveOffers(recent.items, RECENT_DISPLAY);
 		} catch {
 			recentDeals = [];
 		} finally {

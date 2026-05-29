@@ -239,6 +239,7 @@ export interface TranslationMessages {
 		submitting: string;
 		cancel: string;
 		alreadyReported: string;
+		expiredHint: string;
 		genericError: string;
 		reasons: {
 			EXPIRED: string;
