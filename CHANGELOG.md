@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-05-29
+
+### Added
+
+- Admin domain types (`AdminListOffersQuery`, `ReportSummary`, `PaginatedReports`, `PublicUser`) aligned with the backend `/admin/*` contract.
+- Admin API client (`src/lib/api/admin.ts`) exposing `listAdminOffers` (with the admin-only `status` filter), `disableOffer`, `restoreOffer`, `listAdminReports`, `disableUser`, and `restoreUser`. Unit tests cover query serialization, id encoding, and `auth.forbidden` / `auth.unauthorized` propagation.
+- Server-side admin guard (`requireAdmin`) wired through `/admin/+layout.server.ts`: it probes the session over the BFF, refreshes once on 401, redirects anonymous visitors to `/login`, and returns a 403 for authenticated non-admins so admin content never renders for them.
+- `/admin` section with a shared shell and tabbed navigation (Offers, Reports), a localized `admin` translation namespace in Spanish, English, and French, and an `ADMIN`-gated "Administration" link in the header dropdown and mobile menu.
+- Admin offers tab: a paginated, status-filterable table with disable/restore offer actions (the returned offer replaces the row) and a confirmation-gated "disable author" action that calls `PATCH /admin/users/:id/disable`.
+- Admin reports tab: a paginated list of report summaries (offer link, reason, comment, reporter, date) reusing the localized report-reason labels.
+- E2E smoke coverage for the admin panel: anonymous visitors are redirected to login, authenticated non-admins receive a 403, and an admin can list offers, disable one, and view pending reports.
+
+### Fixed
+
+- API requests now send `cache: 'no-store'`, so cookie-authenticated GET reads (e.g. `/offers/:id/reports/me`) are never replayed from the browser HTTP cache. Previously, after an admin restored an offer, the detail page could show a stale "already reported" state until a hard refresh.
+
+### Security
+
+- The public offer detail and listing now only ever surface `ACTIVE` offers (backend change): disabling an offer removes it from the public routes immediately, and reported/disabled/expired offers return a 404 to anonymous and regular users.
+
 ## [0.4.0] - 2026-05-28
 
 ### Added
@@ -201,6 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.5.0]: https://github.com/ofertando-inc/front/releases/tag/v0.5.0
 [0.4.0]: https://github.com/ofertando-inc/front/releases/tag/v0.4.0
 [0.3.0]: https://github.com/ofertando-inc/front/releases/tag/v0.3.0
 [0.2.0]: https://github.com/ofertando-inc/front/releases/tag/v0.2.0
