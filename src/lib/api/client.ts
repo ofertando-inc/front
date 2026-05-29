@@ -109,6 +109,12 @@ export async function apiRequest<T>(path: string, options: RequestOptions = {}):
 	const response = await fetch(getApiUrl(path), {
 		...rest,
 		credentials: 'include',
+		// Never let the browser HTTP cache serve a stale response for these
+		// cookie-authenticated, dynamic API calls. Without this, a GET such as
+		// /offers/:id/reports/me can be replayed from cache after the underlying
+		// state changed (e.g. an admin restore clearing the user's report),
+		// forcing a hard refresh to see the truth.
+		cache: 'no-store',
 		headers: {
 			'Content-Type': 'application/json',
 			...headers
