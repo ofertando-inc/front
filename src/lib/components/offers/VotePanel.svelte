@@ -10,6 +10,7 @@
 		offerId: string;
 		initialScore: number;
 		initialUserVote?: VoteType | null;
+		disabled?: boolean;
 		size?: 'sm' | 'md' | 'lg';
 		class?: string;
 	}
@@ -18,6 +19,7 @@
 		offerId,
 		initialScore,
 		initialUserVote = null,
+		disabled = false,
 		size = 'md',
 		class: className = ''
 	}: Props = $props();
@@ -39,7 +41,7 @@
 		event.preventDefault();
 		event.stopPropagation();
 
-		if (pending) return;
+		if (pending || disabled) return;
 
 		if (!$authStore.isAuthenticated) {
 			errorMessage = $translationStore.errors['auth.unauthorized'];
@@ -84,7 +86,7 @@
 		<button
 			type="button"
 			onclick={(event) => handleVote('UP', event)}
-			disabled={pending}
+			disabled={pending || disabled}
 			aria-label={$translationStore.deals.voteUp}
 			aria-pressed={userVote === 'UP'}
 			class="rounded-full p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-60 {userVote ===
@@ -110,7 +112,7 @@
 		<button
 			type="button"
 			onclick={(event) => handleVote('DOWN', event)}
-			disabled={pending}
+			disabled={pending || disabled}
 			aria-label={$translationStore.deals.voteDown}
 			aria-pressed={userVote === 'DOWN'}
 			class="rounded-full p-1 transition-colors disabled:cursor-not-allowed disabled:opacity-60 {userVote ===

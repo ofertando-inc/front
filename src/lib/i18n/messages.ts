@@ -214,6 +214,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Enviando...',
 			cancel: 'Cancelar',
 			alreadyReported: 'Ya reportada',
+			expiredHint: 'No puedes reportar una oferta expirada',
 			genericError: 'No pudimos enviar el reporte. Inténtalo de nuevo.',
 			reasons: {
 				EXPIRED: 'Oferta expirada',
@@ -547,6 +548,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Sending...',
 			cancel: 'Cancel',
 			alreadyReported: 'Already reported',
+			expiredHint: 'You cannot report an expired offer',
 			genericError: 'We could not submit the report. Please try again.',
 			reasons: {
 				EXPIRED: 'Offer expired',
@@ -882,6 +884,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			submitting: 'Envoi...',
 			cancel: 'Annuler',
 			alreadyReported: 'Déjà signalée',
+			expiredHint: 'Vous ne pouvez pas signaler une offre expirée',
 			genericError: "Nous n'avons pas pu envoyer le signalement. Réessayez.",
 			reasons: {
 				EXPIRED: 'Offre expirée',

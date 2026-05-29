@@ -9,6 +9,7 @@
 		StoreOutline
 	} from 'flowbite-svelte-icons';
 	import { localeStore, translationStore } from '$lib/i18n';
+	import { isOfferExpired } from '$lib/offers/expiration';
 	import type { Offer } from '$lib/types/offer';
 	import DealStatusBadge from './DealStatusBadge.svelte';
 	import VotePanel from './VotePanel.svelte';
@@ -23,9 +24,8 @@
 
 	let detailHref = $derived(resolve('/deals/[id]', { id: offer.id }));
 
-	let isDimmed = $derived(
-		offer.status === 'EXPIRED' || offer.status === 'DISABLED' || offer.status === 'DELETED'
-	);
+	let expired = $derived(isOfferExpired(offer));
+	let isDimmed = $derived(expired || offer.status === 'DISABLED' || offer.status === 'DELETED');
 	let isOnline = $derived(offer.offerType === 'online');
 	let isLocal = $derived(offer.offerType === 'local');
 
@@ -49,6 +49,7 @@
 				offerId={offer.id}
 				initialScore={offer.score}
 				initialUserVote={offer.userVote}
+				disabled={expired}
 				size="md"
 			/>
 			<div class="flex flex-col items-end gap-2">
