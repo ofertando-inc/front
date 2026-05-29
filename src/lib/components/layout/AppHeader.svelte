@@ -75,6 +75,11 @@
 					<DropdownItem href={resolve('/profile')} classes={{ li: 'list-none' }}
 						>{$translationStore.common.profile}</DropdownItem
 					>
+					{#if $authStore.user.role === 'ADMIN'}
+						<DropdownItem href={resolve('/admin')} classes={{ li: 'list-none' }}
+							>{$translationStore.common.admin}</DropdownItem
+						>
+					{/if}
 					<DropdownDivider />
 					<DropdownItem onclick={handleLogout} classes={{ li: 'list-none' }}
 						>{$translationStore.common.logout}</DropdownItem
@@ -144,6 +149,9 @@
 					</Button>
 				</li>
 				<NavLi href={resolve('/profile')}>{$translationStore.common.profile}</NavLi>
+				{#if $authStore.user?.role === 'ADMIN'}
+					<NavLi href={resolve('/admin')}>{$translationStore.common.admin}</NavLi>
+				{/if}
 				<li class="list-none px-3 pt-2">
 					<Button color="light" class="w-full justify-center rounded-full" onclick={handleLogout}>
 						{$translationStore.common.logout}
