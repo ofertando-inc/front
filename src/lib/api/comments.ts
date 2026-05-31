@@ -1,11 +1,12 @@
 import { apiRequest } from '$lib/api/client';
 import type {
 	CommentResponse,
+	CommentVoteResponse,
 	CreateCommentDto,
-	LikeResponse,
 	PaginatedComments,
 	UpdateCommentDto
 } from '$lib/types/comment';
+import type { VoteType } from '$lib/types/vote';
 
 export interface ListCommentsQuery {
 	limit?: number;
@@ -58,16 +59,16 @@ export function deleteComment(offerId: string, commentId: string) {
 	);
 }
 
-export function likeComment(offerId: string, commentId: string) {
-	return apiRequest<LikeResponse>(
-		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/likes`,
-		{ method: 'POST' }
+export function voteComment(offerId: string, commentId: string, type: VoteType) {
+	return apiRequest<CommentVoteResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/votes`,
+		{ method: 'POST', body: JSON.stringify({ type }) }
 	);
 }
 
-export function unlikeComment(offerId: string, commentId: string) {
-	return apiRequest<LikeResponse>(
-		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/likes`,
+export function removeCommentVote(offerId: string, commentId: string) {
+	return apiRequest<CommentVoteResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/votes`,
 		{ method: 'DELETE' }
 	);
 }

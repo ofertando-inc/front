@@ -3,11 +3,11 @@ import { ApiError } from '$lib/api/client';
 import {
 	createComment,
 	deleteComment,
-	likeComment,
 	listComments,
 	listReplies,
-	unlikeComment,
-	updateComment
+	removeCommentVote,
+	updateComment,
+	voteComment
 } from '$lib/api/comments';
 
 const BASE_URL = 'http://test.local';
@@ -174,18 +174,22 @@ describe('deleteComment', () => {
 	});
 });
 
-describe('likeComment', () => {
-	it('POSTs to the likes endpoint with credentials and id encoding', async () => {
-		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ likeCount: 3, liked: true }, 200));
+describe('voteComment', () => {
+	it('POSTs the vote type to the votes endpoint with credentials and id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ score: 3, userVote: 'UP' }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		const res = await likeComment('a/b', 'c/1');
+		const res = await voteComment('a/b', 'c/1', 'UP');
 
 		expect(fetchMock).toHaveBeenCalledWith(
-			`${BASE_URL}/offers/a%2Fb/comments/c%2F1/likes`,
-			expect.objectContaining({ method: 'POST', credentials: 'include' })
+			`${BASE_URL}/offers/a%2Fb/comments/c%2F1/votes`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ type: 'UP' })
+			})
 		);
-		expect(res).toEqual({ likeCount: 3, liked: true });
+		expect(res).toEqual({ score: 3, userVote: 'UP' });
 	});
 
 	it('propagates ApiError on auth.unauthorized', async () => {
@@ -194,21 +198,21 @@ describe('likeComment', () => {
 			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
 		);
 
-		await expect(likeComment('abc', 'c1')).rejects.toBeInstanceOf(ApiError);
+		await expect(voteComment('abc', 'c1', 'DOWN')).rejects.toBeInstanceOf(ApiError);
 	});
 });
 
-describe('unlikeComment', () => {
-	it('DELETEs the likes endpoint and returns the updated count', async () => {
-		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ likeCount: 2, liked: false }, 200));
+describe('removeCommentVote', () => {
+	it('DELETEs the votes endpoint and returns the updated score', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ score: 2, userVote: null }, 200));
 		vi.stubGlobal('fetch', fetchMock);
 
-		const res = await unlikeComment('abc', 'c1');
+		const res = await removeCommentVote('abc', 'c1');
 
 		expect(fetchMock).toHaveBeenCalledWith(
-			`${BASE_URL}/offers/abc/comments/c1/likes`,
+			`${BASE_URL}/offers/abc/comments/c1/votes`,
 			expect.objectContaining({ method: 'DELETE', credentials: 'include' })
 		);
-		expect(res).toEqual({ likeCount: 2, liked: false });
+		expect(res).toEqual({ score: 2, userVote: null });
 	});
 });

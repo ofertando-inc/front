@@ -126,9 +126,9 @@ test.beforeAll(async () => {
 			editedAt: null,
 			user: { id: 'other-user', username: 'otrousuario' },
 			replyTo: null,
-			likeCount: 0,
+			score: 0,
+			userVote: null,
 			replyCount: 0,
-			liked: false,
 			deleted: false
 		};
 		const tombstoneRoot = {
@@ -138,9 +138,9 @@ test.beforeAll(async () => {
 			editedAt: null,
 			user: { id: 'ghost', username: 'fantasma' },
 			replyTo: null,
-			likeCount: 0,
+			score: 0,
+			userVote: null,
 			replyCount: 1,
-			liked: false,
 			deleted: true
 		};
 
@@ -150,17 +150,20 @@ test.beforeAll(async () => {
 			return;
 		}
 
-		const likesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/likes(?:\?.*)?$/);
-		if (likesMatch) {
+		const votesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/votes(?:\?.*)?$/);
+		if (votesMatch) {
 			if (!isAuthenticated(request)) {
 				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
 				return;
 			}
 			if (request.method === 'DELETE') {
-				sendJson(response, 200, { likeCount: 0, liked: false });
+				sendJson(response, 200, { score: 0, userVote: null });
 				return;
 			}
-			sendJson(response, 200, { likeCount: 1, liked: true });
+			void readJsonBody(request).then((body) => {
+				const type = (body as { type?: string }).type === 'DOWN' ? 'DOWN' : 'UP';
+				sendJson(response, 200, { score: type === 'UP' ? 1 : -1, userVote: type });
+			});
 			return;
 		}
 
@@ -197,9 +200,9 @@ test.beforeAll(async () => {
 						editedAt: null,
 						user: { id: 'e2e-user-id', username: 'e2euser' },
 						replyTo: null,
-						likeCount: 0,
+						score: 0,
+						userVote: null,
 						replyCount: 0,
-						liked: false,
 						deleted: false
 					});
 				});
@@ -655,29 +658,31 @@ test('authenticated user can post a comment on the thread', async ({ page, conte
 	await expect(page.getByText('Mi nuevo comentario')).toBeVisible();
 });
 
-test('authenticated user can toggle a like on a comment', async ({ page, context }) => {
+test('authenticated user can up-vote and remove the vote on a comment', async ({
+	page,
+	context
+}) => {
 	await context.addCookies([
 		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
 	]);
 
 	await page.goto('/deals/e2e-comment-offer');
 
-	const likeButton = page.getByRole('button', { name: 'Me gusta' });
-	await expect(likeButton).toContainText('0');
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	const upButton = commentItem.getByRole('button', { name: 'Votar positivo' });
 
-	await likeButton.click();
-	await expect(likeButton).toContainText('1');
-	await expect(likeButton).toHaveAttribute('aria-pressed', 'true');
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'true');
 
-	await likeButton.click();
-	await expect(likeButton).toContainText('0');
-	await expect(likeButton).toHaveAttribute('aria-pressed', 'false');
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
 });
 
-test('anonymous like on a comment redirects to login', async ({ page }) => {
+test('anonymous comment vote redirects to login', async ({ page }) => {
 	await page.goto('/deals/e2e-comment-offer');
 
-	await page.getByRole('button', { name: 'Me gusta' }).click();
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	await commentItem.getByRole('button', { name: 'Votar positivo' }).click();
 	await expect(page).toHaveURL(/\/login$/);
 });
 

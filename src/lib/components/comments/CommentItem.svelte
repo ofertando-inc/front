@@ -2,11 +2,12 @@
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Avatar, Button, Textarea } from 'flowbite-svelte';
-	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
-	import { likeComment, unlikeComment } from '$lib/api/comments';
+	import { ChevronDownOutline, ChevronUpOutline } from 'flowbite-svelte-icons';
+	import { removeCommentVote, voteComment } from '$lib/api/comments';
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { CommentResponse } from '$lib/types/comment';
+	import type { VoteType } from '$lib/types/vote';
 
 	interface Props {
 		offerId: string;
@@ -37,35 +38,45 @@
 	let deleting = $state(false);
 
 	// svelte-ignore state_referenced_locally
-	let liked = $state(comment.liked);
+	let score = $state(comment.score);
 	// svelte-ignore state_referenced_locally
-	let likeCount = $state(comment.likeCount);
-	let likePending = $state(false);
+	let userVote = $state<VoteType | null>(comment.userVote);
+	let votePending = $state(false);
 
-	async function toggleLike() {
-		if (likePending) return;
+	async function handleVote(direction: VoteType) {
+		if (votePending) return;
 		if (!$authStore.isAuthenticated) {
 			void goto(resolve('/login'));
 			return;
 		}
 
-		const wasLiked = liked;
-		const prevCount = likeCount;
-		liked = !wasLiked;
-		likeCount = wasLiked ? likeCount - 1 : likeCount + 1;
-		likePending = true;
+		const prevVote = userVote;
+		const prevScore = score;
+		const isRemoving = userVote === direction;
+
+		if (isRemoving) {
+			score = direction === 'UP' ? score - 1 : score + 1;
+			userVote = null;
+		} else if (userVote === null) {
+			score = direction === 'UP' ? score + 1 : score - 1;
+			userVote = direction;
+		} else {
+			score = direction === 'UP' ? score + 2 : score - 2;
+			userVote = direction;
+		}
+		votePending = true;
 
 		try {
-			const res = wasLiked
-				? await unlikeComment(offerId, comment.id)
-				: await likeComment(offerId, comment.id);
-			liked = res.liked;
-			likeCount = res.likeCount;
+			const res = isRemoving
+				? await removeCommentVote(offerId, comment.id)
+				: await voteComment(offerId, comment.id, direction);
+			score = res.score;
+			userVote = res.userVote;
 		} catch {
-			liked = wasLiked;
-			likeCount = prevCount;
+			score = prevScore;
+			userVote = prevVote;
 		} finally {
-			likePending = false;
+			votePending = false;
 		}
 	}
 
@@ -151,23 +162,41 @@
 			<p class="whitespace-pre-wrap text-gray-700">{comment.content}</p>
 
 			<div class="mt-1 flex items-center gap-3 text-xs font-medium text-gray-500">
-				<button
-					type="button"
-					aria-label={$translationStore.comments.like}
-					aria-pressed={liked}
-					disabled={likePending}
-					class="flex items-center gap-1 transition-colors {liked
-						? 'text-red-600'
-						: 'hover:text-red-600'}"
-					onclick={toggleLike}
-				>
-					{#if liked}
-						<HeartSolid class="h-4 w-4" />
-					{:else}
-						<HeartOutline class="h-4 w-4" />
-					{/if}
-					{likeCount}
-				</button>
+				<div class="flex items-center gap-1">
+					<button
+						type="button"
+						aria-label={$translationStore.deals.voteUp}
+						aria-pressed={userVote === 'UP'}
+						disabled={votePending}
+						class="rounded p-0.5 transition-colors disabled:opacity-60 {userVote === 'UP'
+							? 'text-primary-600'
+							: 'hover:text-primary-600'}"
+						onclick={() => handleVote('UP')}
+					>
+						<ChevronUpOutline class="h-4 w-4" strokeWidth="3" />
+					</button>
+					<span
+						class="min-w-[2ch] text-center {userVote === 'UP'
+							? 'text-primary-600'
+							: userVote === 'DOWN'
+								? 'text-blue-600'
+								: 'text-gray-700'}"
+					>
+						{score}
+					</span>
+					<button
+						type="button"
+						aria-label={$translationStore.deals.voteDown}
+						aria-pressed={userVote === 'DOWN'}
+						disabled={votePending}
+						class="rounded p-0.5 transition-colors disabled:opacity-60 {userVote === 'DOWN'
+							? 'text-blue-600'
+							: 'hover:text-blue-600'}"
+						onclick={() => handleVote('DOWN')}
+					>
+						<ChevronDownOutline class="h-4 w-4" strokeWidth="3" />
+					</button>
+				</div>
 
 				{#if showActions}
 					{#if canReply}
