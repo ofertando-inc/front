@@ -9,7 +9,7 @@
 	import { resolveOfferError } from '$lib/offers/offerErrors';
 	import type { CommentResponse } from '$lib/types/comment';
 	import CommentComposer from './CommentComposer.svelte';
-	import CommentItem from './CommentItem.svelte';
+	import CommentNode from './CommentNode.svelte';
 
 	interface Props {
 		offerId: string;
@@ -100,7 +100,12 @@
 	{:else}
 		<div class="space-y-6">
 			{#each comments as comment (comment.id)}
-				<CommentItem {comment} />
+				<CommentNode
+					{offerId}
+					{comment}
+					{onCountChange}
+					onRemove={() => (comments = comments.filter((c) => c.id !== comment.id))}
+				/>
 			{/each}
 		</div>
 
