@@ -34,6 +34,11 @@
 	let replyToUsername = $state<string | null>(null);
 	let errorMessage = $state<string | null>(null);
 
+	// Replies read oldest-first, regardless of backend, pagination or insertion order.
+	let sortedReplies = $derived(
+		[...replies].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+	);
+
 	function canEdit(c: CommentResponse): boolean {
 		return $authStore.isAuthenticated && !c.deleted && $authStore.user?.id === c.user.id;
 	}
@@ -216,7 +221,7 @@
 
 		{#if expanded}
 			<div class="space-y-4 border-l border-gray-100 pl-4">
-				{#each replies as reply (reply.id)}
+				{#each sortedReplies as reply (reply.id)}
 					<CommentItem
 						comment={reply}
 						canReply={!reply.deleted}

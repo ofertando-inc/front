@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Comment domain types (`CommentResponse` with a nullable `content` tombstone, `replyTo`, `PaginatedComments`, `CreateCommentDto`, `UpdateCommentDto`, `LikeResponse`) and the `comment.not_found` / `comment.forbidden` / `comment.offer_not_commentable` error keys with localized messages in Spanish, English, and French. `Offer` now carries `commentCount`.
+- Comments API client (`src/lib/api/comments.ts`) exposing `listComments`, `listReplies`, `createComment`, `updateComment`, and `deleteComment`, with cursor pagination, id encoding, and a `comment` context for `resolveOfferError`. Unit tested for query/body shape, id encoding, and error propagation.
+- Comment thread on the offer detail page replacing the previous mock list: a localized `comments` namespace, a `CommentThread` that loads paginated root comments and posts new ones (anonymous posters are redirected to `/login`), `CommentItem` rendering with author, locale-aware date, `(edited)` marker, and a `[deleted]` tombstone placeholder, and a `💬 commentCount` indicator on the detail header and on every `DealCard`.
+- One-level flat threading via `CommentNode`: lazy-loaded, paginated replies shown oldest-first, inline reply composer, author/admin inline edit and delete (with tombstone-or-remove handling driven by the DELETE response), and replies to a reply (the reply targets that comment's id and the backend flattens it under the root, with an "in reply to @user" label rendered from `replyTo`).
+- E2E smoke coverage for the comment thread: anonymous visitors see the thread and a tombstone placeholder and are redirected to `/login` when they try to post, and an authenticated user can post a comment that appears in the thread.
+
 ## [0.6.0] - 2026-05-31
 
 ### Added
@@ -237,6 +247,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[unreleased]: https://github.com/ofertando-inc/front/compare/v0.6.0...HEAD
 [0.6.0]: https://github.com/ofertando-inc/front/releases/tag/v0.6.0
 [0.5.0]: https://github.com/ofertando-inc/front/releases/tag/v0.5.0
 [0.4.0]: https://github.com/ofertando-inc/front/releases/tag/v0.4.0
