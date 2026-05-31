@@ -150,6 +150,20 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		const likesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/likes(?:\?.*)?$/);
+		if (likesMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (request.method === 'DELETE') {
+				sendJson(response, 200, { likeCount: 0, liked: false });
+				return;
+			}
+			sendJson(response, 200, { likeCount: 1, liked: true });
+			return;
+		}
+
 		const commentMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)(?:\?.*)?$/);
 		if (commentMatch) {
 			if (!isAuthenticated(request)) {
@@ -639,6 +653,32 @@ test('authenticated user can post a comment on the thread', async ({ page, conte
 	await page.getByRole('button', { name: 'Comentar' }).click();
 
 	await expect(page.getByText('Mi nuevo comentario')).toBeVisible();
+});
+
+test('authenticated user can toggle a like on a comment', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	const likeButton = page.getByRole('button', { name: 'Me gusta' });
+	await expect(likeButton).toContainText('0');
+
+	await likeButton.click();
+	await expect(likeButton).toContainText('1');
+	await expect(likeButton).toHaveAttribute('aria-pressed', 'true');
+
+	await likeButton.click();
+	await expect(likeButton).toContainText('0');
+	await expect(likeButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('anonymous like on a comment redirects to login', async ({ page }) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	await page.getByRole('button', { name: 'Me gusta' }).click();
+	await expect(page).toHaveURL(/\/login$/);
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {
