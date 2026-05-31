@@ -15,6 +15,10 @@ export interface ErrorMessages {
 	'offer.invalid_status_transition': string;
 	'vote.offer_not_voteable': string;
 	'report.offer_not_reportable': string;
+	'comment.not_found': string;
+	'comment.forbidden': string;
+	'comment.offer_not_commentable': string;
+	'comment.cannot_reply_to_reply': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
