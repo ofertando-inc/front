@@ -110,6 +110,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
 			genericVoteError: 'No pudimos registrar tu voto en este momento.',
 			genericReportError: 'No pudimos registrar tu reporte en este momento.',
+			genericCommentError: 'No pudimos completar la acción del comentario en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
 		offerStatus: {
@@ -450,6 +451,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'We could not delete the offer right now.',
 			genericVoteError: 'We could not register your vote right now.',
 			genericReportError: 'We could not register your report right now.',
+			genericCommentError: 'We could not complete the comment action right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
 		offerStatus: {
@@ -787,6 +789,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
 			genericVoteError: "Nous n'avons pas pu enregistrer votre vote pour le moment.",
 			genericReportError: "Nous n'avons pas pu enregistrer votre signalement pour le moment.",
+			genericCommentError:
+				"Nous n'avons pas pu effectuer l'action sur le commentaire pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		offerStatus: {
