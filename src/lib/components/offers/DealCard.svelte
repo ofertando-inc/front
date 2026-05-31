@@ -6,6 +6,7 @@
 		CalendarMonthOutline,
 		GlobeOutline,
 		MapPinOutline,
+		MessagesOutline,
 		StoreOutline
 	} from 'flowbite-svelte-icons';
 	import { localeStore, translationStore } from '$lib/i18n';
@@ -101,6 +102,10 @@
 					{offer.city}
 				</div>
 			{/if}
+			<div class="flex items-center gap-1">
+				<MessagesOutline class="h-3.5 w-3.5 text-gray-400" />
+				{offer.commentCount}
+			</div>
 			<div class="ml-auto flex items-center gap-1">
 				<CalendarMonthOutline class="h-3.5 w-3.5 text-gray-400" />
 				{$translationStore.deals.expiresOn}

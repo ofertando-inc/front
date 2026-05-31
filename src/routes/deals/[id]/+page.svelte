@@ -3,7 +3,7 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { Avatar, Button, Card, Modal, Textarea } from 'flowbite-svelte';
+	import { Avatar, Button, Card, Modal } from 'flowbite-svelte';
 	import {
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
@@ -17,6 +17,7 @@
 	import { ApiError } from '$lib/api/client';
 	import { getOfferById, listOffers } from '$lib/api/offers';
 	import { getMyReport } from '$lib/api/reports';
+	import CommentThread from '$lib/components/comments/CommentThread.svelte';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
 	import ReportModal from '$lib/components/offers/ReportModal.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
@@ -73,16 +74,6 @@
 				}).format(new Date(offer.createdAt))
 			: ''
 	);
-
-	const MOCK_COMMENTS = $derived([
-		{ author: 'María', text: $translationStore.deal.mockComment1, hoursAgo: 2 },
-		{ author: 'Carlos', text: $translationStore.deal.mockComment2, hoursAgo: 5 },
-		{ author: 'Ana', text: $translationStore.deal.mockComment3, hoursAgo: 12 }
-	]);
-
-	function ageLabel(hours: number): string {
-		return $translationStore.deal.mockCommentAge.replace('{hours}', String(hours));
-	}
 
 	function resolveDeleteError(errorKey: string): string {
 		if (errorKey === 'deleteDeal.genericError') {
@@ -383,40 +374,15 @@
 
 				<Card class="max-w-full! p-6! sm:p-8!">
 					<h2 class="mb-6 text-xl font-bold text-gray-900">
-						{$translationStore.deal.commentsTitle} ({MOCK_COMMENTS.length})
+						{$translationStore.comments.title} ({offer.commentCount})
 					</h2>
 
-					<div class="mb-8 flex gap-4">
-						<Avatar cornerStyle="circular" class="bg-gray-200 text-gray-500" />
-						<div class="grow space-y-2">
-							<Textarea rows={3} placeholder={$translationStore.deal.commentPlaceholder} disabled />
-							<div class="flex items-center justify-between">
-								<span class="text-xs text-gray-500"
-									>{$translationStore.deal.commentDisabledHint}</span
-								>
-								<Button disabled class="rounded-lg">
-									{$translationStore.deal.commentSubmit}
-								</Button>
-							</div>
-						</div>
-					</div>
-
-					<div class="space-y-6">
-						{#each MOCK_COMMENTS as comment, i (i)}
-							<div class="flex gap-4">
-								<Avatar cornerStyle="circular" class="bg-blue-100 text-blue-600">
-									{comment.author.slice(0, 1)}
-								</Avatar>
-								<div>
-									<div class="mb-1 flex items-baseline gap-2">
-										<span class="font-bold text-gray-900">{comment.author}</span>
-										<span class="text-xs text-gray-500">{ageLabel(comment.hoursAgo)}</span>
-									</div>
-									<p class="text-gray-700">{comment.text}</p>
-								</div>
-							</div>
-						{/each}
-					</div>
+					<CommentThread
+						offerId={offer.id}
+						onCountChange={(delta) => {
+							if (offer) offer.commentCount += delta;
+						}}
+					/>
 				</Card>
 			</div>
 

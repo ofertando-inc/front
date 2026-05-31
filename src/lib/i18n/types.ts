@@ -226,6 +226,27 @@ export interface TranslationMessages {
 		popularStoresTitle: string;
 		viewAll: string;
 	};
+	comments: {
+		title: string;
+		placeholder: string;
+		submit: string;
+		submitting: string;
+		empty: string;
+		loadMore: string;
+		edited: string;
+		deletedPlaceholder: string;
+		reply: string;
+		replyPlaceholder: string;
+		viewReplies: string;
+		hideReplies: string;
+		loadMoreReplies: string;
+		edit: string;
+		save: string;
+		saving: string;
+		cancel: string;
+		delete: string;
+		deleteConfirm: string;
+	};
 	footer: {
 		rights: string;
 		terms: string;
