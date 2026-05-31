@@ -15,6 +15,9 @@ export interface ErrorMessages {
 	'offer.invalid_status_transition': string;
 	'vote.offer_not_voteable': string;
 	'report.offer_not_reportable': string;
+	'comment.not_found': string;
+	'comment.forbidden': string;
+	'comment.offer_not_commentable': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -139,6 +142,7 @@ export interface TranslationMessages {
 		genericDeleteError: string;
 		genericVoteError: string;
 		genericReportError: string;
+		genericCommentError: string;
 		serverError: string;
 	};
 	offerStatus: {
@@ -220,6 +224,28 @@ export interface TranslationMessages {
 		recentDealsTitle: string;
 		popularStoresTitle: string;
 		viewAll: string;
+	};
+	comments: {
+		title: string;
+		placeholder: string;
+		submit: string;
+		submitting: string;
+		empty: string;
+		loadMore: string;
+		edited: string;
+		deletedPlaceholder: string;
+		reply: string;
+		replyingTo: string;
+		replyPlaceholder: string;
+		viewReplies: string;
+		hideReplies: string;
+		loadMoreReplies: string;
+		edit: string;
+		save: string;
+		saving: string;
+		cancel: string;
+		delete: string;
+		deleteConfirm: string;
 	};
 	footer: {
 		rights: string;

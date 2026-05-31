@@ -155,6 +155,22 @@ describe('resolveOfferError', () => {
 		});
 	});
 
+	it('maps comment.offer_not_commentable to a banner message in the comment context', () => {
+		const error = new ApiError('comment.offer_not_commentable', 400);
+
+		expect(resolveOfferError(error, t, 'comment')).toEqual({
+			bannerMessage: t.errors['comment.offer_not_commentable'],
+			fieldErrors: {}
+		});
+	});
+
+	it('falls back to the contextual comment message for non-ApiError', () => {
+		expect(resolveOfferError(new Error('network'), t, 'comment')).toEqual({
+			bannerMessage: t.offer.genericCommentError,
+			fieldErrors: {}
+		});
+	});
+
 	it('falls back to the contextual generic for unknown ApiError keys', () => {
 		const error = new ApiError('something.brand_new', 418);
 
