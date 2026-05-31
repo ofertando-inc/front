@@ -6,7 +6,8 @@ export const OFFER_TYPE_MAX_LENGTH = 50;
 export const OFFER_STORE_NAME_MAX_LENGTH = 100;
 export const OFFER_CITY_MAX_LENGTH = 100;
 
-const isoDateTime = z.iso.datetime({ local: true });
+const isoLocalDateTime = z.iso.datetime({ local: true });
+const isoUtcDateTime = z.iso.datetime();
 const isoDate = z.iso.date();
 
 function requiredText(maxLength: number) {
@@ -32,7 +33,11 @@ function dateString() {
 }
 
 function isValidDateString(value: string): boolean {
-	return isoDateTime.safeParse(value).success || isoDate.safeParse(value).success;
+	return (
+		isoLocalDateTime.safeParse(value).success ||
+		isoUtcDateTime.safeParse(value).success ||
+		isoDate.safeParse(value).success
+	);
 }
 
 function parseValidDate(value: string | undefined): Date | null {
