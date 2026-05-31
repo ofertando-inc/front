@@ -21,6 +21,7 @@
 	import ReportModal from '$lib/components/offers/ReportModal.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
+	import { isOfferExpired } from '$lib/offers/expiration';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
@@ -40,13 +41,14 @@
 	let alreadyReported = $state(false);
 
 	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
+	let expired = $derived(offer ? isOfferExpired(offer) : false);
 	let visibleBannerError = $derived(
 		deleteErrorKey ? resolveDeleteError(deleteErrorKey) : bannerError
 	);
 
 	let statusBanner = $derived.by(() => {
 		if (!offer) return null;
-		if (offer.status === 'EXPIRED') return $translationStore.deal.expiredBanner;
+		if (expired) return $translationStore.deal.expiredBanner;
 		if (offer.status === 'DISABLED') return $translationStore.deal.disabledBanner;
 		if (offer.status === 'REPORTED') return $translationStore.deal.reportedBanner;
 		return null;
@@ -276,6 +278,7 @@
 							offerId={offer.id}
 							initialScore={offer.score}
 							initialUserVote={offer.userVote}
+							disabled={expired}
 							size="lg"
 						/>
 						{#if offer.externalUrl}
@@ -352,6 +355,16 @@
 										class="rounded-full p-2 text-red-500 disabled:cursor-not-allowed"
 									>
 										<FlagSolid class="h-5 w-5" />
+									</button>
+								{:else if expired}
+									<button
+										type="button"
+										aria-label={$translationStore.report.expiredHint}
+										title={$translationStore.report.expiredHint}
+										disabled
+										class="rounded-full p-2 text-gray-300 disabled:cursor-not-allowed"
+									>
+										<FlagOutline class="h-5 w-5" />
 									</button>
 								{:else}
 									<button

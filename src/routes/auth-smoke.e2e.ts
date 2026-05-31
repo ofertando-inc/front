@@ -131,6 +131,31 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/offers/e2e-expired-offer' || url.startsWith('/offers/e2e-expired-offer?')) {
+			// Status still ACTIVE but the endDate is in the past: the front must
+			// treat it as expired via the OR-date rule, not the lagging status.
+			sendJson(response, 200, {
+				id: 'e2e-expired-offer',
+				title: 'Oferta caducada de prueba',
+				description: 'Descripción de la oferta caducada para el test.',
+				offerType: 'online',
+				externalUrl: 'https://example.com/promo',
+				storeName: 'TestStore',
+				city: 'Bogotá',
+				startDate: '2020-01-01T00:00:00.000Z',
+				endDate: '2020-02-01T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 3,
+				reportCount: 0,
+				createdAt: '2020-01-01T10:00:00.000Z',
+				updatedAt: '2020-01-01T10:00:00.000Z',
+				createdById: 'other-author',
+				createdByUsername: 'other-author',
+				userVote: null
+			});
+			return;
+		}
+
 		if (url === '/offers/e2e-vote-offer' || url.startsWith('/offers/e2e-vote-offer?')) {
 			sendJson(response, 200, {
 				id: 'e2e-vote-offer',
@@ -451,6 +476,25 @@ test('admin reports tab lists pending reports for an admin', async ({ page, cont
 	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
 	await expect(page.getByText('Parece una estafa')).toBeVisible();
 	await expect(page.getByText('reportante')).toBeVisible();
+});
+
+test('offer detail marks a past-date offer as expired and locks vote/report', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-expired-offer');
+
+	await expect(page.getByRole('heading', { name: 'Oferta caducada de prueba' })).toBeVisible();
+	await expect(page.getByText('Esta oferta ya expiró.')).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Votar positivo' })).toBeDisabled();
+	await expect(page.getByRole('button', { name: 'Votar negativo' })).toBeDisabled();
+	await expect(
+		page.getByRole('button', { name: 'No puedes reportar una oferta expirada' })
+	).toBeDisabled();
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {

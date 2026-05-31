@@ -2,6 +2,7 @@
 	import { Button, Card, Input, Label, Select, Textarea } from 'flowbite-svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { translationStore } from '$lib/i18n';
+	import { localInputToUtcIso, utcIsoToLocalInput } from '$lib/offers/dates';
 	import type { CreateOfferFormData } from '$lib/validation/offerSchema';
 
 	export interface OfferFormLabels {
@@ -20,9 +21,36 @@
 
 	let { formData, labels }: Props = $props();
 
+	const DATE_FIELDS = ['startDate', 'endDate'] as const;
+
 	// svelte-ignore state_referenced_locally
 	const { form, errors, enhance, submitting } = superForm(formData, {
-		resetForm: false
+		resetForm: false,
+		onSubmit({ formData: outgoing }) {
+			// Convert the naive datetime-local picker values to ISO 8601 UTC in the
+			// browser (correct timezone + DST), never on the SvelteKit server which
+			// runs in UTC. Only the outgoing payload is rewritten; the visible
+			// inputs keep showing local time.
+			for (const field of DATE_FIELDS) {
+				const value = outgoing.get(field);
+				if (typeof value === 'string') {
+					outgoing.set(field, localInputToUtcIso(value));
+				}
+			}
+		},
+		onUpdated() {
+			// On a validation failure the server echoes the UTC values back into the
+			// form store; re-localize them so the datetime-local pickers can display
+			// them again (no-op when the values are already local).
+			form.update(
+				(current) => ({
+					...current,
+					startDate: utcIsoToLocalInput(current.startDate),
+					endDate: utcIsoToLocalInput(current.endDate)
+				}),
+				{ taint: false }
+			);
+		}
 	});
 
 	type FieldName = keyof CreateOfferFormData;

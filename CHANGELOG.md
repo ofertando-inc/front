@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-05-31
+
+### Added
+
+- `isOfferExpired(offer)` helper applying the backend's OR-date rule: an offer is treated as expired when its status is `EXPIRED` or its `endDate` is in the past, so a slightly lagging status never shows a stale "live" offer. Unit-tested across status, past/future dates, the exact boundary, and unparseable dates.
+- Expired offers (now returned publicly by the backend) render greyed out on the listing and detail pages, driven by `isOfferExpired` rather than the raw status.
+
+### Changed
+
+- Vote and report controls are proactively disabled on the offer detail page when the offer is expired, with a localized tooltip on the report button, instead of relying solely on the backend's `vote.offer_not_voteable` / `report.offer_not_reportable` rejection.
+- The home page hot-deals and recent-deals rows now exclude expired offers: they over-fetch, drop anything expired by the OR-date rule, then trim to the display count, keeping the curated rows full of live deals while `/deals` still shows expired offers greyed.
+
+### Fixed
+
+- Offer create/edit now sends `startDate` / `endDate` as ISO 8601 UTC. New `localInputToUtcIso` / `utcIsoToLocalInput` helpers convert the naive `datetime-local` picker value in the browser (correct timezone and DST), the `OfferForm` rewrites the outgoing payload on submit and re-localizes the pickers if server validation fails, and the offer schema now accepts UTC datetimes. Previously the raw local picker string was sent verbatim, so offers expired at the wrong moment for any user not in UTC.
+
 ## [0.5.0] - 2026-05-29
 
 ### Added
@@ -221,6 +237,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[0.6.0]: https://github.com/ofertando-inc/front/releases/tag/v0.6.0
 [0.5.0]: https://github.com/ofertando-inc/front/releases/tag/v0.5.0
 [0.4.0]: https://github.com/ofertando-inc/front/releases/tag/v0.4.0
 [0.3.0]: https://github.com/ofertando-inc/front/releases/tag/v0.3.0
