@@ -2,6 +2,7 @@ import { apiRequest } from '$lib/api/client';
 import type {
 	CommentResponse,
 	CreateCommentDto,
+	LikeResponse,
 	PaginatedComments,
 	UpdateCommentDto
 } from '$lib/types/comment';
@@ -53,6 +54,20 @@ export function updateComment(offerId: string, commentId: string, payload: Updat
 export function deleteComment(offerId: string, commentId: string) {
 	return apiRequest<CommentResponse>(
 		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}`,
+		{ method: 'DELETE' }
+	);
+}
+
+export function likeComment(offerId: string, commentId: string) {
+	return apiRequest<LikeResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/likes`,
+		{ method: 'POST' }
+	);
+}
+
+export function unlikeComment(offerId: string, commentId: string) {
+	return apiRequest<LikeResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/likes`,
 		{ method: 'DELETE' }
 	);
 }

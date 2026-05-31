@@ -3,8 +3,10 @@ import { ApiError } from '$lib/api/client';
 import {
 	createComment,
 	deleteComment,
+	likeComment,
 	listComments,
 	listReplies,
+	unlikeComment,
 	updateComment
 } from '$lib/api/comments';
 
@@ -169,5 +171,44 @@ describe('deleteComment', () => {
 			key: 'comment.not_found',
 			status: 404
 		});
+	});
+});
+
+describe('likeComment', () => {
+	it('POSTs to the likes endpoint with credentials and id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ likeCount: 3, liked: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await likeComment('a/b', 'c/1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/a%2Fb/comments/c%2F1/likes`,
+			expect.objectContaining({ method: 'POST', credentials: 'include' })
+		);
+		expect(res).toEqual({ likeCount: 3, liked: true });
+	});
+
+	it('propagates ApiError on auth.unauthorized', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
+		);
+
+		await expect(likeComment('abc', 'c1')).rejects.toBeInstanceOf(ApiError);
+	});
+});
+
+describe('unlikeComment', () => {
+	it('DELETEs the likes endpoint and returns the updated count', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ likeCount: 2, liked: false }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await unlikeComment('abc', 'c1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/comments/c1/likes`,
+			expect.objectContaining({ method: 'DELETE', credentials: 'include' })
+		);
+		expect(res).toEqual({ likeCount: 2, liked: false });
 	});
 });
