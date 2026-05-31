@@ -175,6 +175,7 @@
 
 <div class="space-y-3">
 	<CommentItem
+		{offerId}
 		comment={root}
 		canReply={!root.deleted}
 		canEdit={canEdit(root)}
@@ -223,6 +224,7 @@
 			<div class="space-y-4 border-l border-gray-100 pl-4">
 				{#each sortedReplies as reply (reply.id)}
 					<CommentItem
+						{offerId}
 						comment={reply}
 						canReply={!reply.deleted}
 						canEdit={canEdit(reply)}

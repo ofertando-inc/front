@@ -1,9 +1,15 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import { Avatar, Button, Textarea } from 'flowbite-svelte';
+	import { HeartOutline, HeartSolid } from 'flowbite-svelte-icons';
+	import { likeComment, unlikeComment } from '$lib/api/comments';
+	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { CommentResponse } from '$lib/types/comment';
 
 	interface Props {
+		offerId: string;
 		comment: CommentResponse;
 		canReply?: boolean;
 		canEdit?: boolean;
@@ -14,6 +20,7 @@
 	}
 
 	let {
+		offerId,
 		comment,
 		canReply = false,
 		canEdit = false,
@@ -28,6 +35,39 @@
 	let saving = $state(false);
 	let confirmingDelete = $state(false);
 	let deleting = $state(false);
+
+	// svelte-ignore state_referenced_locally
+	let liked = $state(comment.liked);
+	// svelte-ignore state_referenced_locally
+	let likeCount = $state(comment.likeCount);
+	let likePending = $state(false);
+
+	async function toggleLike() {
+		if (likePending) return;
+		if (!$authStore.isAuthenticated) {
+			void goto(resolve('/login'));
+			return;
+		}
+
+		const wasLiked = liked;
+		const prevCount = likeCount;
+		liked = !wasLiked;
+		likeCount = wasLiked ? likeCount - 1 : likeCount + 1;
+		likePending = true;
+
+		try {
+			const res = wasLiked
+				? await unlikeComment(offerId, comment.id)
+				: await likeComment(offerId, comment.id);
+			liked = res.liked;
+			likeCount = res.likeCount;
+		} catch {
+			liked = wasLiked;
+			likeCount = prevCount;
+		} finally {
+			likePending = false;
+		}
+	}
 
 	let dateLabel = $derived(
 		new Intl.DateTimeFormat($localeStore, {
@@ -110,8 +150,26 @@
 		{:else}
 			<p class="whitespace-pre-wrap text-gray-700">{comment.content}</p>
 
-			{#if showActions}
-				<div class="mt-1 flex items-center gap-3 text-xs font-medium text-gray-500">
+			<div class="mt-1 flex items-center gap-3 text-xs font-medium text-gray-500">
+				<button
+					type="button"
+					aria-label={$translationStore.comments.like}
+					aria-pressed={liked}
+					disabled={likePending}
+					class="flex items-center gap-1 transition-colors {liked
+						? 'text-red-600'
+						: 'hover:text-red-600'}"
+					onclick={toggleLike}
+				>
+					{#if liked}
+						<HeartSolid class="h-4 w-4" />
+					{:else}
+						<HeartOutline class="h-4 w-4" />
+					{/if}
+					{likeCount}
+				</button>
+
+				{#if showActions}
 					{#if canReply}
 						<button type="button" class="hover:text-primary-600" onclick={onReply}>
 							{$translationStore.comments.reply}
@@ -151,8 +209,8 @@
 							</button>
 						{/if}
 					{/if}
-				</div>
-			{/if}
+				{/if}
+			</div>
 		{/if}
 	</div>
 </div>
