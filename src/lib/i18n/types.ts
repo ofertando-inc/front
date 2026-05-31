@@ -18,7 +18,6 @@ export interface ErrorMessages {
 	'comment.not_found': string;
 	'comment.forbidden': string;
 	'comment.offer_not_commentable': string;
-	'comment.cannot_reply_to_reply': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -236,6 +235,7 @@ export interface TranslationMessages {
 		edited: string;
 		deletedPlaceholder: string;
 		reply: string;
+		replyingTo: string;
 		replyPlaceholder: string;
 		viewReplies: string;
 		hideReplies: string;

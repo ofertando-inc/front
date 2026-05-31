@@ -7,6 +7,7 @@ export interface CommentResponse {
 		id: string;
 		username: string;
 	};
+	replyTo: { id: string; username: string } | null; // set when replying to a reply
 	likeCount: number;
 	replyCount: number; // live replies (relevant on roots)
 	liked: boolean; // has the authenticated viewer liked it (false when anonymous)

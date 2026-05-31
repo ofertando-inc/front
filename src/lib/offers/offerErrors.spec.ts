@@ -155,11 +155,11 @@ describe('resolveOfferError', () => {
 		});
 	});
 
-	it('maps comment.cannot_reply_to_reply to a banner message in the comment context', () => {
-		const error = new ApiError('comment.cannot_reply_to_reply', 400);
+	it('maps comment.offer_not_commentable to a banner message in the comment context', () => {
+		const error = new ApiError('comment.offer_not_commentable', 400);
 
 		expect(resolveOfferError(error, t, 'comment')).toEqual({
-			bannerMessage: t.errors['comment.cannot_reply_to_reply'],
+			bannerMessage: t.errors['comment.offer_not_commentable'],
 			fieldErrors: {}
 		});
 	});

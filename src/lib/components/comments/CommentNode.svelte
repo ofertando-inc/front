@@ -30,6 +30,8 @@
 	let replyOpen = $state(false);
 	let replyDraft = $state('');
 	let replyPosting = $state(false);
+	let replyParentId = $state('');
+	let replyToUsername = $state<string | null>(null);
 	let errorMessage = $state<string | null>(null);
 
 	function canEdit(c: CommentResponse): boolean {
@@ -83,11 +85,13 @@
 		}
 	}
 
-	function openReply() {
+	function openReplyTo(parentId: string, username: string | null) {
 		if (!$authStore.isAuthenticated) {
 			void goto(resolve('/login'));
 			return;
 		}
+		replyParentId = parentId;
+		replyToUsername = username;
 		replyOpen = true;
 	}
 
@@ -98,7 +102,7 @@
 		try {
 			const created = await createComment(offerId, {
 				content: replyDraft.trim(),
-				parentId: root.id
+				parentId: replyParentId
 			});
 			if (repliesLoaded) replies = [...replies, created];
 			root.replyCount += 1;
@@ -170,7 +174,7 @@
 		canReply={!root.deleted}
 		canEdit={canEdit(root)}
 		canDelete={canDelete(root)}
-		onReply={openReply}
+		onReply={() => openReplyTo(root.id, null)}
 		onSave={saveRoot}
 		onDelete={deleteRoot}
 	/>
@@ -181,13 +185,20 @@
 
 	<div class="ml-12 space-y-3">
 		{#if replyOpen}
-			<CommentComposer
-				bind:value={replyDraft}
-				submitting={replyPosting}
-				placeholder={$translationStore.comments.replyPlaceholder}
-				onSubmit={submitReply}
-				onCancel={() => (replyOpen = false)}
-			/>
+			<div class="space-y-1">
+				{#if replyToUsername}
+					<p class="text-xs text-primary-600">
+						{$translationStore.comments.replyingTo.replace('{username}', replyToUsername)}
+					</p>
+				{/if}
+				<CommentComposer
+					bind:value={replyDraft}
+					submitting={replyPosting}
+					placeholder={$translationStore.comments.replyPlaceholder}
+					onSubmit={submitReply}
+					onCancel={() => (replyOpen = false)}
+				/>
+			</div>
 		{/if}
 
 		{#if root.replyCount > 0}
@@ -208,8 +219,10 @@
 				{#each replies as reply (reply.id)}
 					<CommentItem
 						comment={reply}
+						canReply={!reply.deleted}
 						canEdit={canEdit(reply)}
 						canDelete={canDelete(reply)}
+						onReply={() => openReplyTo(reply.id, reply.user.username)}
 						onSave={(content) => saveReply(reply, content)}
 						onDelete={() => deleteReply(reply)}
 					/>

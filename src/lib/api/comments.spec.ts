@@ -95,19 +95,21 @@ describe('createComment', () => {
 		);
 	});
 
-	it('propagates ApiError on comment.cannot_reply_to_reply', async () => {
+	it('propagates ApiError on comment.offer_not_commentable', async () => {
 		vi.stubGlobal(
 			'fetch',
 			vi
 				.fn()
 				.mockResolvedValue(
-					jsonResponse({ key: 'comment.cannot_reply_to_reply', statusCode: 400 }, 400)
+					jsonResponse({ key: 'comment.offer_not_commentable', statusCode: 400 }, 400)
 				)
 		);
 
-		await expect(createComment('abc', { content: 'x', parentId: 'reply-1' })).rejects.toMatchObject(
-			{ name: 'ApiError', key: 'comment.cannot_reply_to_reply', status: 400 }
-		);
+		await expect(createComment('abc', { content: 'x' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'comment.offer_not_commentable',
+			status: 400
+		});
 	});
 });
 

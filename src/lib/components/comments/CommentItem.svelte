@@ -81,6 +81,12 @@
 			{/if}
 		</div>
 
+		{#if comment.replyTo && !comment.deleted}
+			<p class="mb-1 text-xs text-primary-600">
+				{$translationStore.comments.replyingTo.replace('{username}', comment.replyTo.username)}
+			</p>
+		{/if}
+
 		{#if comment.deleted}
 			<p class="text-sm text-gray-400 italic">{$translationStore.comments.deletedPlaceholder}</p>
 		{:else if editing}
