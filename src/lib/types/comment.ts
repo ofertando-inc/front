@@ -1,3 +1,5 @@
+import type { VoteType } from '$lib/types/vote';
+
 export interface CommentResponse {
 	id: string;
 	content: string | null; // null when the comment is a deleted tombstone
@@ -8,9 +10,9 @@ export interface CommentResponse {
 		username: string;
 	};
 	replyTo: { id: string; username: string } | null; // set when replying to a reply
-	likeCount: number;
+	score: number; // net votes: (up) - (down), can be negative
+	userVote: VoteType | null; // the viewer's vote (null if anonymous or not voted)
 	replyCount: number; // live replies (relevant on roots)
-	liked: boolean; // has the authenticated viewer liked it (false when anonymous)
 	deleted: boolean; // true → tombstone "[deleted]"
 }
 
@@ -28,7 +30,7 @@ export interface UpdateCommentDto {
 	content: string;
 }
 
-export interface LikeResponse {
-	likeCount: number;
-	liked: boolean;
+export interface CommentVoteResponse {
+	score: number;
+	userVote: VoteType | null;
 }

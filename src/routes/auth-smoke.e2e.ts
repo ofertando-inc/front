@@ -126,9 +126,9 @@ test.beforeAll(async () => {
 			editedAt: null,
 			user: { id: 'other-user', username: 'otrousuario' },
 			replyTo: null,
-			likeCount: 0,
+			score: 0,
+			userVote: null,
 			replyCount: 0,
-			liked: false,
 			deleted: false
 		};
 		const tombstoneRoot = {
@@ -138,15 +138,32 @@ test.beforeAll(async () => {
 			editedAt: null,
 			user: { id: 'ghost', username: 'fantasma' },
 			replyTo: null,
-			likeCount: 0,
+			score: 0,
+			userVote: null,
 			replyCount: 1,
-			liked: false,
 			deleted: true
 		};
 
 		const repliesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/replies(?:\?.*)?$/);
 		if (repliesMatch) {
 			sendJson(response, 200, { items: [], nextCursor: null });
+			return;
+		}
+
+		const votesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/votes(?:\?.*)?$/);
+		if (votesMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (request.method === 'DELETE') {
+				sendJson(response, 200, { score: 0, userVote: null });
+				return;
+			}
+			void readJsonBody(request).then((body) => {
+				const type = (body as { type?: string }).type === 'DOWN' ? 'DOWN' : 'UP';
+				sendJson(response, 200, { score: type === 'UP' ? 1 : -1, userVote: type });
+			});
 			return;
 		}
 
@@ -183,9 +200,9 @@ test.beforeAll(async () => {
 						editedAt: null,
 						user: { id: 'e2e-user-id', username: 'e2euser' },
 						replyTo: null,
-						likeCount: 0,
+						score: 0,
+						userVote: null,
 						replyCount: 0,
-						liked: false,
 						deleted: false
 					});
 				});
@@ -639,6 +656,34 @@ test('authenticated user can post a comment on the thread', async ({ page, conte
 	await page.getByRole('button', { name: 'Comentar' }).click();
 
 	await expect(page.getByText('Mi nuevo comentario')).toBeVisible();
+});
+
+test('authenticated user can up-vote and remove the vote on a comment', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	const upButton = commentItem.getByRole('button', { name: 'Votar positivo' });
+
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'true');
+
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('anonymous comment vote redirects to login', async ({ page }) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	await commentItem.getByRole('button', { name: 'Votar positivo' }).click();
+	await expect(page).toHaveURL(/\/login$/);
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {

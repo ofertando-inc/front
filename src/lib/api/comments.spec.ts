@@ -5,7 +5,9 @@ import {
 	deleteComment,
 	listComments,
 	listReplies,
-	updateComment
+	removeCommentVote,
+	updateComment,
+	voteComment
 } from '$lib/api/comments';
 
 const BASE_URL = 'http://test.local';
@@ -169,5 +171,48 @@ describe('deleteComment', () => {
 			key: 'comment.not_found',
 			status: 404
 		});
+	});
+});
+
+describe('voteComment', () => {
+	it('POSTs the vote type to the votes endpoint with credentials and id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ score: 3, userVote: 'UP' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await voteComment('a/b', 'c/1', 'UP');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/a%2Fb/comments/c%2F1/votes`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ type: 'UP' })
+			})
+		);
+		expect(res).toEqual({ score: 3, userVote: 'UP' });
+	});
+
+	it('propagates ApiError on auth.unauthorized', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.unauthorized', statusCode: 401 }, 401))
+		);
+
+		await expect(voteComment('abc', 'c1', 'DOWN')).rejects.toBeInstanceOf(ApiError);
+	});
+});
+
+describe('removeCommentVote', () => {
+	it('DELETEs the votes endpoint and returns the updated score', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ score: 2, userVote: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await removeCommentVote('abc', 'c1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/comments/c1/votes`,
+			expect.objectContaining({ method: 'DELETE', credentials: 'include' })
+		);
+		expect(res).toEqual({ score: 2, userVote: null });
 	});
 });

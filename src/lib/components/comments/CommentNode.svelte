@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { Button } from 'flowbite-svelte';
@@ -38,6 +39,12 @@
 	let sortedReplies = $derived(
 		[...replies].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
 	);
+
+	onMount(() => {
+		// A single reply is shown by default; threads with two or more stay
+		// collapsed behind the "view replies" toggle.
+		if (root.replyCount === 1) void toggleReplies();
+	});
 
 	function canEdit(c: CommentResponse): boolean {
 		return $authStore.isAuthenticated && !c.deleted && $authStore.user?.id === c.user.id;
@@ -109,9 +116,20 @@
 				content: replyDraft.trim(),
 				parentId: replyParentId
 			});
-			if (repliesLoaded) replies = [...replies, created];
+			if (repliesLoaded) {
+				// The list is already loaded: append the new reply and keep it visible.
+				replies = [...replies, created];
+				expanded = true;
+			} else if (root.replyCount === 0) {
+				// First reply of the thread: the full list is just this one, so show it
+				// (matches the single-reply default).
+				replies = [created];
+				repliesLoaded = true;
+				expanded = true;
+			}
+			// Otherwise replies exist but were never expanded: just bump the count and
+			// leave them collapsed behind the toggle (2+ replies stay hidden by default).
 			root.replyCount += 1;
-			expanded = true;
 			replyOpen = false;
 			replyDraft = '';
 			onCountChange?.(1);
@@ -175,6 +193,7 @@
 
 <div class="space-y-3">
 	<CommentItem
+		{offerId}
 		comment={root}
 		canReply={!root.deleted}
 		canEdit={canEdit(root)}
@@ -223,6 +242,7 @@
 			<div class="space-y-4 border-l border-gray-100 pl-4">
 				{#each sortedReplies as reply (reply.id)}
 					<CommentItem
+						{offerId}
 						comment={reply}
 						canReply={!reply.deleted}
 						canEdit={canEdit(reply)}
