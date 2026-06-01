@@ -110,6 +110,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'No pudimos eliminar la oferta en este momento.',
 			genericVoteError: 'No pudimos registrar tu voto en este momento.',
 			genericReportError: 'No pudimos registrar tu reporte en este momento.',
+			genericCommentError: 'No pudimos completar la acción del comentario en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.'
 		},
 		offerStatus: {
@@ -196,6 +197,28 @@ export const messages: Record<Locale, TranslationMessages> = {
 			popularStoresTitle: 'Tiendas populares',
 			viewAll: 'Ver todas'
 		},
+		comments: {
+			title: 'Comentarios',
+			placeholder: 'Escribe un comentario...',
+			submit: 'Comentar',
+			submitting: 'Enviando...',
+			empty: 'Sé el primero en comentar.',
+			loadMore: 'Ver más comentarios',
+			edited: '(editado)',
+			deletedPlaceholder: '[comentario eliminado]',
+			reply: 'Responder',
+			replyingTo: 'En respuesta a @{username}',
+			replyPlaceholder: 'Escribe una respuesta...',
+			viewReplies: 'Ver respuestas ({count})',
+			hideReplies: 'Ocultar respuestas',
+			loadMoreReplies: 'Ver más respuestas',
+			edit: 'Editar',
+			save: 'Guardar',
+			saving: 'Guardando...',
+			cancel: 'Cancelar',
+			delete: 'Eliminar',
+			deleteConfirm: '¿Eliminar este comentario?'
+		},
 		footer: {
 			rights: 'Todos los derechos reservados.',
 			terms: 'Términos',
@@ -232,18 +255,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Publicado por',
 			relatedTitle: 'Ofertas relacionadas',
 			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
-			commentsTitle: 'Comentarios',
-			commentPlaceholder: 'Añade un comentario...',
-			commentSubmit: 'Comentar',
-			commentDisabledHint: 'Disponible próximamente.',
 			expiredBanner: 'Esta oferta ya expiró.',
 			disabledBanner: 'Esta oferta fue desactivada por un administrador.',
-			reportedBanner: 'Esta oferta está siendo revisada por la moderación.',
-			mockComment1:
-				'¡Excelente oferta! Pude pedirla esta mañana sin problema, el descuento se aplica al pagar.',
-			mockComment2: 'Confirmo el precio en la tienda física, todavía quedaban unidades.',
-			mockComment3: 'OJO: el precio sube si pagas con otra tarjeta. Revisen bien.',
-			mockCommentAge: 'hace {hours}h'
+			reportedBanner: 'Esta oferta está siendo revisada por la moderación.'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -260,6 +274,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
 			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'report.offer_not_reportable': 'No puedes reportar esta oferta porque ya no está activa.',
+			'comment.not_found': 'No encontramos ese comentario. Puede haber sido eliminado.',
+			'comment.forbidden': 'No tienes permiso para modificar este comentario.',
+			'comment.offer_not_commentable': 'No puedes comentar esta oferta en este momento.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -446,6 +463,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: 'We could not delete the offer right now.',
 			genericVoteError: 'We could not register your vote right now.',
 			genericReportError: 'We could not register your report right now.',
+			genericCommentError: 'We could not complete the comment action right now.',
 			serverError: 'The server is unavailable right now. Please try again later.'
 		},
 		offerStatus: {
@@ -530,6 +548,28 @@ export const messages: Record<Locale, TranslationMessages> = {
 			popularStoresTitle: 'Popular stores',
 			viewAll: 'View all'
 		},
+		comments: {
+			title: 'Comments',
+			placeholder: 'Write a comment...',
+			submit: 'Comment',
+			submitting: 'Sending...',
+			empty: 'Be the first to comment.',
+			loadMore: 'View more comments',
+			edited: '(edited)',
+			deletedPlaceholder: '[comment deleted]',
+			reply: 'Reply',
+			replyingTo: 'In reply to @{username}',
+			replyPlaceholder: 'Write a reply...',
+			viewReplies: 'View replies ({count})',
+			hideReplies: 'Hide replies',
+			loadMoreReplies: 'View more replies',
+			edit: 'Edit',
+			save: 'Save',
+			saving: 'Saving...',
+			cancel: 'Cancel',
+			delete: 'Delete',
+			deleteConfirm: 'Delete this comment?'
+		},
 		footer: {
 			rights: 'All rights reserved.',
 			terms: 'Terms',
@@ -566,18 +606,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Posted by',
 			relatedTitle: 'Related offers',
 			relatedEmpty: 'No related offers at the moment.',
-			commentsTitle: 'Comments',
-			commentPlaceholder: 'Add a comment...',
-			commentSubmit: 'Comment',
-			commentDisabledHint: 'Coming soon.',
 			expiredBanner: 'This offer has expired.',
 			disabledBanner: 'This offer was disabled by an administrator.',
-			reportedBanner: 'This offer is being reviewed by the moderation team.',
-			mockComment1:
-				'Great deal! I just ordered this morning without any issue, the discount applies at checkout.',
-			mockComment2: 'Confirmed the price at the physical store, there were still units left.',
-			mockComment3: 'Heads up: the price goes up if you pay with another card. Check carefully.',
-			mockCommentAge: '{hours}h ago'
+			reportedBanner: 'This offer is being reviewed by the moderation team.'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -594,6 +625,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
 			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'report.offer_not_reportable': 'You cannot report this offer because it is no longer active.',
+			'comment.not_found': 'We could not find that comment. It may have been removed.',
+			'comment.forbidden': 'You do not have permission to modify this comment.',
+			'comment.offer_not_commentable': 'You cannot comment on this offer right now.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -779,6 +813,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericDeleteError: "Nous n'avons pas pu supprimer l'offre pour le moment.",
 			genericVoteError: "Nous n'avons pas pu enregistrer votre vote pour le moment.",
 			genericReportError: "Nous n'avons pas pu enregistrer votre signalement pour le moment.",
+			genericCommentError:
+				"Nous n'avons pas pu effectuer l'action sur le commentaire pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard."
 		},
 		offerStatus: {
@@ -866,6 +902,28 @@ export const messages: Record<Locale, TranslationMessages> = {
 			popularStoresTitle: 'Magasins populaires',
 			viewAll: 'Voir toutes'
 		},
+		comments: {
+			title: 'Commentaires',
+			placeholder: 'Écrivez un commentaire...',
+			submit: 'Commenter',
+			submitting: 'Envoi...',
+			empty: 'Soyez le premier à commenter.',
+			loadMore: 'Voir plus de commentaires',
+			edited: '(modifié)',
+			deletedPlaceholder: '[commentaire supprimé]',
+			reply: 'Répondre',
+			replyingTo: 'En réponse à @{username}',
+			replyPlaceholder: 'Écrivez une réponse...',
+			viewReplies: 'Voir les réponses ({count})',
+			hideReplies: 'Masquer les réponses',
+			loadMoreReplies: 'Voir plus de réponses',
+			edit: 'Modifier',
+			save: 'Enregistrer',
+			saving: 'Enregistrement...',
+			cancel: 'Annuler',
+			delete: 'Supprimer',
+			deleteConfirm: 'Supprimer ce commentaire ?'
+		},
 		footer: {
 			rights: 'Tous droits réservés.',
 			terms: 'Conditions',
@@ -902,18 +960,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Publié par',
 			relatedTitle: 'Offres similaires',
 			relatedEmpty: "Pas d'offres similaires pour le moment.",
-			commentsTitle: 'Commentaires',
-			commentPlaceholder: 'Ajoutez un commentaire...',
-			commentSubmit: 'Commenter',
-			commentDisabledHint: 'Bientôt disponible.',
 			expiredBanner: 'Cette offre a expiré.',
 			disabledBanner: 'Cette offre a été désactivée par un administrateur.',
-			reportedBanner: 'Cette offre est en cours de vérification par la modération.',
-			mockComment1:
-				"Super offre ! Je viens de commander ce matin sans problème, la réduction s'applique au paiement.",
-			mockComment2: 'Prix confirmé en magasin physique, il restait encore des unités.',
-			mockComment3: 'Attention : le prix augmente si vous payez avec une autre carte. À vérifier.',
-			mockCommentAge: 'il y a {hours}h'
+			reportedBanner: 'Cette offre est en cours de vérification par la modération.'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
@@ -932,6 +981,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'report.offer_not_reportable':
 				"Vous ne pouvez pas signaler cette offre car elle n'est plus active.",
+			'comment.not_found': "Nous n'avons pas trouvé ce commentaire. Il a peut-être été supprimé.",
+			'comment.forbidden': "Vous n'avez pas la permission de modifier ce commentaire.",
+			'comment.offer_not_commentable': 'Vous ne pouvez pas commenter cette offre pour le moment.',
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',

@@ -21,6 +21,7 @@ export interface Offer {
 	status: OfferStatus;
 	score: number;
 	reportCount: number;
+	commentCount: number;
 	createdAt: string;
 	updatedAt: string;
 	createdById: string;

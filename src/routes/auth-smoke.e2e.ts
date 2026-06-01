@@ -13,6 +13,17 @@ function isAuthenticated(request: import('node:http').IncomingMessage) {
 	return cookie.includes('e2e_session=authenticated') || cookie.includes('e2e_session=admin');
 }
 
+async function readJsonBody(request: import('node:http').IncomingMessage): Promise<unknown> {
+	const chunks: Buffer[] = [];
+	for await (const chunk of request) chunks.push(chunk as Buffer);
+	if (chunks.length === 0) return {};
+	try {
+		return JSON.parse(Buffer.concat(chunks).toString('utf8'));
+	} catch {
+		return {};
+	}
+}
+
 function isAdmin(request: import('node:http').IncomingMessage) {
 	return (request.headers.cookie ?? '').includes('e2e_session=admin');
 }
@@ -108,6 +119,125 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		const liveRoot = {
+			id: 'c-live',
+			content: 'Primer comentario de prueba',
+			createdAt: '2026-05-20T10:00:00.000Z',
+			editedAt: null,
+			user: { id: 'other-user', username: 'otrousuario' },
+			replyTo: null,
+			score: 0,
+			userVote: null,
+			replyCount: 0,
+			deleted: false
+		};
+		const tombstoneRoot = {
+			id: 'c-tomb',
+			content: null,
+			createdAt: '2026-05-19T10:00:00.000Z',
+			editedAt: null,
+			user: { id: 'ghost', username: 'fantasma' },
+			replyTo: null,
+			score: 0,
+			userVote: null,
+			replyCount: 1,
+			deleted: true
+		};
+
+		const repliesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/replies(?:\?.*)?$/);
+		if (repliesMatch) {
+			sendJson(response, 200, { items: [], nextCursor: null });
+			return;
+		}
+
+		const votesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/votes(?:\?.*)?$/);
+		if (votesMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (request.method === 'DELETE') {
+				sendJson(response, 200, { score: 0, userVote: null });
+				return;
+			}
+			void readJsonBody(request).then((body) => {
+				const type = (body as { type?: string }).type === 'DOWN' ? 'DOWN' : 'UP';
+				sendJson(response, 200, { score: type === 'UP' ? 1 : -1, userVote: type });
+			});
+			return;
+		}
+
+		const commentMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)(?:\?.*)?$/);
+		if (commentMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, {
+				...liveRoot,
+				id: commentMatch[2],
+				content: request.method === 'DELETE' ? null : 'Comentario editado',
+				editedAt: request.method === 'DELETE' ? null : '2026-05-21T10:00:00.000Z',
+				deleted: request.method === 'DELETE',
+				replyCount: 0
+			});
+			return;
+		}
+
+		const commentsMatch = url.match(/^\/offers\/([^/?]+)\/comments(?:\?.*)?$/);
+		if (commentsMatch) {
+			if (request.method === 'POST') {
+				if (!isAuthenticated(request)) {
+					sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+					return;
+				}
+				void readJsonBody(request).then((body) => {
+					const content = (body as { content?: string }).content ?? '';
+					sendJson(response, 201, {
+						id: 'c-new',
+						content,
+						createdAt: '2026-05-22T10:00:00.000Z',
+						editedAt: null,
+						user: { id: 'e2e-user-id', username: 'e2euser' },
+						replyTo: null,
+						score: 0,
+						userVote: null,
+						replyCount: 0,
+						deleted: false
+					});
+				});
+				return;
+			}
+
+			const seeded = commentsMatch[1] === 'e2e-comment-offer' ? [liveRoot, tombstoneRoot] : [];
+			sendJson(response, 200, { items: seeded, nextCursor: null });
+			return;
+		}
+
+		if (url === '/offers/e2e-comment-offer' || url.startsWith('/offers/e2e-comment-offer?')) {
+			sendJson(response, 200, {
+				id: 'e2e-comment-offer',
+				title: 'Oferta de prueba de comentarios',
+				description: 'Descripción de la oferta para el test de comentarios.',
+				offerType: 'online',
+				externalUrl: 'https://example.com/promo',
+				storeName: 'TestStore',
+				city: 'Bogotá',
+				startDate: '2026-05-01T00:00:00.000Z',
+				endDate: '2026-12-31T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 7,
+				reportCount: 0,
+				commentCount: 2,
+				createdAt: '2026-05-01T10:00:00.000Z',
+				updatedAt: '2026-05-01T10:00:00.000Z',
+				createdById: 'other-author',
+				createdByUsername: 'other-author',
+				userVote: null
+			});
+			return;
+		}
+
 		if (url === '/offers/e2e-report-offer' || url.startsWith('/offers/e2e-report-offer?')) {
 			sendJson(response, 200, {
 				id: 'e2e-report-offer',
@@ -122,6 +252,7 @@ test.beforeAll(async () => {
 				status: 'ACTIVE',
 				score: 0,
 				reportCount: 0,
+				commentCount: 2,
 				createdAt: '2026-05-01T10:00:00.000Z',
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
@@ -147,6 +278,7 @@ test.beforeAll(async () => {
 				status: 'ACTIVE',
 				score: 3,
 				reportCount: 0,
+				commentCount: 5,
 				createdAt: '2020-01-01T10:00:00.000Z',
 				updatedAt: '2020-01-01T10:00:00.000Z',
 				createdById: 'other-author',
@@ -170,6 +302,7 @@ test.beforeAll(async () => {
 				status: 'ACTIVE',
 				score: 15,
 				reportCount: 0,
+				commentCount: 0,
 				createdAt: '2026-05-01T10:00:00.000Z',
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
@@ -210,6 +343,7 @@ test.beforeAll(async () => {
 				status: 'ACTIVE',
 				score: 4,
 				reportCount: 2,
+				commentCount: 3,
 				createdAt: '2026-05-01T10:00:00.000Z',
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'author-id',
@@ -495,6 +629,61 @@ test('offer detail marks a past-date offer as expired and locks vote/report', as
 	await expect(
 		page.getByRole('button', { name: 'No puedes reportar una oferta expirada' })
 	).toBeDisabled();
+});
+
+test('offer detail shows the comment thread with a tombstone and redirects anonymous posters', async ({
+	page
+}) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	await expect(page.getByText('Primer comentario de prueba')).toBeVisible();
+	await expect(page.getByText('[comentario eliminado]')).toBeVisible();
+
+	await page.getByPlaceholder('Escribe un comentario...').fill('Hola comunidad');
+	await page.getByRole('button', { name: 'Comentar' }).click();
+
+	await expect(page).toHaveURL(/\/login$/);
+});
+
+test('authenticated user can post a comment on the thread', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	await page.getByPlaceholder('Escribe un comentario...').fill('Mi nuevo comentario');
+	await page.getByRole('button', { name: 'Comentar' }).click();
+
+	await expect(page.getByText('Mi nuevo comentario')).toBeVisible();
+});
+
+test('authenticated user can up-vote and remove the vote on a comment', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	const upButton = commentItem.getByRole('button', { name: 'Votar positivo' });
+
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'true');
+
+	await upButton.click();
+	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('anonymous comment vote redirects to login', async ({ page }) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	await commentItem.getByRole('button', { name: 'Votar positivo' }).click();
+	await expect(page).toHaveURL(/\/login$/);
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {
