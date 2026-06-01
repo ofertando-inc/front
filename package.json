@@ -58,5 +58,8 @@
 	"dependencies": {
 		"sveltekit-superforms": "^2.30.1",
 		"zod": "^4.4.3"
+	},
+	"overrides": {
+		"cookie": "^0.7.0"
 	}
 }
