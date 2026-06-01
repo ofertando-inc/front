@@ -283,17 +283,9 @@ export interface TranslationMessages {
 		publishedBy: string;
 		relatedTitle: string;
 		relatedEmpty: string;
-		commentsTitle: string;
-		commentPlaceholder: string;
-		commentSubmit: string;
-		commentDisabledHint: string;
 		expiredBanner: string;
 		disabledBanner: string;
 		reportedBanner: string;
-		mockComment1: string;
-		mockComment2: string;
-		mockComment3: string;
-		mockCommentAge: string;
 	};
 	errors: ErrorMessages;
 	validation: ValidationMessages;

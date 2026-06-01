@@ -255,18 +255,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Publicado por',
 			relatedTitle: 'Ofertas relacionadas',
 			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
-			commentsTitle: 'Comentarios',
-			commentPlaceholder: 'Añade un comentario...',
-			commentSubmit: 'Comentar',
-			commentDisabledHint: 'Disponible próximamente.',
 			expiredBanner: 'Esta oferta ya expiró.',
 			disabledBanner: 'Esta oferta fue desactivada por un administrador.',
-			reportedBanner: 'Esta oferta está siendo revisada por la moderación.',
-			mockComment1:
-				'¡Excelente oferta! Pude pedirla esta mañana sin problema, el descuento se aplica al pagar.',
-			mockComment2: 'Confirmo el precio en la tienda física, todavía quedaban unidades.',
-			mockComment3: 'OJO: el precio sube si pagas con otra tarjeta. Revisen bien.',
-			mockCommentAge: 'hace {hours}h'
+			reportedBanner: 'Esta oferta está siendo revisada por la moderación.'
 		},
 		errors: {
 			'auth.unauthorized': 'Tu sesión ha expirado. Inicia sesión de nuevo.',
@@ -615,18 +606,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Posted by',
 			relatedTitle: 'Related offers',
 			relatedEmpty: 'No related offers at the moment.',
-			commentsTitle: 'Comments',
-			commentPlaceholder: 'Add a comment...',
-			commentSubmit: 'Comment',
-			commentDisabledHint: 'Coming soon.',
 			expiredBanner: 'This offer has expired.',
 			disabledBanner: 'This offer was disabled by an administrator.',
-			reportedBanner: 'This offer is being reviewed by the moderation team.',
-			mockComment1:
-				'Great deal! I just ordered this morning without any issue, the discount applies at checkout.',
-			mockComment2: 'Confirmed the price at the physical store, there were still units left.',
-			mockComment3: 'Heads up: the price goes up if you pay with another card. Check carefully.',
-			mockCommentAge: '{hours}h ago'
+			reportedBanner: 'This offer is being reviewed by the moderation team.'
 		},
 		errors: {
 			'auth.unauthorized': 'Your session has expired. Please log in again.',
@@ -978,18 +960,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishedBy: 'Publié par',
 			relatedTitle: 'Offres similaires',
 			relatedEmpty: "Pas d'offres similaires pour le moment.",
-			commentsTitle: 'Commentaires',
-			commentPlaceholder: 'Ajoutez un commentaire...',
-			commentSubmit: 'Commenter',
-			commentDisabledHint: 'Bientôt disponible.',
 			expiredBanner: 'Cette offre a expiré.',
 			disabledBanner: 'Cette offre a été désactivée par un administrateur.',
-			reportedBanner: 'Cette offre est en cours de vérification par la modération.',
-			mockComment1:
-				"Super offre ! Je viens de commander ce matin sans problème, la réduction s'applique au paiement.",
-			mockComment2: 'Prix confirmé en magasin physique, il restait encore des unités.',
-			mockComment3: 'Attention : le prix augmente si vous payez avec une autre carte. À vérifier.',
-			mockCommentAge: 'il y a {hours}h'
+			reportedBanner: 'Cette offre est en cours de vérification par la modération.'
 		},
 		errors: {
 			'auth.unauthorized': 'Votre session a expiré. Reconnectez-vous.',
