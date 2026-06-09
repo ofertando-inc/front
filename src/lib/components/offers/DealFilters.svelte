@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Select } from 'flowbite-svelte';
+	import { Select } from 'flowbite-svelte';
 	import { translationStore } from '$lib/i18n';
 	import type { OfferPeriod, OfferSort } from '$lib/types/offer';
 
@@ -22,12 +22,21 @@
 		selectedPeriod = $bindable<OfferPeriod>('all'),
 		class: className = ''
 	}: Props = $props();
+
+	const selectClass = 'w-44! rounded-full border-orange-100 bg-white';
+
+	function typeLabel(type: string): string {
+		if (type === 'online') return $translationStore.deals.typeOnline;
+		if (type === 'local') return $translationStore.deals.typeLocal;
+		return type;
+	}
 </script>
 
-<div class="flex flex-wrap items-center gap-3 {className}">
+<div class="flex flex-wrap items-center gap-2.5 {className}">
 	<Select
 		bind:value={selectedCity}
-		class="min-w-40"
+		placeholder=""
+		class={selectClass}
 		aria-label={$translationStore.deals.filterCity}
 	>
 		<option value="">{$translationStore.deals.allCities}</option>
@@ -38,32 +47,45 @@
 
 	<Select
 		bind:value={selectedOfferType}
-		class="min-w-40"
+		placeholder=""
+		class={selectClass}
 		aria-label={$translationStore.deals.filterType}
 	>
 		<option value="">{$translationStore.deals.allTypes}</option>
 		{#each offerTypes as type (type)}
-			<option value={type}>{type}</option>
+			<option value={type}>{typeLabel(type)}</option>
 		{/each}
 	</Select>
 
-	<ButtonGroup>
-		<Button
-			color={selectedSort === 'date' ? 'primary' : 'alternative'}
+	<div class="inline-flex rounded-full border border-orange-100 bg-white p-1">
+		<button
+			type="button"
 			onclick={() => (selectedSort = 'date')}
+			class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
+			'date'
+				? 'bg-primary-500 text-white shadow-sm'
+				: 'text-gray-600 hover:text-primary-600'}"
 		>
 			{$translationStore.deals.sortRecent}
-		</Button>
-		<Button
-			color={selectedSort === 'score' ? 'primary' : 'alternative'}
+		</button>
+		<button
+			type="button"
 			onclick={() => (selectedSort = 'score')}
+			class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
+			'score'
+				? 'bg-primary-500 text-white shadow-sm'
+				: 'text-gray-600 hover:text-primary-600'}"
 		>
 			{$translationStore.deals.sortPopular}
-		</Button>
-	</ButtonGroup>
+		</button>
+	</div>
 
 	{#if selectedSort === 'score'}
-		<Select bind:value={selectedPeriod} class="min-w-32">
+		<Select
+			bind:value={selectedPeriod}
+			placeholder=""
+			class="w-36! rounded-full border-orange-100 bg-white"
+		>
 			<option value="all">{$translationStore.deals.periodAll}</option>
 			<option value="day">{$translationStore.deals.periodDay}</option>
 			<option value="week">{$translationStore.deals.periodWeek}</option>
