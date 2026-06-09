@@ -71,12 +71,12 @@ test.beforeAll(async () => {
 				return;
 			}
 
-			sendJson(response, 200, { items: [], nextCursor: null });
+			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
 		}
 
 		if (url === '/offers' || url.startsWith('/offers?')) {
-			sendJson(response, 200, { items: [], nextCursor: null });
+			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
 		}
 
@@ -390,7 +390,7 @@ test.beforeAll(async () => {
 			}
 
 			if (url === '/admin/offers' || url.startsWith('/admin/offers?')) {
-				sendJson(response, 200, { items: [adminOffer], nextCursor: null });
+				sendJson(response, 200, { items: [adminOffer], nextCursor: null, total: 1 });
 				return;
 			}
 
