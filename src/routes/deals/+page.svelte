@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { Button } from 'flowbite-svelte';
-	import { TagSolid } from 'flowbite-svelte-icons';
+	import { TagSolid, CloseOutline } from 'flowbite-svelte-icons';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { page } from '$app/state';
 	import { ApiError } from '$lib/api/client';
 	import DealCard from '$lib/components/offers/DealCard.svelte';
 	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
@@ -19,9 +22,15 @@
 	let typeFilter = $state<string>('');
 	let sortFilter = $state<OfferSort>('date');
 	let periodFilter = $state<OfferPeriod>('all');
+	let hideExpired = $state(false);
+
+	// The search term is URL-driven so the global header search can deep-link
+	// into the listing (`/deals?q=…`) and the back button stays meaningful.
+	let searchQuery = $derived(page.url.searchParams.get('q') ?? '');
 
 	let offers = $state<Offer[]>([]);
 	let cursor = $state<string | null>(null);
+	let total = $state(0);
 	let initialLoading = $state(true);
 	let loadingMore = $state(false);
 	let bannerError = $state<string | null>(null);
@@ -30,12 +39,18 @@
 
 	function buildBaseQuery(): ListOffersQuery {
 		return {
+			q: searchQuery || undefined,
 			sort: sortFilter,
 			period: sortFilter === 'score' ? periodFilter : undefined,
 			city: cityFilter || undefined,
 			offerType: typeFilter || undefined,
+			includeExpired: hideExpired ? false : undefined,
 			limit: PAGE_LIMIT
 		};
+	}
+
+	function clearSearch() {
+		void goto(resolve('/deals'));
 	}
 
 	async function loadFirstPage(query: ListOffersQuery) {
@@ -48,6 +63,7 @@
 			const res = await listOffers(query);
 			offers = res.items;
 			cursor = res.nextCursor;
+			total = res.total;
 		} catch (err) {
 			handleError(err, query);
 		} finally {
@@ -65,6 +81,7 @@
 			const res = await listOffers(query);
 			offers = [...offers, ...res.items];
 			cursor = res.nextCursor;
+			total = res.total;
 		} catch (err) {
 			handleError(err, query);
 		} finally {
@@ -109,8 +126,33 @@
 			bind:selectedOfferType={typeFilter}
 			bind:selectedSort={sortFilter}
 			bind:selectedPeriod={periodFilter}
+			bind:hideExpired
 		/>
 	</div>
+
+	{#if !initialLoading && !bannerError}
+		<div class="flex flex-wrap items-center gap-3 text-sm text-gray-500">
+			<span class="tabular-nums">
+				{$translationStore.deals.resultsCount.replace('{count}', String(total))}
+			</span>
+			{#if searchQuery}
+				<span
+					class="inline-flex items-center gap-2 rounded-full bg-orange-50 py-1 pr-1.5 pl-3 font-medium text-primary-700"
+				>
+					{$translationStore.deals.searchResultsFor}
+					<span class="font-semibold">“{searchQuery}”</span>
+					<button
+						type="button"
+						onclick={clearSearch}
+						aria-label={$translationStore.deals.clearSearch}
+						class="flex h-5 w-5 items-center justify-center rounded-full text-primary-600 transition-colors hover:bg-primary-100"
+					>
+						<CloseOutline class="h-3.5 w-3.5" />
+					</button>
+				</span>
+			{/if}
+		</div>
+	{/if}
 
 	{#if bannerError}
 		<p
