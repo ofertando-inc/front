@@ -20,6 +20,16 @@
 	} from 'flowbite-svelte';
 	import { SearchOutline, TagSolid } from 'flowbite-svelte-icons';
 
+	let searchTerm = $state('');
+
+	function handleSearch(event: SubmitEvent) {
+		event.preventDefault();
+		const term = searchTerm.trim();
+		const target = term ? `${resolve('/deals')}?q=${encodeURIComponent(term)}` : resolve('/deals');
+		// eslint-disable-next-line svelte/no-navigation-without-resolve -- query string appended to a resolved route
+		void goto(target);
+	}
+
 	async function handleLogout() {
 		await authStore.logout();
 		await goto(resolve('/'));
@@ -98,9 +108,10 @@
 		</div>
 
 		<div class="hidden flex-1 items-center justify-center gap-8 px-8 md:order-1 md:flex">
-			<div class="w-full max-w-md">
+			<form class="w-full max-w-md" onsubmit={handleSearch} role="search">
 				<Input
 					type="search"
+					bind:value={searchTerm}
 					placeholder={$translationStore.common.searchPlaceholder}
 					class="rounded-full border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
 				>
@@ -108,7 +119,7 @@
 						<SearchOutline class="h-5 w-5 text-primary-400" />
 					{/snippet}
 				</Input>
-			</div>
+			</form>
 
 			<NavUl activeUrl={page.url.pathname} class="gap-2">
 				<NavLi href={resolve('/')}>{$translationStore.common.home}</NavLi>
@@ -117,15 +128,18 @@
 
 		<NavUl {hidden} activeUrl={page.url.pathname} class="mt-3 gap-2 md:hidden">
 			<li class="mb-3 list-none">
-				<Input
-					type="search"
-					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-lg border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
-				>
-					{#snippet left()}
-						<SearchOutline class="h-5 w-5 text-primary-400" />
-					{/snippet}
-				</Input>
+				<form onsubmit={handleSearch} role="search">
+					<Input
+						type="search"
+						bind:value={searchTerm}
+						placeholder={$translationStore.common.searchPlaceholder}
+						class="rounded-lg border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
+					>
+						{#snippet left()}
+							<SearchOutline class="h-5 w-5 text-primary-400" />
+						{/snippet}
+					</Input>
+				</form>
 			</li>
 			<li class="list-none px-3 pb-2">
 				<Select onchange={handleLocaleChange} value={$localeStore}>

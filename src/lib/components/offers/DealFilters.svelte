@@ -10,6 +10,7 @@
 		selectedOfferType?: string;
 		selectedSort?: OfferSort;
 		selectedPeriod?: OfferPeriod;
+		hideExpired?: boolean;
 		class?: string;
 	}
 
@@ -20,10 +21,17 @@
 		selectedOfferType = $bindable(''),
 		selectedSort = $bindable<OfferSort>('date'),
 		selectedPeriod = $bindable<OfferPeriod>('all'),
+		hideExpired = $bindable(false),
 		class: className = ''
 	}: Props = $props();
 
 	const selectClass = 'w-44! rounded-full border-orange-100 bg-white';
+
+	let sortOptions = $derived<{ value: OfferSort; label: string }[]>([
+		{ value: 'date', label: $translationStore.deals.sortRecent },
+		{ value: 'score', label: $translationStore.deals.sortPopular },
+		{ value: 'ending', label: $translationStore.deals.sortEnding }
+	]);
 
 	function typeLabel(type: string): string {
 		if (type === 'online') return $translationStore.deals.typeOnline;
@@ -58,26 +66,19 @@
 	</Select>
 
 	<div class="inline-flex rounded-full border border-orange-100 bg-white p-1">
-		<button
-			type="button"
-			onclick={() => (selectedSort = 'date')}
-			class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
-			'date'
-				? 'bg-primary-500 text-white shadow-sm'
-				: 'text-gray-600 hover:text-primary-600'}"
-		>
-			{$translationStore.deals.sortRecent}
-		</button>
-		<button
-			type="button"
-			onclick={() => (selectedSort = 'score')}
-			class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
-			'score'
-				? 'bg-primary-500 text-white shadow-sm'
-				: 'text-gray-600 hover:text-primary-600'}"
-		>
-			{$translationStore.deals.sortPopular}
-		</button>
+		{#each sortOptions as opt (opt.value)}
+			<button
+				type="button"
+				onclick={() => (selectedSort = opt.value)}
+				aria-pressed={selectedSort === opt.value}
+				class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
+				opt.value
+					? 'bg-primary-500 text-white shadow-sm'
+					: 'text-gray-600 hover:text-primary-600'}"
+			>
+				{opt.label}
+			</button>
+		{/each}
 	</div>
 
 	{#if selectedSort === 'score'}
@@ -93,4 +94,15 @@
 			<option value="year">{$translationStore.deals.periodYear}</option>
 		</Select>
 	{/if}
+
+	<button
+		type="button"
+		onclick={() => (hideExpired = !hideExpired)}
+		aria-pressed={hideExpired}
+		class="rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors {hideExpired
+			? 'border-primary-500 bg-primary-500 text-white shadow-sm'
+			: 'border-orange-100 bg-white text-gray-600 hover:text-primary-600'}"
+	>
+		{$translationStore.deals.hideExpired}
+	</button>
 </div>
