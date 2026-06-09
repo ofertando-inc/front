@@ -11,6 +11,7 @@ export const ErrorKey = {
 	OfferForbidden: 'offer.forbidden',
 	OfferInvalidDates: 'offer.invalid_dates',
 	OfferInvalidStatusTransition: 'offer.invalid_status_transition',
+	OfferInvalidCategory: 'offer.invalid_category',
 
 	VoteOfferNotVoteable: 'vote.offer_not_voteable',
 
