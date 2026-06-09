@@ -384,6 +384,11 @@ test.beforeAll(async () => {
 				userVote: null
 			};
 
+			if (url === '/admin/moderation/summary') {
+				sendJson(response, 200, { pendingComments: 4, pendingOfferReports: 2 });
+				return;
+			}
+
 			if (url === '/admin/offers' || url.startsWith('/admin/offers?')) {
 				sendJson(response, 200, { items: [adminOffer], nextCursor: null });
 				return;
@@ -719,6 +724,21 @@ test('admin comments tab shows the queue, report details, and hides a comment', 
 
 	await page.getByRole('button', { name: 'Ocultar', exact: true }).click();
 	await expect(page.getByText('No hay comentarios en la cola de moderación.')).toBeVisible();
+});
+
+test('admin dashboard shows moderation summary cards and nav badges', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin');
+
+	await expect(page.getByText('Comentarios por revisar')).toBeVisible();
+	await expect(page.getByText('Ofertas reportadas')).toBeVisible();
+	await expect(page.getByText('Total pendiente')).toBeVisible();
+
+	// Sidebar badges: pendingComments (4) on Comentarios, pendingOfferReports (2) on Reportes.
+	const sidebar = page.getByRole('navigation', { name: 'Moderación' });
+	await expect(sidebar.getByText('4')).toBeVisible();
+	await expect(sidebar.getByText('2')).toBeVisible();
 });
 
 test('offer detail marks a past-date offer as expired and locks vote/report', async ({
