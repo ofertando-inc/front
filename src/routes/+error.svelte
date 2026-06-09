@@ -23,13 +23,18 @@
 
 <section class="flex min-h-[calc(100vh-9rem)] items-center justify-center py-8 sm:py-12">
 	<Card
-		class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 text-center shadow-sm"
+		class="w-full max-w-md! rounded-3xl border border-orange-100 bg-white p-8! text-center shadow-sm"
 	>
-		<p class="text-6xl font-extrabold text-primary-500">{page.status}</p>
-		<h1 class="mt-4 text-2xl font-bold text-gray-900">{title}</h1>
+		<p
+			class="font-display text-7xl font-extrabold tracking-tight text-transparent"
+			style="background: linear-gradient(135deg, var(--color-primary-500), var(--color-heat-500)); -webkit-background-clip: text; background-clip: text;"
+		>
+			{page.status}
+		</p>
+		<h1 class="mt-4 text-2xl font-extrabold text-gray-900">{title}</h1>
 		<p class="mt-3 text-sm leading-6 text-gray-600">{description}</p>
 		<div class="mt-6 flex justify-center">
-			<Button href={resolve('/')} class="rounded-xl">
+			<Button href={resolve('/')} class="rounded-full px-6">
 				{$translationStore.errorPage.backToHome}
 			</Button>
 		</div>
