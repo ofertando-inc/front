@@ -37,7 +37,8 @@ const validCreatePayload: CreateOfferDto = {
 	storeName: 'Acme',
 	city: 'Bogotá',
 	startDate: '2026-05-18T00:00:00.000Z',
-	endDate: '2026-05-25T00:00:00.000Z'
+	endDate: '2026-05-25T00:00:00.000Z',
+	categoryIds: ['cat-1']
 };
 
 describe('listOffers', () => {

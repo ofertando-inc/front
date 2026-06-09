@@ -1,4 +1,6 @@
-import type { Offer } from '$lib/types/offer';
+import type { Offer, OfferCategory } from '$lib/types/offer';
+
+const cat = (slug: string, name: string): OfferCategory => ({ id: `cat-${slug}`, slug, name });
 
 export const MOCK_OFFERS: Offer[] = [
 	{
@@ -20,7 +22,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-25T10:00:00.000Z',
 		createdById: 'mock-user-carlos',
 		createdByUsername: 'Carlos',
-		userVote: null
+		userVote: null,
+		categories: [cat('technology', 'Technology')]
 	},
 	{
 		id: '2',
@@ -41,7 +44,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-26T08:30:00.000Z',
 		createdById: 'mock-user-gamer',
 		createdByUsername: 'Gamer',
-		userVote: null
+		userVote: null,
+		categories: [cat('technology', 'Technology'), cat('entertainment', 'Entertainment')]
 	},
 	{
 		id: '3',
@@ -62,7 +66,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-27T12:15:00.000Z',
 		createdById: 'mock-user-foodie',
 		createdByUsername: 'Foodie',
-		userVote: null
+		userVote: null,
+		categories: [cat('restaurants', 'Restaurants')]
 	},
 	{
 		id: '4',
@@ -83,7 +88,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-27T09:00:00.000Z',
 		createdById: 'mock-user-viajero',
 		createdByUsername: 'Viajero',
-		userVote: null
+		userVote: null,
+		categories: [cat('travel', 'Travel')]
 	},
 	{
 		id: '5',
@@ -104,7 +110,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-20T23:59:59.000Z',
 		createdById: 'mock-user-tech',
 		createdByUsername: 'Tech',
-		userVote: null
+		userVote: null,
+		categories: [cat('technology', 'Technology')]
 	},
 	{
 		id: '6',
@@ -125,7 +132,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-26T16:45:00.000Z',
 		createdById: 'mock-user-sneakerhead',
 		createdByUsername: 'Sneakerhead',
-		userVote: null
+		userVote: null,
+		categories: [cat('sports', 'Sports'), cat('fashion', 'Fashion')]
 	},
 	{
 		id: '7',
@@ -146,7 +154,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-27T10:30:00.000Z',
 		createdById: 'mock-user-ahorrador',
 		createdByUsername: 'Ahorrador',
-		userVote: null
+		userVote: null,
+		categories: [cat('groceries', 'Groceries')]
 	},
 	{
 		id: '8',
@@ -167,7 +176,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-20T08:00:00.000Z',
 		createdById: 'mock-user-music',
 		createdByUsername: 'Music',
-		userVote: null
+		userVote: null,
+		categories: [cat('entertainment', 'Entertainment')]
 	},
 	{
 		id: '9',
@@ -188,7 +198,8 @@ export const MOCK_OFFERS: Offer[] = [
 		updatedAt: '2026-04-28T10:00:00.000Z',
 		createdById: 'mock-user-new',
 		createdByUsername: 'New',
-		userVote: null
+		userVote: null,
+		categories: [cat('technology', 'Technology')]
 	}
 ];
 

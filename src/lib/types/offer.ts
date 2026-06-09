@@ -8,6 +8,40 @@ export type OfferStatus = (typeof OFFER_STATUSES)[number];
 export type OfferSort = (typeof OFFER_SORTS)[number];
 export type OfferPeriod = (typeof OFFER_PERIODS)[number];
 
+// Frozen category slugs shared with the backend seed. The front owns the
+// localized label (i18n `categories` namespace keyed by slug); the slug is the
+// stable join key, so an unknown slug falls back to the backend `name`.
+export const CATEGORY_SLUGS = [
+	'technology',
+	'home',
+	'fashion',
+	'groceries',
+	'restaurants',
+	'travel',
+	'entertainment',
+	'beauty',
+	'sports',
+	'kids',
+	'services',
+	'other'
+] as const;
+
+export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
+
+export interface Category {
+	id: string;
+	slug: string;
+	name: string;
+	order: number;
+}
+
+// The lightweight shape embedded in each offer (no `order`).
+export interface OfferCategory {
+	id: string;
+	slug: string;
+	name: string;
+}
+
 export interface Offer {
 	id: string;
 	title: string;
@@ -27,6 +61,7 @@ export interface Offer {
 	createdById: string;
 	createdByUsername: string;
 	userVote: VoteType | null;
+	categories: OfferCategory[];
 }
 
 export interface PaginatedOffers {
@@ -45,6 +80,7 @@ export interface CreateOfferDto {
 	city: string;
 	startDate: string;
 	endDate: string;
+	categoryIds: string[];
 }
 
 export type UpdateOfferDto = Partial<CreateOfferDto>;
