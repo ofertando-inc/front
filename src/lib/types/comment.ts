@@ -13,7 +13,31 @@ export interface CommentResponse {
 	score: number; // net votes: (up) - (down), can be negative
 	userVote: VoteType | null; // the viewer's vote (null if anonymous or not voted)
 	replyCount: number; // live replies (relevant on roots)
-	deleted: boolean; // true → tombstone "[deleted]"
+	deleted: boolean; // true → tombstone, removed by its author
+	hidden: boolean; // true → tombstone, hidden by a moderator
+}
+
+export const COMMENT_REPORT_REASONS = [
+	'SPAM',
+	'ABUSE',
+	'OFF_TOPIC',
+	'MISINFORMATION',
+	'OTHER'
+] as const;
+
+export type CommentReportReason = (typeof COMMENT_REPORT_REASONS)[number];
+
+export interface CreateCommentReportDto {
+	reason: CommentReportReason;
+	note?: string;
+}
+
+export interface CommentReportResponse {
+	reportCount: number;
+}
+
+export interface MyCommentReportResponse {
+	reason: CommentReportReason | null;
 }
 
 export interface PaginatedComments {

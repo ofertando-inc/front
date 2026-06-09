@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Comment reporting: users can report a comment via a `CommentReportModal` (reasons `SPAM` / `ABUSE` / `OFF_TOPIC` / `MISINFORMATION` / `OTHER` plus an optional note), wired on every comment and reply that is not the viewer's own and not removed. Anonymous reporters are redirected to `/login`, and the action switches to a localized "reported" state after submitting. New `reportComment` / `getMyCommentReport` API client functions and a `comment.not_reportable` error key, all localized in Spanish, English, and French. Unit-tested.
+- Moderator-hidden comments: `CommentResponse` now carries `hidden`, and the thread renders a distinct placeholder — "removed by the author" (`deleted`) vs "hidden by a moderator" (`hidden`) — while keeping the tombstone in place when it still has replies. Edit / delete / reply / report are all disabled on removed comments.
+- E2E smoke coverage: an authenticated user reports a comment through the modal and sees the "reported" state, and a moderator-hidden comment shows its distinct placeholder.
+
 ## [0.7.0] - 2026-06-01
 
 ### Added
@@ -248,6 +256,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[unreleased]: https://github.com/ofertando-inc/front/compare/v0.7.0...HEAD
 [0.7.0]: https://github.com/ofertando-inc/front/releases/tag/v0.7.0
 [0.6.0]: https://github.com/ofertando-inc/front/releases/tag/v0.6.0
 [0.5.0]: https://github.com/ofertando-inc/front/releases/tag/v0.5.0
