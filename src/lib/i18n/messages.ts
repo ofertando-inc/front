@@ -49,7 +49,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Oferta',
 			thDate: 'Fecha',
 			reportsEmpty: 'No hay reportes pendientes.',
-			noComment: 'Sin comentario'
+			noComment: 'Sin comentario',
+			tabComments: 'Comentarios',
+			thContent: 'Comentario',
+			thNote: 'Nota',
+			actionHide: 'Ocultar',
+			actionDismiss: 'Descartar',
+			actionDismissReports: 'Descartar reportes',
+			commentsEmpty: 'No hay comentarios en la cola de moderación.',
+			viewReports: 'Ver reportes',
+			hideReports: 'Ocultar reportes',
+			noteEmpty: 'Sin nota'
 		},
 		auth: {
 			loginTitle: 'Inicia sesión',
@@ -425,7 +435,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Offer',
 			thDate: 'Date',
 			reportsEmpty: 'No pending reports.',
-			noComment: 'No comment'
+			noComment: 'No comment',
+			tabComments: 'Comments',
+			thContent: 'Comment',
+			thNote: 'Note',
+			actionHide: 'Hide',
+			actionDismiss: 'Dismiss',
+			actionDismissReports: 'Dismiss reports',
+			commentsEmpty: 'No comments in the moderation queue.',
+			viewReports: 'View reports',
+			hideReports: 'Hide reports',
+			noteEmpty: 'No note'
 		},
 		auth: {
 			loginTitle: 'Log in',
@@ -798,7 +818,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Offre',
 			thDate: 'Date',
 			reportsEmpty: 'Aucun signalement en attente.',
-			noComment: 'Sans commentaire'
+			noComment: 'Sans commentaire',
+			tabComments: 'Commentaires',
+			thContent: 'Commentaire',
+			thNote: 'Note',
+			actionHide: 'Masquer',
+			actionDismiss: 'Rejeter',
+			actionDismissReports: 'Rejeter les signalements',
+			commentsEmpty: 'Aucun commentaire dans la file de modération.',
+			viewReports: 'Voir les signalements',
+			hideReports: 'Masquer les signalements',
+			noteEmpty: 'Sans note'
 		},
 		auth: {
 			loginTitle: 'Se connecter',

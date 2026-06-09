@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comment reporting: users can report a comment via a `CommentReportModal` (reasons `SPAM` / `ABUSE` / `OFF_TOPIC` / `MISINFORMATION` / `OTHER` plus an optional note), wired on every comment and reply that is not the viewer's own and not removed. Anonymous reporters are redirected to `/login`, and the action switches to a localized "reported" state after submitting. New `reportComment` / `getMyCommentReport` API client functions and a `comment.not_reportable` error key, all localized in Spanish, English, and French. Unit-tested.
 - Moderator-hidden comments: `CommentResponse` now carries `hidden`, and the thread renders a distinct placeholder — "removed by the author" (`deleted`) vs "hidden by a moderator" (`hidden`) — while keeping the tombstone in place when it still has replies. Edit / delete / reply / report are all disabled on removed comments.
 - E2E smoke coverage: an authenticated user reports a comment through the modal and sees the "reported" state, and a moderator-hidden comment shows its distinct placeholder.
+- Admin moderation API and types (`CommentModerationSummary`, `ReportDetail`, `ReportStatus`, paginations) plus `listAdminComments`, `hideComment`, `dismissComment`, `restoreComment`, `listAdminCommentReports`, `listAdminOfferReports`, and `dismissOffer`. Unit-tested.
+- Admin comment-moderation tab (`/admin/comments`): a paginated queue (most reported first) showing the comment, author, offer link, and report count, with hide / dismiss actions that drop the row from the queue and a lazy "view reports" expansion that lists each report's reason, note, reporter, and date.
+- Decision actions on the admin offer-reports tab: each reported offer can be dismissed (reports cleared, offer returns to active) or disabled, both resolved per offer so every row of that offer leaves the now `PENDING`-only queue.
+- E2E smoke coverage for the moderation queues: an admin dismisses an offer report and empties the queue, and lists the comment queue, expands a comment's report details, and hides it.
 
 ## [0.7.0] - 2026-06-01
 

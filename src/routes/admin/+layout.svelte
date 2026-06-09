@@ -7,7 +7,8 @@
 
 	let tabs = $derived([
 		{ href: resolve('/admin'), label: $translationStore.admin.tabOffers },
-		{ href: resolve('/admin/reports'), label: $translationStore.admin.tabReports }
+		{ href: resolve('/admin/reports'), label: $translationStore.admin.tabReports },
+		{ href: resolve('/admin/comments'), label: $translationStore.admin.tabComments }
 	]);
 
 	function isActive(href: string): boolean {
