@@ -129,7 +129,8 @@ test.beforeAll(async () => {
 			score: 0,
 			userVote: null,
 			replyCount: 0,
-			deleted: false
+			deleted: false,
+			hidden: false
 		};
 		const tombstoneRoot = {
 			id: 'c-tomb',
@@ -141,12 +142,42 @@ test.beforeAll(async () => {
 			score: 0,
 			userVote: null,
 			replyCount: 1,
-			deleted: true
+			deleted: true,
+			hidden: false
+		};
+		const hiddenRoot = {
+			id: 'c-hidden',
+			content: null,
+			createdAt: '2026-05-18T10:00:00.000Z',
+			editedAt: null,
+			user: { id: 'troll', username: 'troll' },
+			replyTo: null,
+			score: 0,
+			userVote: null,
+			replyCount: 1,
+			deleted: false,
+			hidden: true
 		};
 
 		const repliesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/replies(?:\?.*)?$/);
 		if (repliesMatch) {
 			sendJson(response, 200, { items: [], nextCursor: null });
+			return;
+		}
+
+		const commentReportsMatch = url.match(
+			/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/reports(\/me)?(?:\?.*)?$/
+		);
+		if (commentReportsMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (commentReportsMatch[3]) {
+				sendJson(response, 200, { reason: null });
+				return;
+			}
+			sendJson(response, 200, { reportCount: 1 });
 			return;
 		}
 
@@ -203,13 +234,15 @@ test.beforeAll(async () => {
 						score: 0,
 						userVote: null,
 						replyCount: 0,
-						deleted: false
+						deleted: false,
+						hidden: false
 					});
 				});
 				return;
 			}
 
-			const seeded = commentsMatch[1] === 'e2e-comment-offer' ? [liveRoot, tombstoneRoot] : [];
+			const seeded =
+				commentsMatch[1] === 'e2e-comment-offer' ? [liveRoot, tombstoneRoot, hiddenRoot] : [];
 			sendJson(response, 200, { items: seeded, nextCursor: null });
 			return;
 		}
@@ -637,7 +670,7 @@ test('offer detail shows the comment thread with a tombstone and redirects anony
 	await page.goto('/deals/e2e-comment-offer');
 
 	await expect(page.getByText('Primer comentario de prueba')).toBeVisible();
-	await expect(page.getByText('[comentario eliminado]')).toBeVisible();
+	await expect(page.getByText('[eliminado por el autor]')).toBeVisible();
 
 	await page.getByPlaceholder('Escribe un comentario...').fill('Hola comunidad');
 	await page.getByRole('button', { name: 'Comentar' }).click();
@@ -684,6 +717,30 @@ test('anonymous comment vote redirects to login', async ({ page }) => {
 	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
 	await commentItem.getByRole('button', { name: 'Votar positivo' }).click();
 	await expect(page).toHaveURL(/\/login$/);
+});
+
+test('offer detail shows a moderator-hidden comment placeholder', async ({ page }) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	await expect(page.getByText('[ocultado por un moderador]')).toBeVisible();
+});
+
+test('authenticated user can report a comment', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	await commentItem.getByRole('button', { name: 'Reportar' }).click();
+
+	await expect(page.getByRole('heading', { name: 'Reportar comentario' })).toBeVisible();
+	await page.getByLabel('Motivo *').selectOption('SPAM');
+	await page.getByRole('button', { name: 'Enviar reporte' }).click();
+
+	await expect(page.getByRole('heading', { name: 'Reportar comentario' })).toBeHidden();
+	await expect(commentItem.getByText('Reportado')).toBeVisible();
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {
