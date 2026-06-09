@@ -144,7 +144,6 @@ export interface TranslationMessages {
 		role: string;
 		offers: string;
 		comments: string;
-		reputation: string;
 		votes: string;
 		myOffers: string;
 		myComments: string;

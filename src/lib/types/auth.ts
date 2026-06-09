@@ -13,3 +13,8 @@ export interface User {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface UserStats {
+	offerCount: number;
+	commentCount: number;
+}

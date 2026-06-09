@@ -32,6 +32,15 @@ test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
 
+		if (url === '/users/me/stats') {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, { offerCount: 3, commentCount: 7 });
+			return;
+		}
+
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
 				const admin = isAdmin(request);
@@ -588,6 +597,12 @@ test('profile offers tab renders an empty state for authenticated users without 
 	const main = page.locator('main');
 	await expect(page).toHaveURL(/\/profile$/);
 	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	// Real stats come from GET /users/me/stats; reputation was removed.
+	await expect(main.getByText('3', { exact: true })).toBeVisible();
+	await expect(main.getByText('7', { exact: true })).toBeVisible();
+	await expect(main.getByText('Reputación')).toHaveCount(0);
+
 	await expect(main.getByText('Mis ofertas')).toBeVisible();
 	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
 	await expect(main.getByText('Publica tu primera oferta para que aparezca aquí.')).toBeVisible();

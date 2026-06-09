@@ -20,6 +20,7 @@
 		TagSolid,
 		TrashBinOutline
 	} from 'flowbite-svelte-icons';
+	import { getMyStats } from '$lib/api/auth';
 	import { ApiError } from '$lib/api/client';
 	import { deleteOffer, getMyOffers } from '$lib/api/offers';
 	import DealCard from '$lib/components/offers/DealCard.svelte';
@@ -28,12 +29,14 @@
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import { resolveOfferError, type OfferContext } from '$lib/offers/offerErrors';
+	import type { UserStats } from '$lib/types/auth';
 	import type { Offer } from '$lib/types/offer';
 
 	let loading = $state(true);
 	let offersLoading = $state(false);
 	let selectedTab = $state('offers');
 	let myOffers = $state<Offer[]>([]);
+	let stats = $state<UserStats | null>(null);
 	let offersError = $state<{ error: unknown; context: OfferContext } | null>(null);
 	let deleteModalOpen = $state(false);
 	let deleteTarget = $state<Offer | null>(null);
@@ -41,7 +44,6 @@
 
 	const offerSkeletons = [0, 1, 2];
 
-	let offerCount = $derived(myOffers.length);
 	let isDeletingTarget = $derived(Boolean(deleteTarget && deletingOfferId === deleteTarget.id));
 	let offersErrorMessage = $derived(
 		offersError
@@ -82,6 +84,15 @@
 			offersError = { error, context: 'browse' };
 		} finally {
 			offersLoading = false;
+		}
+	}
+
+	async function loadStats() {
+		try {
+			stats = await getMyStats();
+		} catch {
+			// Stats are non-critical: leave the counters as placeholders on failure.
+			stats = null;
 		}
 	}
 
@@ -127,6 +138,7 @@
 			await authStore.loadCurrentUser();
 			loading = false;
 			void loadMyOffers();
+			void loadStats();
 		} catch {
 			await goto(resolve('/login'));
 			return;
@@ -152,9 +164,8 @@
 					<div class="mx-auto h-4 w-64 rounded bg-gray-200 md:mx-0"></div>
 					<div class="mx-auto h-3 w-56 rounded bg-gray-200 md:mx-0"></div>
 					<div
-						class="mx-auto mt-6 grid w-full max-w-md grid-cols-3 gap-3 sm:gap-6 md:mx-0 md:max-w-lg"
+						class="mx-auto mt-6 grid w-full max-w-xs grid-cols-2 gap-3 sm:gap-6 md:mx-0 md:max-w-sm"
 					>
-						<div class="h-16 rounded-xl bg-gray-200"></div>
 						<div class="h-16 rounded-xl bg-gray-200"></div>
 						<div class="h-16 rounded-xl bg-gray-200"></div>
 					</div>
@@ -204,19 +215,19 @@
 					</div>
 
 					<div
-						class="mx-auto mt-6 grid w-full max-w-md grid-cols-3 gap-3 sm:gap-6 md:mx-0 md:max-w-lg"
+						class="mx-auto mt-6 grid w-full max-w-xs grid-cols-2 gap-3 sm:gap-6 md:mx-0 md:max-w-sm"
 					>
 						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-							<span class="block text-2xl font-bold text-gray-900">{offerCount}</span>
+							<span class="block text-2xl font-bold text-gray-900 tabular-nums"
+								>{stats ? stats.offerCount : '—'}</span
+							>
 							<span class="text-sm text-gray-500">{$translationStore.profile.offers}</span>
 						</div>
 						<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-							<span class="block text-2xl font-bold text-gray-900">0</span>
+							<span class="block text-2xl font-bold text-gray-900 tabular-nums"
+								>{stats ? stats.commentCount : '—'}</span
+							>
 							<span class="text-sm text-gray-500">{$translationStore.profile.comments}</span>
-						</div>
-						<div class="rounded-xl bg-primary-50 px-3 py-3 text-center">
-							<span class="block text-2xl font-bold text-primary-600">0°</span>
-							<span class="text-sm text-gray-500">{$translationStore.profile.reputation}</span>
 						</div>
 					</div>
 				</div>
