@@ -55,7 +55,8 @@ const offerShape = {
 	storeName: requiredText(OFFER_STORE_NAME_MAX_LENGTH),
 	city: requiredText(OFFER_CITY_MAX_LENGTH),
 	startDate: dateString(),
-	endDate: dateString()
+	endDate: dateString(),
+	categoryIds: z.array(z.string()).min(1, { message: 'isNotEmpty' })
 };
 
 function validateOfferDates(

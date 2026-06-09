@@ -19,4 +19,4 @@
 	<title>{data.offer.title} — {$translationStore.editDeal.pageTitle}</title>
 </svelte:head>
 
-<OfferForm formData={data.form} {labels} />
+<OfferForm formData={data.form} categories={data.categories} {labels} />

@@ -13,6 +13,7 @@ export interface ErrorMessages {
 	'offer.forbidden': string;
 	'offer.invalid_dates': string;
 	'offer.invalid_status_transition': string;
+	'offer.invalid_category': string;
 	'vote.offer_not_voteable': string;
 	'report.offer_not_reportable': string;
 	'comment.not_found': string;
@@ -183,9 +184,11 @@ export interface TranslationMessages {
 		filterCity: string;
 		filterType: string;
 		filterStore: string;
+		filterCategory: string;
 		allCities: string;
 		allTypes: string;
 		allStores: string;
+		allCategories: string;
 		sortRecent: string;
 		sortPopular: string;
 		sortEnding: string;
@@ -202,6 +205,20 @@ export interface TranslationMessages {
 		loadMore: string;
 		empty: string;
 	};
+	categories: {
+		technology: string;
+		home: string;
+		fashion: string;
+		groceries: string;
+		restaurants: string;
+		travel: string;
+		entertainment: string;
+		beauty: string;
+		sports: string;
+		kids: string;
+		services: string;
+		other: string;
+	};
 	createDeal: {
 		pageTitle: string;
 		heading: string;
@@ -211,6 +228,7 @@ export interface TranslationMessages {
 		descriptionLabel: string;
 		descriptionPlaceholder: string;
 		offerTypeLabel: string;
+		categoriesLabel: string;
 		offerTypeOnline: string;
 		offerTypeLocal: string;
 		externalUrlLabel: string;

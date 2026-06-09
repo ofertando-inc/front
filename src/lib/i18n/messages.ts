@@ -149,9 +149,11 @@ export const messages: Record<Locale, TranslationMessages> = {
 			filterCity: 'Ciudad',
 			filterType: 'Tipo',
 			filterStore: 'Tienda',
+			filterCategory: 'Categoría',
 			allCities: 'Todas las ciudades',
 			allTypes: 'Todos los tipos',
 			allStores: 'Todas las tiendas',
+			allCategories: 'Todas las categorías',
 			sortRecent: 'Más recientes',
 			sortPopular: 'Más populares',
 			sortEnding: 'Termina pronto',
@@ -168,6 +170,20 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Cargar más',
 			empty: 'No hay ofertas que coincidan con tus filtros.'
 		},
+		categories: {
+			technology: 'Tecnología',
+			home: 'Hogar',
+			fashion: 'Moda',
+			groceries: 'Mercado',
+			restaurants: 'Restaurantes',
+			travel: 'Viajes',
+			entertainment: 'Entretenimiento',
+			beauty: 'Belleza',
+			sports: 'Deportes',
+			kids: 'Niños',
+			services: 'Servicios',
+			other: 'Otros'
+		},
 		createDeal: {
 			pageTitle: 'Compartir una oferta',
 			heading: 'Comparte una oferta',
@@ -179,6 +195,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
 			offerTypeLabel: 'Tipo de oferta',
+			categoriesLabel: 'Categorías',
 			offerTypeOnline: 'Online',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: 'Enlace de la oferta',
@@ -321,6 +338,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'offer.invalid_category': 'Selecciona al menos una categoría válida.',
 			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'report.offer_not_reportable': 'No puedes reportar esta oferta porque ya no está activa.',
 			'comment.not_found': 'No encontramos ese comentario. Puede haber sido eliminado.',
@@ -553,9 +571,11 @@ export const messages: Record<Locale, TranslationMessages> = {
 			filterCity: 'City',
 			filterType: 'Type',
 			filterStore: 'Store',
+			filterCategory: 'Category',
 			allCities: 'All cities',
 			allTypes: 'All types',
 			allStores: 'All stores',
+			allCategories: 'All categories',
 			sortRecent: 'Most recent',
 			sortPopular: 'Most popular',
 			sortEnding: 'Ending soon',
@@ -572,6 +592,20 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Load more',
 			empty: 'No offers match your filters.'
 		},
+		categories: {
+			technology: 'Technology',
+			home: 'Home',
+			fashion: 'Fashion',
+			groceries: 'Groceries',
+			restaurants: 'Restaurants',
+			travel: 'Travel',
+			entertainment: 'Entertainment',
+			beauty: 'Beauty',
+			sports: 'Sports',
+			kids: 'Kids',
+			services: 'Services',
+			other: 'Other'
+		},
 		createDeal: {
 			pageTitle: 'Share a deal',
 			heading: 'Share a deal',
@@ -582,6 +616,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe the deal, important conditions, availability, and steps to use it.',
 			offerTypeLabel: 'Deal type',
+			categoriesLabel: 'Categories',
 			offerTypeOnline: 'Online',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: 'Deal link',
@@ -723,6 +758,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'offer.invalid_category': 'Pick at least one valid category.',
 			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'report.offer_not_reportable': 'You cannot report this offer because it is no longer active.',
 			'comment.not_found': 'We could not find that comment. It may have been removed.',
@@ -955,9 +991,11 @@ export const messages: Record<Locale, TranslationMessages> = {
 			filterCity: 'Ville',
 			filterType: 'Type',
 			filterStore: 'Magasin',
+			filterCategory: 'Catégorie',
 			allCities: 'Toutes les villes',
 			allTypes: 'Tous les types',
 			allStores: 'Tous les magasins',
+			allCategories: 'Toutes les catégories',
 			sortRecent: 'Plus récentes',
 			sortPopular: 'Plus populaires',
 			sortEnding: 'Bientôt finies',
@@ -974,6 +1012,20 @@ export const messages: Record<Locale, TranslationMessages> = {
 			loadMore: 'Charger plus',
 			empty: 'Aucune offre ne correspond à vos filtres.'
 		},
+		categories: {
+			technology: 'Technologie',
+			home: 'Maison',
+			fashion: 'Mode',
+			groceries: 'Courses',
+			restaurants: 'Restaurants',
+			travel: 'Voyages',
+			entertainment: 'Divertissement',
+			beauty: 'Beauté',
+			sports: 'Sport',
+			kids: 'Enfants',
+			services: 'Services',
+			other: 'Autres'
+		},
 		createDeal: {
 			pageTitle: 'Partager une offre',
 			heading: 'Partager une offre',
@@ -985,6 +1037,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
 			offerTypeLabel: "Type d'offre",
+			categoriesLabel: 'Catégories',
 			offerTypeOnline: 'En ligne',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: "Lien de l'offre",
@@ -1128,6 +1181,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'offer.invalid_dates':
 				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'offer.invalid_category': 'Choisis au moins une catégorie valide.',
 			'vote.offer_not_voteable':
 				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'report.offer_not_reportable':

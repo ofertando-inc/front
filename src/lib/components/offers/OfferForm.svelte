@@ -2,7 +2,9 @@
 	import { Button, Card, Input, Label, Select, Textarea } from 'flowbite-svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { translationStore } from '$lib/i18n';
+	import { categoryLabel } from '$lib/offers/categoryLabel';
 	import { localInputToUtcIso, utcIsoToLocalInput } from '$lib/offers/dates';
+	import type { Category } from '$lib/types/offer';
 	import type { CreateOfferFormData } from '$lib/validation/offerSchema';
 
 	export interface OfferFormLabels {
@@ -16,10 +18,11 @@
 
 	interface Props {
 		formData: SuperValidated<CreateOfferFormData>;
+		categories: Category[];
 		labels: OfferFormLabels;
 	}
 
-	let { formData, labels }: Props = $props();
+	let { formData, categories, labels }: Props = $props();
 
 	const DATE_FIELDS = ['startDate', 'endDate'] as const;
 
@@ -187,6 +190,37 @@
 					</Select>
 					{#if resolveFieldError('offerType')}
 						<p class="text-sm text-red-600">{resolveFieldError('offerType')}</p>
+					{/if}
+				</div>
+
+				<div class="space-y-2">
+					<Label class="text-sm font-medium text-gray-700"
+						>{$translationStore.createDeal.categoriesLabel} *</Label
+					>
+					<div class="flex flex-wrap gap-2">
+						{#each categories as category (category.id)}
+							<label class="cursor-pointer">
+								<input
+									type="checkbox"
+									name="categoryIds"
+									value={category.id}
+									bind:group={$form.categoryIds}
+									class="sr-only"
+								/>
+								<span
+									class="inline-block rounded-full border px-3 py-1.5 text-sm font-medium transition-colors {$form.categoryIds.includes(
+										category.id
+									)
+										? 'border-primary-500 bg-primary-500 text-white'
+										: 'border-gray-300 bg-white text-gray-600 hover:border-primary-300'}"
+								>
+									{categoryLabel($translationStore, category.slug, category.name)}
+								</span>
+							</label>
+						{/each}
+					</div>
+					{#if resolveFieldError('categoryIds')}
+						<p class="text-sm text-red-600">{resolveFieldError('categoryIds')}</p>
 					{/if}
 				</div>
 

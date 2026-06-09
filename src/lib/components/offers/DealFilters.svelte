@@ -1,14 +1,17 @@
 <script lang="ts">
 	import { Select } from 'flowbite-svelte';
 	import { translationStore } from '$lib/i18n';
-	import type { FacetValue, OfferPeriod, OfferSort } from '$lib/types/offer';
+	import { categoryLabel } from '$lib/offers/categoryLabel';
+	import type { CategoryFacet, FacetValue, OfferPeriod, OfferSort } from '$lib/types/offer';
 
 	interface Props {
 		cities: FacetValue[];
 		stores: FacetValue[];
+		categories: CategoryFacet[];
 		offerTypes: string[];
 		selectedCity?: string;
 		selectedStore?: string;
+		selectedCategory?: string;
 		selectedOfferType?: string;
 		selectedSort?: OfferSort;
 		selectedPeriod?: OfferPeriod;
@@ -19,9 +22,11 @@
 	let {
 		cities,
 		stores,
+		categories,
 		offerTypes,
 		selectedCity = $bindable(''),
 		selectedStore = $bindable(''),
+		selectedCategory = $bindable(''),
 		selectedOfferType = $bindable(''),
 		selectedSort = $bindable<OfferSort>('date'),
 		selectedPeriod = $bindable<OfferPeriod>('all'),
@@ -68,6 +73,20 @@
 		<option value="">{$translationStore.deals.allStores}</option>
 		{#each stores as store (store.value)}
 			<option value={store.value}>{facetLabel(store)}</option>
+		{/each}
+	</Select>
+
+	<Select
+		bind:value={selectedCategory}
+		placeholder=""
+		class={selectClass}
+		aria-label={$translationStore.deals.filterCategory}
+	>
+		<option value="">{$translationStore.deals.allCategories}</option>
+		{#each categories as category (category.slug)}
+			<option value={category.slug}>
+				{categoryLabel($translationStore, category.slug, category.name)} ({category.count})
+			</option>
 		{/each}
 	</Select>
 

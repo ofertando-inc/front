@@ -80,6 +80,14 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/categories') {
+			sendJson(response, 200, [
+				{ id: 'cat-technology', slug: 'technology', name: 'Technology', order: 1 },
+				{ id: 'cat-other', slug: 'other', name: 'Other', order: 12 }
+			]);
+			return;
+		}
+
 		if (url === '/offers' || url.startsWith('/offers?')) {
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
@@ -271,7 +279,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -295,7 +304,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -321,7 +331,8 @@ test.beforeAll(async () => {
 				updatedAt: '2020-01-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -345,7 +356,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -386,7 +398,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'author-id',
 				createdByUsername: 'autor-test',
-				userVote: null
+				userVote: null,
+				categories: []
 			};
 
 			if (url === '/admin/moderation/summary') {
@@ -586,6 +599,27 @@ test('create deal redirects unauthenticated users to login', async ({ page }) =>
 
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('create deal shows a required category picker for an authenticated user', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+
+	// Categories come from the server load (GET /categories) and render as chips
+	// with localized labels (default locale is Spanish: technology -> Tecnología).
+	const techChip = page.getByText('Tecnología', { exact: true });
+	await expect(techChip).toBeVisible();
+	await expect(page.getByText('Otros', { exact: true })).toBeVisible();
+
+	// Selecting a chip toggles the hidden checkbox bound to categoryIds.
+	await techChip.click();
+	await expect(page.locator('input[name="categoryIds"][value="cat-technology"]')).toBeChecked();
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
