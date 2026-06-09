@@ -41,6 +41,47 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/users/me/comments' || url.startsWith('/users/me/comments?')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, {
+				items: [
+					{
+						id: 'mc1',
+						content: 'Mi comentario de prueba',
+						createdAt: '2026-05-20T10:00:00.000Z',
+						editedAt: null,
+						score: 5,
+						replyCount: 2,
+						hidden: false,
+						offer: { id: 'e2e-comment-offer', title: 'Oferta comentada' }
+					}
+				],
+				nextCursor: null
+			});
+			return;
+		}
+
+		if (url === '/users/me/votes' || url.startsWith('/users/me/votes?')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, {
+				items: [
+					{
+						type: 'UP',
+						createdAt: '2026-05-21T10:00:00.000Z',
+						offer: { id: 'e2e-vote-offer', title: 'Oferta votada', score: 16 }
+					}
+				],
+				nextCursor: null
+			});
+			return;
+		}
+
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
 				const admin = isAdmin(request);
@@ -607,6 +648,26 @@ test('profile offers tab renders an empty state for authenticated users without 
 	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
 	await expect(main.getByText('Publica tu primera oferta para que aparezca aquí.')).toBeVisible();
 	await expect(main.getByRole('link', { name: 'Publicar oferta' })).toBeVisible();
+});
+
+test('profile comments and votes tabs list the user activity', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/profile');
+	const main = page.locator('main');
+	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	// Comments tab lazy-loads GET /users/me/comments.
+	await main.getByText('Mis comentarios').click();
+	await expect(main.getByText('Oferta comentada')).toBeVisible();
+	await expect(main.getByText('Mi comentario de prueba')).toBeVisible();
+
+	// Votes tab lazy-loads GET /users/me/votes and shows the offer score.
+	await main.getByText('Mis votos').click();
+	await expect(main.getByText('Oferta votada')).toBeVisible();
+	await expect(main.getByText('16°')).toBeVisible();
 });
 
 test('create deal redirects unauthenticated users to login', async ({ page }) => {

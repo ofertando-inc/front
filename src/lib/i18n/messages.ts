@@ -116,8 +116,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: 'Aún no has publicado ofertas.',
 			noOffersDescription: 'Publica tu primera oferta para que aparezca aquí.',
 			noComments: 'Aún no has comentado ninguna oferta.',
-			noVotes: 'Historial de votos no disponible.',
-			comingSoon: 'Disponible cuando conectemos los datos de actividad.',
+			noVotes: 'Aún no has votado por ninguna oferta.',
 			publishOffer: 'Publicar oferta',
 			offerActions: 'Acciones de la oferta',
 			retry: 'Reintentar'
@@ -537,8 +536,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: 'You have not published any offers yet.',
 			noOffersDescription: 'Publish your first deal so it appears here.',
 			noComments: 'You have not commented on any offer yet.',
-			noVotes: 'Vote history is not available yet.',
-			comingSoon: 'Available when activity data is connected.',
+			noVotes: "You haven't voted on any offers yet.",
 			publishOffer: 'Publish deal',
 			offerActions: 'Deal actions',
 			retry: 'Try again'
@@ -955,8 +953,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: "Vous n'avez pas encore publié d'offres.",
 			noOffersDescription: 'Publiez votre première offre pour la voir apparaître ici.',
 			noComments: "Vous n'avez encore commenté aucune offre.",
-			noVotes: "L'historique des votes n'est pas encore disponible.",
-			comingSoon: "Disponible lorsque les données d'activité seront connectées.",
+			noVotes: "Tu n'as encore voté pour aucune offre.",
 			publishOffer: 'Publier une offre',
 			offerActions: "Actions de l'offre",
 			retry: 'Réessayer'
