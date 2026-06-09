@@ -31,17 +31,17 @@
 	}
 </script>
 
-<Navbar class="sticky top-0 z-50 border-b border-gray-200 bg-white px-2 py-2 sm:px-4 sm:py-3">
+<Navbar
+	class="sticky top-0 z-50 border-b border-orange-100 bg-[#fffbf5]/85 px-2 py-2.5 backdrop-blur-md sm:px-4"
+>
 	{#snippet children({ hidden, toggle })}
-		<NavBrand href={resolve('/')} class="gap-2">
+		<NavBrand href={resolve('/')} class="gap-2.5">
 			<div
-				class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary-500 text-white transition-colors hover:bg-primary-600 sm:h-10 sm:w-10"
+				class="flex h-9 w-9 shrink-0 -rotate-3 items-center justify-center rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 text-white shadow-sm shadow-primary-500/30 transition-transform hover:rotate-0 sm:h-10 sm:w-10"
 			>
 				<TagSolid class="h-5 w-5 -rotate-90 sm:h-6 sm:w-6" />
 			</div>
-			<span
-				class="bg-linear-to-r from-primary-600 to-primary-500 bg-clip-text text-xl font-bold text-transparent sm:text-2xl"
-			>
+			<span class="font-display text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl">
 				{$translationStore.common.appName}
 			</span>
 		</NavBrand>
@@ -102,10 +102,10 @@
 				<Input
 					type="search"
 					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-full border-gray-300 bg-gray-50 pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
+					class="rounded-full border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
 				>
 					{#snippet left()}
-						<SearchOutline class="h-5 w-5 text-gray-400" />
+						<SearchOutline class="h-5 w-5 text-primary-400" />
 					{/snippet}
 				</Input>
 			</div>
@@ -120,10 +120,10 @@
 				<Input
 					type="search"
 					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-lg border-gray-300 bg-gray-50 pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
+					class="rounded-lg border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
 				>
 					{#snippet left()}
-						<SearchOutline class="h-5 w-5 text-gray-400" />
+						<SearchOutline class="h-5 w-5 text-primary-400" />
 					{/snippet}
 				</Input>
 			</li>
