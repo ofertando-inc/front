@@ -1,8 +1,11 @@
 import { apiRequest } from '$lib/api/client';
 import type {
+	CommentReportResponse,
 	CommentResponse,
 	CommentVoteResponse,
 	CreateCommentDto,
+	CreateCommentReportDto,
+	MyCommentReportResponse,
 	PaginatedComments,
 	UpdateCommentDto
 } from '$lib/types/comment';
@@ -70,5 +73,19 @@ export function removeCommentVote(offerId: string, commentId: string) {
 	return apiRequest<CommentVoteResponse>(
 		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/votes`,
 		{ method: 'DELETE' }
+	);
+}
+
+export function reportComment(offerId: string, commentId: string, payload: CreateCommentReportDto) {
+	return apiRequest<CommentReportResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/reports`,
+		{ method: 'POST', body: JSON.stringify(payload) }
+	);
+}
+
+export function getMyCommentReport(offerId: string, commentId: string) {
+	return apiRequest<MyCommentReportResponse>(
+		`/offers/${encodeURIComponent(offerId)}/comments/${encodeURIComponent(commentId)}/reports/me`,
+		{ method: 'GET' }
 	);
 }

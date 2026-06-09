@@ -3,9 +3,11 @@ import { ApiError } from '$lib/api/client';
 import {
 	createComment,
 	deleteComment,
+	getMyCommentReport,
 	listComments,
 	listReplies,
 	removeCommentVote,
+	reportComment,
 	updateComment,
 	voteComment
 } from '$lib/api/comments';
@@ -214,5 +216,72 @@ describe('removeCommentVote', () => {
 			expect.objectContaining({ method: 'DELETE', credentials: 'include' })
 		);
 		expect(res).toEqual({ score: 2, userVote: null });
+	});
+});
+
+describe('reportComment', () => {
+	it('POSTs the reason and note with id encoding and returns the count', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ reportCount: 4 }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await reportComment('a/b', 'c/1', { reason: 'SPAM', note: 'pub évidente' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/a%2Fb/comments/c%2F1/reports`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ reason: 'SPAM', note: 'pub évidente' })
+			})
+		);
+		expect(res).toEqual({ reportCount: 4 });
+	});
+
+	it('omits the note when not provided', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ reportCount: 1 }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await reportComment('abc', 'c1', { reason: 'OTHER' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/comments/c1/reports`,
+			expect.objectContaining({ body: JSON.stringify({ reason: 'OTHER' }) })
+		);
+	});
+
+	it('propagates ApiError on comment.not_reportable', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(jsonResponse({ key: 'comment.not_reportable', statusCode: 400 }, 400))
+		);
+
+		await expect(reportComment('abc', 'c1', { reason: 'SPAM' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'comment.not_reportable',
+			status: 400
+		});
+	});
+});
+
+describe('getMyCommentReport', () => {
+	it('GETs the viewer report status with id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ reason: 'ABUSE' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await getMyCommentReport('abc', 'c1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/comments/c1/reports/me`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+		expect(res).toEqual({ reason: 'ABUSE' });
+	});
+
+	it('returns null when the viewer has not reported the comment', async () => {
+		vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse({ reason: null }, 200)));
+
+		await expect(getMyCommentReport('abc', 'c1')).resolves.toEqual({ reason: null });
 	});
 });
