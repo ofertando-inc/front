@@ -173,9 +173,9 @@
 			{$translationStore.admin.offersEmpty}
 		</p>
 	{:else}
-		<div class="overflow-x-auto rounded-2xl border border-gray-200">
+		<div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
 			<table class="w-full min-w-3xl text-left text-sm">
-				<thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+				<thead class="bg-gray-50 text-xs tracking-wide text-gray-500 uppercase">
 					<tr>
 						<th class="px-4 py-3">{$translationStore.admin.thOffer}</th>
 						<th class="px-4 py-3">{$translationStore.admin.thAuthor}</th>
@@ -187,7 +187,7 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each offers as offer (offer.id)}
-						<tr class="bg-white">
+						<tr class="transition-colors hover:bg-gray-50">
 							<td class="px-4 py-3">
 								<a
 									href={resolve('/deals/[id]', { id: offer.id })}
@@ -198,8 +198,8 @@
 							</td>
 							<td class="px-4 py-3 text-gray-600">{offer.createdByUsername}</td>
 							<td class="px-4 py-3"><DealStatusBadge status={offer.status} /></td>
-							<td class="px-4 py-3 text-right text-gray-700">{offer.score}</td>
-							<td class="px-4 py-3 text-right text-gray-700">{offer.reportCount}</td>
+							<td class="px-4 py-3 text-right text-gray-700 tabular-nums">{offer.score}</td>
+							<td class="px-4 py-3 text-right text-gray-700 tabular-nums">{offer.reportCount}</td>
 							<td class="px-4 py-3">
 								<div class="flex justify-end gap-2">
 									{#if offer.status === 'DISABLED'}
