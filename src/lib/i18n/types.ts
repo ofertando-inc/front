@@ -152,7 +152,6 @@ export interface TranslationMessages {
 		noOffersDescription: string;
 		noComments: string;
 		noVotes: string;
-		comingSoon: string;
 		publishOffer: string;
 		offerActions: string;
 		retry: string;
