@@ -235,7 +235,6 @@ export interface TranslationMessages {
 		empty: string;
 		loadMore: string;
 		edited: string;
-		deletedPlaceholder: string;
 		reply: string;
 		replyingTo: string;
 		replyPlaceholder: string;
