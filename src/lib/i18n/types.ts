@@ -186,12 +186,17 @@ export interface TranslationMessages {
 		allTypes: string;
 		sortRecent: string;
 		sortPopular: string;
+		sortEnding: string;
+		hideExpired: string;
 		periodAll: string;
 		periodDay: string;
 		periodWeek: string;
 		periodMonth: string;
 		periodYear: string;
 		listingTitle: string;
+		resultsCount: string;
+		searchResultsFor: string;
+		clearSearch: string;
 		loadMore: string;
 		empty: string;
 	};
