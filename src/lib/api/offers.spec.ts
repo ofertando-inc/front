@@ -5,6 +5,7 @@ import {
 	deleteOffer,
 	getMyOffers,
 	getOfferById,
+	getOfferFacets,
 	listOffers,
 	updateOffer
 } from '$lib/api/offers';
@@ -119,6 +120,26 @@ describe('getMyOffers', () => {
 		expect(url).toContain('/offers/mine?');
 		expect(url).toContain('sort=date');
 		expect(url).toContain('limit=10');
+	});
+});
+
+describe('getOfferFacets', () => {
+	it('GETs /offers/facets with credentials and returns the facet buckets', async () => {
+		const facets = {
+			cities: [{ value: 'Bogotá', count: 12 }],
+			stores: [{ value: 'Acme', count: 5 }],
+			categories: [{ slug: 'technology', name: 'Technology', count: 8 }]
+		};
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse(facets, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await getOfferFacets();
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/facets`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+		expect(res).toEqual(facets);
 	});
 });
 

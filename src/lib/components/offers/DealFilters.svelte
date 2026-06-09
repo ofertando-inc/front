@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { Select } from 'flowbite-svelte';
 	import { translationStore } from '$lib/i18n';
-	import type { OfferPeriod, OfferSort } from '$lib/types/offer';
+	import type { FacetValue, OfferPeriod, OfferSort } from '$lib/types/offer';
 
 	interface Props {
-		cities: string[];
+		cities: FacetValue[];
+		stores: FacetValue[];
 		offerTypes: string[];
 		selectedCity?: string;
+		selectedStore?: string;
 		selectedOfferType?: string;
 		selectedSort?: OfferSort;
 		selectedPeriod?: OfferPeriod;
@@ -16,8 +18,10 @@
 
 	let {
 		cities,
+		stores,
 		offerTypes,
 		selectedCity = $bindable(''),
+		selectedStore = $bindable(''),
 		selectedOfferType = $bindable(''),
 		selectedSort = $bindable<OfferSort>('date'),
 		selectedPeriod = $bindable<OfferPeriod>('all'),
@@ -38,6 +42,8 @@
 		if (type === 'local') return $translationStore.deals.typeLocal;
 		return type;
 	}
+
+	const facetLabel = (f: FacetValue) => `${f.value} (${f.count})`;
 </script>
 
 <div class="flex flex-wrap items-center gap-2.5 {className}">
@@ -48,8 +54,20 @@
 		aria-label={$translationStore.deals.filterCity}
 	>
 		<option value="">{$translationStore.deals.allCities}</option>
-		{#each cities as city (city)}
-			<option value={city}>{city}</option>
+		{#each cities as city (city.value)}
+			<option value={city.value}>{facetLabel(city)}</option>
+		{/each}
+	</Select>
+
+	<Select
+		bind:value={selectedStore}
+		placeholder=""
+		class={selectClass}
+		aria-label={$translationStore.deals.filterStore}
+	>
+		<option value="">{$translationStore.deals.allStores}</option>
+		{#each stores as store (store.value)}
+			<option value={store.value}>{facetLabel(store)}</option>
 		{/each}
 	</Select>
 

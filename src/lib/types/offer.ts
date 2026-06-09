@@ -61,3 +61,22 @@ export interface ListOffersQuery {
 	offerType?: string;
 	includeExpired?: boolean;
 }
+
+// Filter values computed by the backend over publicly listable offers
+// (ACTIVE + EXPIRED), each carrying how many offers match it.
+export interface FacetValue {
+	value: string;
+	count: number;
+}
+
+export interface CategoryFacet {
+	slug: string;
+	name: string;
+	count: number;
+}
+
+export interface OfferFacets {
+	cities: FacetValue[];
+	stores: FacetValue[];
+	categories: CategoryFacet[];
+}

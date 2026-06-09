@@ -182,8 +182,10 @@ export interface TranslationMessages {
 		expiresOn: string;
 		filterCity: string;
 		filterType: string;
+		filterStore: string;
 		allCities: string;
 		allTypes: string;
+		allStores: string;
 		sortRecent: string;
 		sortPopular: string;
 		sortEnding: string;

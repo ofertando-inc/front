@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import { Button } from 'flowbite-svelte';
 	import { TagSolid, CloseOutline } from 'flowbite-svelte-icons';
 	import { goto } from '$app/navigation';
@@ -8,21 +9,31 @@
 	import DealCard from '$lib/components/offers/DealCard.svelte';
 	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
 	import DealFilters from '$lib/components/offers/DealFilters.svelte';
-	import { listOffers } from '$lib/api/offers';
+	import { getOfferFacets, listOffers } from '$lib/api/offers';
 	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
 	import { translationStore } from '$lib/i18n';
-	import type { ListOffersQuery, Offer, OfferPeriod, OfferSort } from '$lib/types/offer';
+	import type {
+		ListOffersQuery,
+		Offer,
+		OfferFacets,
+		OfferPeriod,
+		OfferSort
+	} from '$lib/types/offer';
 
-	const CITIES = ['Bogotá', 'Medellín', 'Cali', 'Barranquilla', 'Nacional'];
 	const OFFER_TYPES = ['online', 'local'];
 	const PAGE_LIMIT = 20;
 
 	let cityFilter = $state<string>('');
+	let storeFilter = $state<string>('');
 	let typeFilter = $state<string>('');
 	let sortFilter = $state<OfferSort>('date');
 	let periodFilter = $state<OfferPeriod>('all');
 	let hideExpired = $state(false);
+
+	// Filter values come from the backend so the dropdowns reflect the live
+	// catalogue (cities / stores that actually have offers) with match counts.
+	let facets = $state<OfferFacets | null>(null);
 
 	// The search term is URL-driven so the global header search can deep-link
 	// into the listing (`/deals?q=…`) and the back button stays meaningful.
@@ -43,6 +54,7 @@
 			sort: sortFilter,
 			period: sortFilter === 'score' ? periodFilter : undefined,
 			city: cityFilter || undefined,
+			store: storeFilter || undefined,
 			offerType: typeFilter || undefined,
 			includeExpired: hideExpired ? false : undefined,
 			limit: PAGE_LIMIT
@@ -101,6 +113,15 @@
 	$effect(() => {
 		void loadFirstPage(buildBaseQuery());
 	});
+
+	onMount(async () => {
+		try {
+			facets = await getOfferFacets();
+		} catch {
+			// Facets are progressive enhancement — the dropdowns simply stay empty.
+			facets = null;
+		}
+	});
 </script>
 
 <svelte:head>
@@ -120,9 +141,11 @@
 			</h1>
 		</div>
 		<DealFilters
-			cities={CITIES}
+			cities={facets?.cities ?? []}
+			stores={facets?.stores ?? []}
 			offerTypes={OFFER_TYPES}
 			bind:selectedCity={cityFilter}
+			bind:selectedStore={storeFilter}
 			bind:selectedOfferType={typeFilter}
 			bind:selectedSort={sortFilter}
 			bind:selectedPeriod={periodFilter}

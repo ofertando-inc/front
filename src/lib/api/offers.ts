@@ -3,6 +3,7 @@ import type {
 	CreateOfferDto,
 	ListOffersQuery,
 	Offer,
+	OfferFacets,
 	PaginatedOffers,
 	UpdateOfferDto
 } from '$lib/types/offer';
@@ -29,6 +30,12 @@ function buildQueryString(query?: ListOffersQuery): string {
 
 export function listOffers(query?: ListOffersQuery) {
 	return apiRequest<PaginatedOffers>(`/offers${buildQueryString(query)}`, {
+		method: 'GET'
+	});
+}
+
+export function getOfferFacets() {
+	return apiRequest<OfferFacets>('/offers/facets', {
 		method: 'GET'
 	});
 }

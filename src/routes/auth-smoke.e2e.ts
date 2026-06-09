@@ -75,6 +75,11 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/offers/facets') {
+			sendJson(response, 200, { cities: [], stores: [], categories: [] });
+			return;
+		}
+
 		if (url === '/offers' || url.startsWith('/offers?')) {
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
