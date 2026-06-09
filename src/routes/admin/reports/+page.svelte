@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { Button, Spinner } from 'flowbite-svelte';
-	import { listAdminReports } from '$lib/api/admin';
+	import { disableOffer, dismissOffer, listAdminReports } from '$lib/api/admin';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
 	import type { ReportSummary } from '$lib/types/admin';
@@ -11,6 +11,7 @@
 	let nextCursor = $state<string | null>(null);
 	let loading = $state(true);
 	let loadingMore = $state(false);
+	let pendingOfferId = $state<string | null>(null);
 	let errorMessage = $state<string | null>(null);
 
 	let dateFormatter = $derived(
@@ -51,6 +52,40 @@
 			loadingMore = false;
 		}
 	}
+
+	// Resolution is per offer: acting on one report clears every pending report of
+	// that offer, so we drop all of its rows from the queue.
+	function removeOfferRows(offerId: string) {
+		reports = reports.filter((r) => r.offer.id !== offerId);
+	}
+
+	async function handleDismiss(report: ReportSummary) {
+		if (pendingOfferId) return;
+		pendingOfferId = report.offer.id;
+		errorMessage = null;
+		try {
+			await dismissOffer(report.offer.id);
+			removeOfferRows(report.offer.id);
+		} catch {
+			errorMessage = $translationStore.admin.actionError;
+		} finally {
+			pendingOfferId = null;
+		}
+	}
+
+	async function handleDisable(report: ReportSummary) {
+		if (pendingOfferId) return;
+		pendingOfferId = report.offer.id;
+		errorMessage = null;
+		try {
+			await disableOffer(report.offer.id);
+			removeOfferRows(report.offer.id);
+		} catch {
+			errorMessage = $translationStore.admin.actionError;
+		} finally {
+			pendingOfferId = null;
+		}
+	}
 </script>
 
 <div class="space-y-4">
@@ -81,6 +116,7 @@
 						<th class="px-4 py-3">{$translationStore.admin.thComment}</th>
 						<th class="px-4 py-3">{$translationStore.admin.thReporter}</th>
 						<th class="px-4 py-3 text-right">{$translationStore.admin.thDate}</th>
+						<th class="px-4 py-3 text-right">{$translationStore.admin.thActions}</th>
 					</tr>
 				</thead>
 				<tbody class="divide-y divide-gray-100">
@@ -107,6 +143,26 @@
 							<td class="px-4 py-3 text-gray-600">{report.user.username}</td>
 							<td class="px-4 py-3 text-right whitespace-nowrap text-gray-500">
 								{dateFormatter.format(new Date(report.createdAt))}
+							</td>
+							<td class="px-4 py-3">
+								<div class="flex flex-wrap justify-end gap-2">
+									<Button
+										size="xs"
+										color="alternative"
+										disabled={pendingOfferId === report.offer.id}
+										onclick={() => handleDismiss(report)}
+									>
+										{$translationStore.admin.actionDismiss}
+									</Button>
+									<Button
+										size="xs"
+										color="red"
+										disabled={pendingOfferId === report.offer.id}
+										onclick={() => handleDisable(report)}
+									>
+										{$translationStore.admin.actionDisable}
+									</Button>
+								</div>
 							</td>
 						</tr>
 					{/each}
