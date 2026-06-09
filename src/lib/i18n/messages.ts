@@ -59,7 +59,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			commentsEmpty: 'No hay comentarios en la cola de moderación.',
 			viewReports: 'Ver reportes',
 			hideReports: 'Ocultar reportes',
-			noteEmpty: 'Sin nota'
+			noteEmpty: 'Sin nota',
+			brand: 'Moderación',
+			tabDashboard: 'Resumen',
+			dashboardTitle: 'Resumen de moderación',
+			dashboardSubtitle: 'Estado de las colas y accesos rápidos.',
+			statPendingComments: 'Comentarios por revisar',
+			statPendingReports: 'Ofertas reportadas',
+			statTotalPending: 'Total pendiente',
+			statAllClear: 'Todo al día. No hay nada pendiente.',
+			queuesTitle: 'Colas de moderación',
+			viewQueue: 'Abrir cola'
 		},
 		auth: {
 			loginTitle: 'Inicia sesión',
@@ -445,7 +455,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			commentsEmpty: 'No comments in the moderation queue.',
 			viewReports: 'View reports',
 			hideReports: 'Hide reports',
-			noteEmpty: 'No note'
+			noteEmpty: 'No note',
+			brand: 'Moderation',
+			tabDashboard: 'Overview',
+			dashboardTitle: 'Moderation overview',
+			dashboardSubtitle: 'Queue status and quick access.',
+			statPendingComments: 'Comments to review',
+			statPendingReports: 'Reported offers',
+			statTotalPending: 'Total pending',
+			statAllClear: 'All caught up. Nothing pending.',
+			queuesTitle: 'Moderation queues',
+			viewQueue: 'Open queue'
 		},
 		auth: {
 			loginTitle: 'Log in',
@@ -828,7 +848,17 @@ export const messages: Record<Locale, TranslationMessages> = {
 			commentsEmpty: 'Aucun commentaire dans la file de modération.',
 			viewReports: 'Voir les signalements',
 			hideReports: 'Masquer les signalements',
-			noteEmpty: 'Sans note'
+			noteEmpty: 'Sans note',
+			brand: 'Modération',
+			tabDashboard: 'Aperçu',
+			dashboardTitle: 'Aperçu de la modération',
+			dashboardSubtitle: 'État des files et accès rapides.',
+			statPendingComments: 'Commentaires à examiner',
+			statPendingReports: 'Offres signalées',
+			statTotalPending: 'Total en attente',
+			statAllClear: 'Tout est à jour. Rien en attente.',
+			queuesTitle: 'Files de modération',
+			viewQueue: 'Ouvrir la file'
 		},
 		auth: {
 			loginTitle: 'Se connecter',

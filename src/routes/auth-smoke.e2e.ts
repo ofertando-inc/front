@@ -674,9 +674,8 @@ test('admin panel returns 403 for authenticated non-admins', async ({ page, cont
 test('admin offers tab lists offers and disables one for an admin', async ({ page, context }) => {
 	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
 
-	await page.goto('/admin');
+	await page.goto('/admin/offers');
 
-	await expect(page.getByRole('heading', { name: 'Panel de administración' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'Desactivar', exact: true }).click();
