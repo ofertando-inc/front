@@ -238,6 +238,7 @@ export interface TranslationMessages {
 		genericError: string;
 	};
 	home: {
+		heroEyebrow: string;
 		heroTitle: string;
 		heroSubtitle: string;
 		exploreCta: string;
