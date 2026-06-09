@@ -207,6 +207,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: 'No pudimos eliminar la oferta. Inténtalo de nuevo.'
 		},
 		home: {
+			heroEyebrow: 'La comunidad de ofertas de Colombia',
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
 				'Únete a la comunidad de ahorradores más grande del país. Encuentra, comparte y vota por los mejores descuentos en tiendas físicas y online.',
@@ -601,6 +602,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: 'We could not delete the deal. Please try again.'
 		},
 		home: {
+			heroEyebrow: "Colombia's deal-hunting community",
 			heroTitle: 'Discover the best deals in Colombia',
 			heroSubtitle:
 				'Join the largest community of bargain hunters in the country. Find, share, and vote on the best discounts in physical stores and online.',
@@ -998,6 +1000,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: "Nous n'avons pas pu supprimer l'offre. Réessayez."
 		},
 		home: {
+			heroEyebrow: 'La communauté des bons plans en Colombie',
 			heroTitle: 'Découvrez les meilleures offres en Colombie',
 			heroSubtitle:
 				'Rejoignez la plus grande communauté de chasseurs de bonnes affaires du pays. Trouvez, partagez et votez pour les meilleurs rabais en magasin et en ligne.',

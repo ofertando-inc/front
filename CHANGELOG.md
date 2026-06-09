@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Redesigned the `/admin` panel into a dashboard with a sidebar (Overview / Offers / Reports / Comments): `/admin` is now an overview with stat cards and quick links, the offers management page moved to `/admin/offers`, the nav carries live count badges from the moderation summary, and the queue tables were refined (subtle elevation, hover rows, tabular-number counts, clamped comment content).
 - New product-wide design foundations ("Mercado vibrante" direction): self-hosted Bricolage Grotesque (display) and Hanken Grotesk (body) fonts, a warm cream background with charcoal text, and `heat` / `savings` colour scales added to the theme. Headings now use the display font. The global header, footer, and error page were restyled to the warmer palette (frosted warm header, gradient brand mark, cream search fields).
+- Redesigned the home page in the "Mercado vibrante" direction: a two-column hero on a warm gradient-mesh background (live-community eyebrow with a pulsing dot, display headline, comfortable-measure subtitle, pill CTAs, and a floating decorative deal cluster with subtle motion that respects `prefers-reduced-motion`), gradient icon tiles on the "hot deals" (heat) and "recently added" (primary) section headers, and pill-style popular-store chips with a hover lift. New `home.heroEyebrow` key localized in Spanish, English, and French.
 
 ## [0.7.0] - 2026-06-01
 
