@@ -4,6 +4,7 @@ import type {
 	AdminListOffersQuery,
 	CommentModerationSummary,
 	ModerationListQuery,
+	ModerationSummary,
 	PaginatedModerationComments,
 	PaginatedReportDetails,
 	PaginatedReports,
@@ -117,4 +118,8 @@ export function dismissOffer(id: string) {
 	return apiRequest<Offer>(`/admin/offers/${encodeURIComponent(id)}/dismiss`, {
 		method: 'PATCH'
 	});
+}
+
+export function getModerationSummary() {
+	return apiRequest<ModerationSummary>('/admin/moderation/summary', { method: 'GET' });
 }

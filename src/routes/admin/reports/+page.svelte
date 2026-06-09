@@ -107,9 +107,9 @@
 			{$translationStore.admin.reportsEmpty}
 		</p>
 	{:else}
-		<div class="overflow-x-auto rounded-2xl border border-gray-200">
+		<div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
 			<table class="w-full min-w-3xl text-left text-sm">
-				<thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+				<thead class="bg-gray-50 text-xs tracking-wide text-gray-500 uppercase">
 					<tr>
 						<th class="px-4 py-3">{$translationStore.admin.thReportedOffer}</th>
 						<th class="px-4 py-3">{$translationStore.admin.thReason}</th>
@@ -121,7 +121,7 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each reports as report (report.id)}
-						<tr class="bg-white">
+						<tr class="transition-colors hover:bg-gray-50">
 							<td class="px-4 py-3">
 								<a
 									href={resolve('/deals/[id]', { id: report.offer.id })}

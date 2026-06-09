@@ -95,6 +95,16 @@ export interface TranslationMessages {
 		viewReports: string;
 		hideReports: string;
 		noteEmpty: string;
+		brand: string;
+		tabDashboard: string;
+		dashboardTitle: string;
+		dashboardSubtitle: string;
+		statPendingComments: string;
+		statPendingReports: string;
+		statTotalPending: string;
+		statAllClear: string;
+		queuesTitle: string;
+		viewQueue: string;
 	};
 	auth: {
 		loginTitle: string;

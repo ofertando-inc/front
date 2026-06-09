@@ -141,9 +141,9 @@
 			{$translationStore.admin.commentsEmpty}
 		</p>
 	{:else}
-		<div class="overflow-x-auto rounded-2xl border border-gray-200">
+		<div class="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
 			<table class="w-full min-w-3xl text-left text-sm">
-				<thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+				<thead class="bg-gray-50 text-xs tracking-wide text-gray-500 uppercase">
 					<tr>
 						<th class="px-4 py-3">{$translationStore.admin.thContent}</th>
 						<th class="px-4 py-3">{$translationStore.admin.thAuthor}</th>
@@ -154,8 +154,10 @@
 				</thead>
 				<tbody class="divide-y divide-gray-100">
 					{#each comments as comment (comment.id)}
-						<tr class="bg-white align-top">
-							<td class="max-w-md px-4 py-3 text-gray-700">{comment.content}</td>
+						<tr class="align-top transition-colors hover:bg-gray-50">
+							<td class="max-w-md px-4 py-3 text-gray-700">
+								<p class="line-clamp-2">{comment.content}</p>
+							</td>
 							<td class="px-4 py-3 text-gray-600">{comment.user.username}</td>
 							<td class="px-4 py-3">
 								<a
@@ -165,7 +167,7 @@
 									{comment.offer.title}
 								</a>
 							</td>
-							<td class="px-4 py-3 text-right font-semibold text-gray-700">
+							<td class="px-4 py-3 text-right font-semibold text-gray-700 tabular-nums">
 								{comment.reportCount}
 							</td>
 							<td class="px-4 py-3">

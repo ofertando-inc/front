@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Admin comment-moderation tab (`/admin/comments`): a paginated queue (most reported first) showing the comment, author, offer link, and report count, with hide / dismiss actions that drop the row from the queue and a lazy "view reports" expansion that lists each report's reason, note, reporter, and date.
 - Decision actions on the admin offer-reports tab: each reported offer can be dismissed (reports cleared, offer returns to active) or disabled, both resolved per offer so every row of that offer leaves the now `PENDING`-only queue.
 - E2E smoke coverage for the moderation queues: an admin dismisses an offer report and empties the queue, and lists the comment queue, expands a comment's report details, and hides it.
+- Moderation summary API (`getModerationSummary` → `{ pendingComments, pendingOfferReports }`) feeding a shared store, plus an `/admin` dashboard with queue stat cards and sidebar count badges.
+
+### Changed
+
+- Redesigned the `/admin` panel into a dashboard with a sidebar (Overview / Offers / Reports / Comments): `/admin` is now an overview with stat cards and quick links, the offers management page moved to `/admin/offers`, the nav carries live count badges from the moderation summary, and the queue tables were refined (subtle elevation, hover rows, tabular-number counts, clamped comment content).
 
 ## [0.7.0] - 2026-06-01
 
