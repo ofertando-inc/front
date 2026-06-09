@@ -13,10 +13,15 @@ function buildQueryString(query?: ListOffersQuery): string {
 	const params = new URLSearchParams();
 	if (query.cursor !== undefined) params.set('cursor', query.cursor);
 	if (query.limit !== undefined) params.set('limit', String(query.limit));
+	if (query.q !== undefined) params.set('q', query.q);
 	if (query.sort !== undefined) params.set('sort', query.sort);
 	if (query.period !== undefined) params.set('period', query.period);
 	if (query.city !== undefined) params.set('city', query.city);
+	if (query.store !== undefined) params.set('store', query.store);
+	if (query.category !== undefined) params.set('category', query.category);
 	if (query.offerType !== undefined) params.set('offerType', query.offerType);
+	if (query.includeExpired !== undefined)
+		params.set('includeExpired', String(query.includeExpired));
 
 	const serialized = params.toString();
 	return serialized ? `?${serialized}` : '';

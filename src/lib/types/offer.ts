@@ -1,7 +1,7 @@
 import type { VoteType } from '$lib/types/vote';
 
 export const OFFER_STATUSES = ['ACTIVE', 'REPORTED', 'DISABLED', 'DELETED', 'EXPIRED'] as const;
-export const OFFER_SORTS = ['date', 'score'] as const;
+export const OFFER_SORTS = ['date', 'score', 'ending'] as const;
 export const OFFER_PERIODS = ['all', 'day', 'week', 'month', 'year'] as const;
 
 export type OfferStatus = (typeof OFFER_STATUSES)[number];
@@ -32,6 +32,8 @@ export interface Offer {
 export interface PaginatedOffers {
 	items: Offer[];
 	nextCursor: string | null;
+	// CountedPaginatedResult: filtered total, independent of `limit`.
+	total: number;
 }
 
 export interface CreateOfferDto {
@@ -50,8 +52,12 @@ export type UpdateOfferDto = Partial<CreateOfferDto>;
 export interface ListOffersQuery {
 	cursor?: string;
 	limit?: number;
+	q?: string;
 	sort?: OfferSort;
 	period?: OfferPeriod;
 	city?: string;
+	store?: string;
+	category?: string;
 	offerType?: string;
+	includeExpired?: boolean;
 }
