@@ -416,6 +416,54 @@ test.beforeAll(async () => {
 				return;
 			}
 
+			if (/^\/admin\/offers\/[^/]+\/dismiss$/.test(url)) {
+				sendJson(response, 200, { ...adminOffer, status: 'ACTIVE', reportCount: 0 });
+				return;
+			}
+
+			const moderationComment = {
+				id: 'mod-c1',
+				content: 'Comentario reportado de prueba',
+				reportCount: 3,
+				hiddenAt: null,
+				createdAt: '2026-05-20T10:00:00.000Z',
+				user: { id: 'troll-id', username: 'troll' },
+				offer: { id: 'e2e-admin-offer', title: 'Oferta moderable' }
+			};
+
+			const commentReportsAdminMatch = url.match(/^\/admin\/comments\/([^/?]+)\/reports(?:\?.*)?$/);
+			if (commentReportsAdminMatch) {
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'rd-1',
+							reason: 'SPAM',
+							note: 'publicidad evidente',
+							status: 'PENDING',
+							createdAt: '2026-05-20T10:00:00.000Z',
+							user: { id: 'r1', username: 'denunciante' }
+						}
+					],
+					nextCursor: null
+				});
+				return;
+			}
+
+			if (/^\/admin\/comments\/[^/]+\/hide$/.test(url)) {
+				sendJson(response, 200, { ...moderationComment, hiddenAt: '2026-05-21T10:00:00.000Z' });
+				return;
+			}
+
+			if (/^\/admin\/comments\/[^/]+\/dismiss$/.test(url)) {
+				sendJson(response, 200, { ...moderationComment, reportCount: 0 });
+				return;
+			}
+
+			if (url === '/admin/comments' || url.startsWith('/admin/comments?')) {
+				sendJson(response, 200, { items: [moderationComment], nextCursor: null });
+				return;
+			}
+
 			if (/^\/admin\/users\/[^/]+\/(disable|restore)$/.test(url)) {
 				const disabling = url.endsWith('/disable');
 				sendJson(response, 200, {
@@ -643,6 +691,35 @@ test('admin reports tab lists pending reports for an admin', async ({ page, cont
 	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
 	await expect(page.getByText('Parece una estafa')).toBeVisible();
 	await expect(page.getByText('reportante')).toBeVisible();
+});
+
+test('admin reports tab dismisses an offer report', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/reports');
+	await expect(page.getByText('Parece una estafa')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Descartar' }).click();
+
+	await expect(page.getByText('No hay reportes pendientes.')).toBeVisible();
+});
+
+test('admin comments tab shows the queue, report details, and hides a comment', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/comments');
+
+	await expect(page.getByText('Comentario reportado de prueba')).toBeVisible();
+	await expect(page.getByText('troll')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Ver reportes' }).click();
+	await expect(page.getByText('publicidad evidente')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Ocultar', exact: true }).click();
+	await expect(page.getByText('No hay comentarios en la cola de moderación.')).toBeVisible();
 });
 
 test('offer detail marks a past-date offer as expired and locks vote/report', async ({
