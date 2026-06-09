@@ -2,6 +2,7 @@ import { redirect } from '@sveltejs/kit';
 import { fail, superValidate } from 'sveltekit-superforms';
 import {
 	applyBackendErrors,
+	fetchOfferCategories,
 	getDefaultOfferData,
 	offerFormAdapter,
 	readBackendError,
@@ -14,6 +15,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 	await requireAuthenticated(fetch);
 
 	return {
+		categories: await fetchOfferCategories(fetch),
 		form: await superValidate(offerFormAdapter, {
 			defaults: getDefaultOfferData()
 		})

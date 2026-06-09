@@ -12,7 +12,8 @@ const validOffer = {
 	storeName: 'Acme',
 	city: 'Bogotá',
 	startDate: futureStartDate,
-	endDate: futureEndDate
+	endDate: futureEndDate,
+	categoryIds: ['cat-1']
 };
 
 function fieldMessages(error: unknown, field: string): string[] {
@@ -55,9 +56,19 @@ describe('createOfferSchema', () => {
 					'storeName',
 					'city',
 					'startDate',
-					'endDate'
+					'endDate',
+					'categoryIds'
 				])
 			);
+		}
+	});
+
+	it('requires at least one category', () => {
+		const result = createOfferSchema.safeParse({ ...validOffer, categoryIds: [] });
+
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			expect(fieldMessages(result.error, 'categoryIds')).toContain('isNotEmpty');
 		}
 	});
 

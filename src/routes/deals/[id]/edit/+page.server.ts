@@ -3,6 +3,7 @@ import { fail, superValidate } from 'sveltekit-superforms';
 import { requireOwnedOffer } from '$lib/server/offers/access';
 import {
 	applyBackendErrors,
+	fetchOfferCategories,
 	offerFormAdapter,
 	offerToFormData,
 	readBackendError,
@@ -17,6 +18,7 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 
 	return {
 		offer,
+		categories: await fetchOfferCategories(fetch),
 		form: await superValidate(offerFormAdapter, {
 			defaults: offerToFormData(offer)
 		})
