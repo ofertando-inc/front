@@ -66,3 +66,8 @@ export interface PaginatedReportDetails {
 	items: ReportDetail[];
 	nextCursor: string | null;
 }
+
+export interface ModerationSummary {
+	pendingComments: number;
+	pendingOfferReports: number;
+}

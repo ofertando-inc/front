@@ -5,6 +5,7 @@ import {
 	disableUser,
 	dismissComment,
 	dismissOffer,
+	getModerationSummary,
 	hideComment,
 	listAdminCommentReports,
 	listAdminComments,
@@ -274,5 +275,22 @@ describe('dismissOffer', () => {
 			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
 		);
 		expect(res).toEqual({ id: 'o1', status: 'ACTIVE' });
+	});
+});
+
+describe('getModerationSummary', () => {
+	it('GETs the moderation summary counts', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ pendingComments: 5, pendingOfferReports: 2 }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await getModerationSummary();
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/moderation/summary`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+		expect(res).toEqual({ pendingComments: 5, pendingOfferReports: 2 });
 	});
 });
