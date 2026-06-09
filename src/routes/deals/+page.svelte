@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Button } from 'flowbite-svelte';
+	import { TagSolid } from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
 	import DealCard from '$lib/components/offers/DealCard.svelte';
 	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
@@ -91,7 +92,16 @@
 
 <section class="space-y-6">
 	<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-		<h1 class="text-3xl font-bold text-gray-900">{$translationStore.deals.listingTitle}</h1>
+		<div class="flex items-center gap-3">
+			<span
+				class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 text-white shadow-sm shadow-primary-500/30"
+			>
+				<TagSolid class="h-5 w-5 -rotate-90" />
+			</span>
+			<h1 class="font-display text-3xl font-extrabold tracking-tight text-gray-900">
+				{$translationStore.deals.listingTitle}
+			</h1>
+		</div>
 		<DealFilters
 			cities={CITIES}
 			offerTypes={OFFER_TYPES}
@@ -124,9 +134,14 @@
 	</div>
 
 	{#if isEmpty}
-		<p class="rounded-2xl border border-gray-200 bg-white p-8 text-center text-gray-500">
-			{$translationStore.deals.empty}
-		</p>
+		<div class="rounded-2xl border border-orange-100 bg-white p-10 text-center">
+			<div
+				class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-orange-50 text-primary-400"
+			>
+				<TagSolid class="h-6 w-6 -rotate-90" />
+			</div>
+			<p class="text-gray-500">{$translationStore.deals.empty}</p>
+		</div>
 	{/if}
 
 	{#if !initialLoading && cursor}

@@ -40,7 +40,7 @@
 </script>
 
 <Card
-	class="flex max-w-full! flex-col overflow-hidden rounded-xl border border-gray-200 bg-white p-0! transition-shadow hover:shadow-lg {isDimmed
+	class="flex max-w-full! flex-col overflow-hidden rounded-2xl border border-orange-100 bg-white p-0! transition-all duration-200 hover:-translate-y-0.5 hover:border-primary-200 hover:shadow-lg hover:shadow-orange-900/5 {isDimmed
 		? 'opacity-75 grayscale-[0.5]'
 		: ''} {className}"
 >
@@ -62,14 +62,14 @@
 				</div>
 				{#if isOnline}
 					<span
-						class="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700"
+						class="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700"
 					>
 						<GlobeOutline class="h-3 w-3" />
 						{$translationStore.deals.typeOnline}
 					</span>
 				{:else if isLocal}
 					<span
-						class="inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700"
+						class="inline-flex items-center gap-1 rounded-full bg-violet-50 px-2.5 py-1 text-xs font-semibold text-violet-700"
 					>
 						<MapPinOutline class="h-3 w-3" />
 						{$translationStore.deals.typeLocal}
@@ -80,7 +80,7 @@
 
 		<a href={detailHref} class="group grow">
 			<h3
-				class="mb-2 line-clamp-2 text-lg leading-tight font-bold text-gray-900 transition-colors group-hover:text-primary-600"
+				class="mb-2 line-clamp-2 font-display text-lg leading-tight font-extrabold text-gray-900 transition-colors group-hover:text-primary-600"
 			>
 				{offer.title}
 			</h3>
@@ -90,7 +90,7 @@
 		</a>
 
 		<div
-			class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-100 pt-4 text-xs text-gray-500"
+			class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-orange-100 pt-4 text-xs text-gray-500"
 		>
 			<div class="flex items-center gap-1 font-medium text-gray-700">
 				<StoreOutline class="h-3.5 w-3.5 text-gray-400" />

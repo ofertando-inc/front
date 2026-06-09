@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronUpOutline, ChevronDownOutline } from 'flowbite-svelte-icons';
+	import { ChevronUpOutline, ChevronDownOutline, FireSolid } from 'flowbite-svelte-icons';
 	import { castVote, removeVote } from '$lib/api/votes';
 	import { translationStore } from '$lib/i18n';
 	import { resolveOfferError } from '$lib/offers/offerErrors';
@@ -36,6 +36,7 @@
 	let iconClass = $derived(size === 'sm' ? 'h-4 w-4' : size === 'md' ? 'h-5 w-5' : 'h-6 w-6');
 	let gapClass = $derived(size === 'sm' ? 'gap-1' : size === 'md' ? 'gap-2' : 'gap-3');
 	let scoreClass = $derived(size === 'sm' ? 'text-sm' : size === 'md' ? 'text-base' : 'text-lg');
+	let flameClass = $derived(size === 'sm' ? 'h-3 w-3' : size === 'md' ? 'h-3.5 w-3.5' : 'h-4 w-4');
 
 	async function handleVote(direction: VoteType, event: MouseEvent) {
 		event.preventDefault();
@@ -98,15 +99,18 @@
 		</button>
 
 		<span
-			class="min-w-[2ch] text-center {scoreClass} {userVote === 'UP'
+			class="inline-flex items-center gap-0.5 {scoreClass} {userVote === 'UP'
 				? 'text-primary-600'
 				: userVote === 'DOWN'
 					? 'text-blue-600'
 					: isHot
-						? 'text-primary-500'
+						? 'text-heat-500'
 						: 'text-gray-700'}"
 		>
-			{score}°
+			{#if isHot}
+				<FireSolid class={flameClass} />
+			{/if}
+			<span class="min-w-[2ch] text-center tabular-nums">{score}°</span>
 		</span>
 
 		<button
