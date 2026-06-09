@@ -85,6 +85,16 @@ export interface TranslationMessages {
 		thDate: string;
 		reportsEmpty: string;
 		noComment: string;
+		tabComments: string;
+		thContent: string;
+		thNote: string;
+		actionHide: string;
+		actionDismiss: string;
+		actionDismissReports: string;
+		commentsEmpty: string;
+		viewReports: string;
+		hideReports: string;
+		noteEmpty: string;
 	};
 	auth: {
 		loginTitle: string;
