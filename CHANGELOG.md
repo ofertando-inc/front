@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Redesigned the `/admin` panel into a dashboard with a sidebar (Overview / Offers / Reports / Comments): `/admin` is now an overview with stat cards and quick links, the offers management page moved to `/admin/offers`, the nav carries live count badges from the moderation summary, and the queue tables were refined (subtle elevation, hover rows, tabular-number counts, clamped comment content).
+- New product-wide design foundations ("Mercado vibrante" direction): self-hosted Bricolage Grotesque (display) and Hanken Grotesk (body) fonts, a warm cream background with charcoal text, and `heat` / `savings` colour scales added to the theme. Headings now use the display font. The global header, footer, and error page were restyled to the warmer palette (frosted warm header, gradient brand mark, cream search fields).
 
 ## [0.7.0] - 2026-06-01
 

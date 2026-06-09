@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import '@fontsource-variable/hanken-grotesk/index.css';
+	import '@fontsource-variable/bricolage-grotesque/index.css';
 	import './layout.css';
 	import AppFooter from '$lib/components/layout/AppFooter.svelte';
 	import AppHeader from '$lib/components/layout/AppHeader.svelte';
