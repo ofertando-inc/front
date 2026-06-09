@@ -18,6 +18,8 @@ export interface ErrorMessages {
 	'comment.not_found': string;
 	'comment.forbidden': string;
 	'comment.offer_not_commentable': string;
+	'comment.not_reportable': string;
+	'comment.invalid_status_transition': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -246,6 +248,28 @@ export interface TranslationMessages {
 		cancel: string;
 		delete: string;
 		deleteConfirm: string;
+		deletedPlaceholderAuthor: string;
+		hiddenPlaceholderModerator: string;
+		report: string;
+		reported: string;
+		reportTitle: string;
+		reportDescription: string;
+		reportReasonLabel: string;
+		reportReasonPlaceholder: string;
+		reportNoteLabel: string;
+		reportNotePlaceholder: string;
+		reportNoteHint: string;
+		reportSubmit: string;
+		reportSubmitting: string;
+		reportSuccess: string;
+		reportGenericError: string;
+		reportReasons: {
+			SPAM: string;
+			ABUSE: string;
+			OFF_TOPIC: string;
+			MISINFORMATION: string;
+			OTHER: string;
+		};
 	};
 	footer: {
 		rights: string;
