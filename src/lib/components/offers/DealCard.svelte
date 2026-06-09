@@ -10,10 +10,13 @@
 		StoreOutline
 	} from 'flowbite-svelte-icons';
 	import { localeStore, translationStore } from '$lib/i18n';
+	import { categoryLabel } from '$lib/offers/categoryLabel';
 	import { isOfferExpired } from '$lib/offers/expiration';
 	import type { Offer } from '$lib/types/offer';
 	import DealStatusBadge from './DealStatusBadge.svelte';
 	import VotePanel from './VotePanel.svelte';
+
+	const MAX_CATEGORY_CHIPS = 3;
 
 	interface Props {
 		offer: Offer;
@@ -37,6 +40,9 @@
 			year: 'numeric'
 		}).format(new Date(offer.endDate))
 	);
+
+	let visibleCategories = $derived(offer.categories.slice(0, MAX_CATEGORY_CHIPS));
+	let extraCategories = $derived(offer.categories.length - visibleCategories.length);
 </script>
 
 <Card
@@ -88,6 +94,23 @@
 				{offer.description}
 			</p>
 		</a>
+
+		{#if visibleCategories.length > 0}
+			<div class="mb-4 flex flex-wrap gap-1.5">
+				{#each visibleCategories as category (category.id)}
+					<span
+						class="rounded-full bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-primary-700"
+					>
+						{categoryLabel($translationStore, category.slug, category.name)}
+					</span>
+				{/each}
+				{#if extraCategories > 0}
+					<span class="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+						+{extraCategories}
+					</span>
+				{/if}
+			</div>
+		{/if}
 
 		<div
 			class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-orange-100 pt-4 text-xs text-gray-500"
