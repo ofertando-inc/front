@@ -3,8 +3,15 @@ import { ApiError } from '$lib/api/client';
 import {
 	disableOffer,
 	disableUser,
+	dismissComment,
+	dismissOffer,
+	hideComment,
+	listAdminCommentReports,
+	listAdminComments,
+	listAdminOfferReports,
 	listAdminOffers,
 	listAdminReports,
+	restoreComment,
 	restoreOffer,
 	restoreUser
 } from '$lib/api/admin';
@@ -166,5 +173,106 @@ describe('restoreUser', () => {
 			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
 		);
 		expect(res).toEqual({ id: 'u1', status: 'ACTIVE' });
+	});
+});
+
+describe('listAdminComments', () => {
+	it('GETs the moderation queue with cursor and limit', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAdminComments({ cursor: 'abc', limit: 20 });
+
+		const url = fetchMock.mock.calls[0]?.[0] as string;
+		expect(url).toContain('/admin/comments?');
+		expect(url).toContain('cursor=abc');
+		expect(url).toContain('limit=20');
+	});
+
+	it('propagates ApiError on auth.forbidden', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.forbidden', statusCode: 403 }, 403))
+		);
+
+		await expect(listAdminComments()).rejects.toMatchObject({ name: 'ApiError', status: 403 });
+	});
+});
+
+describe('hideComment / dismissComment / restoreComment', () => {
+	it('PATCHes the hide endpoint with id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'c1', hiddenAt: 'now' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await hideComment('c/1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/comments/c%2F1/hide`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
+		);
+	});
+
+	it('PATCHes the dismiss endpoint', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'c1', reportCount: 0 }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await dismissComment('c1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/comments/c1/dismiss`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
+		);
+	});
+
+	it('PATCHes the restore endpoint', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'c1', hiddenAt: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await restoreComment('c1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/comments/c1/restore`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
+		);
+	});
+});
+
+describe('listAdminCommentReports / listAdminOfferReports', () => {
+	it('GETs the report details of a comment with id encoding', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAdminCommentReports('c/1', { limit: 10 });
+
+		const url = fetchMock.mock.calls[0]?.[0] as string;
+		expect(url).toContain('/admin/comments/c%2F1/reports?');
+		expect(url).toContain('limit=10');
+	});
+
+	it('GETs the report details of an offer', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAdminOfferReports('o1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/offers/o1/reports`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+	});
+});
+
+describe('dismissOffer', () => {
+	it('PATCHes the offer dismiss endpoint and returns the active offer', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'o1', status: 'ACTIVE' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await dismissOffer('o1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/offers/o1/dismiss`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include' })
+		);
+		expect(res).toEqual({ id: 'o1', status: 'ACTIVE' });
 	});
 });
