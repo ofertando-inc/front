@@ -82,6 +82,26 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/users/me' && request.method === 'PATCH') {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			void readJsonBody(request).then((body) => {
+				const patch = (body ?? {}) as { username?: unknown; email?: unknown };
+				sendJson(response, 200, {
+					id: 'e2e-user-id',
+					email: typeof patch.email === 'string' ? patch.email : 'e2e@example.com',
+					username: typeof patch.username === 'string' ? patch.username : 'e2euser',
+					role: 'USER',
+					status: 'ACTIVE',
+					createdAt: '2026-05-01T10:00:00.000Z',
+					updatedAt: '2026-05-22T10:00:00.000Z'
+				});
+			});
+			return;
+		}
+
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
 				const admin = isAdmin(request);
@@ -668,6 +688,23 @@ test('profile comments and votes tabs list the user activity', async ({ page, co
 	await main.getByText('Mis votos').click();
 	await expect(main.getByText('Oferta votada')).toBeVisible();
 	await expect(main.getByText('16°')).toBeVisible();
+});
+
+test('profile lets the user edit their username', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/profile');
+	const main = page.locator('main');
+	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	await main.getByRole('button', { name: 'Editar perfil' }).click();
+	await page.getByLabel('Nombre de usuario').fill('nicolas2');
+	await page.getByRole('button', { name: 'Guardar cambios' }).click();
+
+	// PATCH /users/me echoes the new username; the store update refreshes the header.
+	await expect(main.getByRole('heading', { name: 'nicolas2' })).toBeVisible();
 });
 
 test('create deal redirects unauthenticated users to login', async ({ page }) => {
