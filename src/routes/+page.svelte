@@ -6,7 +6,6 @@
 	import DealCard from '$lib/components/offers/DealCard.svelte';
 	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
 	import { listOffers } from '$lib/api/offers';
-	import { MOCK_POPULAR_STORES } from '$lib/data/mockDeals';
 	import { translationStore } from '$lib/i18n';
 	import { isOfferExpired } from '$lib/offers/expiration';
 	import type { Offer } from '$lib/types/offer';
@@ -209,24 +208,6 @@
 					<DealCard offer={deal} />
 				{/each}
 			{/if}
-		</div>
-	</section>
-
-	<!-- Popular stores -->
-	<section class="border-t border-orange-100 pt-12">
-		<h2
-			class="mb-6 text-center font-display text-xl font-extrabold tracking-tight text-gray-900 sm:text-2xl"
-		>
-			{$translationStore.home.popularStoresTitle}
-		</h2>
-		<div class="flex flex-wrap justify-center gap-3">
-			{#each MOCK_POPULAR_STORES as store (store)}
-				<div
-					class="cursor-default rounded-full border border-orange-100 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary-300 hover:text-primary-600 hover:shadow-md"
-				>
-					{store}
-				</div>
-			{/each}
 		</div>
 	</section>
 </div>

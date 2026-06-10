@@ -202,12 +202,3 @@ export const MOCK_OFFERS: Offer[] = [
 		categories: [cat('technology', 'Technology')]
 	}
 ];
-
-export const MOCK_POPULAR_STORES = [
-	'Éxito',
-	'Falabella',
-	'MercadoLibre',
-	'Alkosto',
-	'Jumbo',
-	'Amazon'
-];
