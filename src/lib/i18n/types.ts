@@ -9,6 +9,8 @@ export interface ErrorMessages {
 	'auth.account_disabled': string;
 	'user.email_taken': string;
 	'user.username_taken': string;
+	'user.current_password_required': string;
+	'user.invalid_current_password': string;
 	'offer.not_found': string;
 	'offer.forbidden': string;
 	'offer.invalid_dates': string;
@@ -46,6 +48,8 @@ export interface TranslationMessages {
 		english: string;
 		french: string;
 		home: string;
+		explore: string;
+		search: string;
 		searchPlaceholder: string;
 		login: string;
 		register: string;
@@ -132,6 +136,7 @@ export interface TranslationMessages {
 		validationError: string;
 		genericLoginError: string;
 		genericRegisterError: string;
+		genericUpdateError: string;
 		serverError: string;
 		profileTitle: string;
 		notAuthenticated: string;
@@ -155,6 +160,14 @@ export interface TranslationMessages {
 		publishOffer: string;
 		offerActions: string;
 		retry: string;
+		editProfile: string;
+		newPasswordLabel: string;
+		newPasswordHint: string;
+		currentPasswordLabel: string;
+		save: string;
+		saving: string;
+		cancel: string;
+		updateSuccess: string;
 	};
 	offer: {
 		genericBrowseError: string;
@@ -268,7 +281,6 @@ export interface TranslationMessages {
 		publishCta: string;
 		hotDealsTitle: string;
 		recentDealsTitle: string;
-		popularStoresTitle: string;
 		viewAll: string;
 	};
 	comments: {
@@ -318,7 +330,20 @@ export interface TranslationMessages {
 		rights: string;
 		terms: string;
 		privacy: string;
-		contact: string;
+	};
+	legal: {
+		lastUpdated: string;
+		backHome: string;
+		terms: {
+			title: string;
+			intro: string;
+			sections: { heading: string; body: string }[];
+		};
+		privacy: {
+			title: string;
+			intro: string;
+			sections: { heading: string; body: string }[];
+		};
 	};
 	report: {
 		modalTitle: string;
