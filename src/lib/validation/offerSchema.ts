@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { isKnownCity } from '$lib/offers/cities';
 
 export const OFFER_TITLE_MAX_LENGTH = 200;
 export const OFFER_DESCRIPTION_MAX_LENGTH = 5000;
@@ -59,8 +60,8 @@ const offerShape = {
 	categoryIds: z.array(z.string()).min(1, { message: 'isNotEmpty' })
 };
 
-function validateOfferDates(
-	data: Partial<{ startDate: string; endDate: string }>,
+function validateOffer(
+	data: Partial<{ offerType: string; city: string; startDate: string; endDate: string }>,
 	ctx: z.RefinementCtx
 ) {
 	const startDate = parseValidDate(data.startDate);
@@ -81,11 +82,24 @@ function validateOfferDates(
 			message: 'isAfterStart'
 		});
 	}
+
+	// Local offers must point to a real Colombian city. Online offers use a
+	// sentinel ("Nacional") and are not checked against the city list.
+	if (data.offerType === 'local') {
+		const city = (data.city ?? '').trim();
+		if (city && !isKnownCity(city)) {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['city'],
+				message: 'unknownCity'
+			});
+		}
+	}
 }
 
-export const createOfferSchema = z.object(offerShape).superRefine(validateOfferDates);
+export const createOfferSchema = z.object(offerShape).superRefine(validateOffer);
 
-export const updateOfferSchema = z.object(offerShape).partial().superRefine(validateOfferDates);
+export const updateOfferSchema = z.object(offerShape).partial().superRefine(validateOffer);
 
 export type CreateOfferFormData = z.infer<typeof createOfferSchema>;
 export type UpdateOfferFormData = z.infer<typeof updateOfferSchema>;
