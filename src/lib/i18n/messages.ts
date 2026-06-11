@@ -464,6 +464,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ciudad debe ser una cadena de texto.',
 					isNotEmpty: 'Ingresa una ciudad.',
+					unknownCity: 'Selecciona una ciudad de la lista.',
 					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
 				},
 				startDate: {
@@ -948,6 +949,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'The city must be a string.',
 					isNotEmpty: 'Enter a city.',
+					unknownCity: 'Pick a city from the list.',
 					maxLength: 'The city name is too long (max 100 characters).'
 				},
 				startDate: {
@@ -1441,6 +1443,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ville doit être une chaîne de caractères.',
 					isNotEmpty: 'Saisissez une ville.',
+					unknownCity: 'Choisis une ville dans la liste.',
 					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
 				},
 				startDate: {
