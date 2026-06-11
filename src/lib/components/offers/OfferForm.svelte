@@ -3,9 +3,11 @@
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { translationStore } from '$lib/i18n';
 	import { categoryLabel } from '$lib/offers/categoryLabel';
+	import { NATIONAL_CITY, normalizeCity } from '$lib/offers/cities';
 	import { localInputToUtcIso, utcIsoToLocalInput } from '$lib/offers/dates';
 	import type { Category } from '$lib/types/offer';
 	import type { CreateOfferFormData } from '$lib/validation/offerSchema';
+	import CityCombobox from './CityCombobox.svelte';
 
 	export interface OfferFormLabels {
 		heading: string;
@@ -40,6 +42,17 @@
 					outgoing.set(field, localInputToUtcIso(value));
 				}
 			}
+
+			// Local offers ship the canonical city name so the backend always
+			// stores a uniform value (e.g. "medellin" -> "Medellín"); an unknown
+			// city is left as-is and rejected by the schema. Online offers have no
+			// city field, so they always ship the "Nacional" sentinel.
+			if (outgoing.get('offerType') === 'local') {
+				const canonical = normalizeCity(String(outgoing.get('city') ?? ''));
+				if (canonical) outgoing.set('city', canonical);
+			} else {
+				outgoing.set('city', NATIONAL_CITY);
+			}
 		},
 		onUpdated() {
 			// On a validation failure the server echoes the UTC values back into the
@@ -55,6 +68,16 @@
 			);
 		}
 	});
+
+	// Online offers have no city field — they ship the "Nacional" sentinel.
+	// Switching to local clears it so the user must pick a real city.
+	function handleOfferTypeChange() {
+		if ($form.offerType === 'online') {
+			$form.city = NATIONAL_CITY;
+		} else if ($form.city === NATIONAL_CITY) {
+			$form.city = '';
+		}
+	}
 
 	type FieldName = keyof CreateOfferFormData;
 
@@ -180,6 +203,7 @@
 						id="offerType"
 						name="offerType"
 						bind:value={$form.offerType}
+						onchange={handleOfferTypeChange}
 						required
 						aria-invalid={resolveFieldError('offerType') ? 'true' : undefined}
 						color={resolveFieldError('offerType') ? 'red' : undefined}
@@ -266,26 +290,24 @@
 						{/if}
 					</div>
 
-					<div class="space-y-2">
-						<Label for="city" class="text-sm font-medium text-gray-700"
-							>{$translationStore.createDeal.cityLabel} *</Label
-						>
-						<Input
-							id="city"
-							name="city"
-							type="text"
-							bind:value={$form.city}
-							placeholder={$translationStore.createDeal.cityPlaceholder}
-							required
-							maxlength={100}
-							aria-invalid={resolveFieldError('city') ? 'true' : undefined}
-							color={resolveFieldError('city') ? 'red' : undefined}
-							class={resolveFieldError('city') ? fieldErrorClass : fieldClass}
-						/>
-						{#if resolveFieldError('city')}
-							<p class="text-sm text-red-600">{resolveFieldError('city')}</p>
-						{/if}
-					</div>
+					{#if $form.offerType === 'local'}
+						<div class="space-y-2">
+							<Label for="city" class="text-sm font-medium text-gray-700"
+								>{$translationStore.createDeal.cityLabel} *</Label
+							>
+							<CityCombobox
+								id="city"
+								name="city"
+								bind:value={$form.city}
+								placeholder={$translationStore.createDeal.cityPlaceholder}
+								required
+								invalid={Boolean(resolveFieldError('city'))}
+							/>
+							{#if resolveFieldError('city')}
+								<p class="text-sm text-red-600">{resolveFieldError('city')}</p>
+							{/if}
+						</div>
+					{/if}
 				</div>
 
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
