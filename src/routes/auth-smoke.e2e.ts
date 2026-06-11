@@ -733,6 +733,11 @@ test('create deal shows a required category picker for an authenticated user', a
 	// Selecting a chip toggles the hidden checkbox bound to categoryIds.
 	await techChip.click();
 	await expect(page.locator('input[name="categoryIds"][value="cat-technology"]')).toBeChecked();
+
+	// Switching to a local offer reveals the city autocomplete (bundled dataset).
+	await page.selectOption('select#offerType', 'local');
+	await page.fill('input#city', 'mede');
+	await expect(page.getByRole('option', { name: /Medellín/ })).toBeVisible();
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
