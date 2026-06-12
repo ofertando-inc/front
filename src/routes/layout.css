@@ -57,6 +57,13 @@
 		font-family: var(--font-display);
 		letter-spacing: -0.015em;
 	}
+
+	/* Tailwind v4's reset no longer sets a pointer cursor on buttons — restore it
+	   for every enabled clickable so the whole UI feels actionable. */
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
 }
 
 .page-shell {

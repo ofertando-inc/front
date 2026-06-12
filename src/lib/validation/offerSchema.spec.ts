@@ -110,6 +110,39 @@ describe('createOfferSchema', () => {
 			expect(fieldMessages(result.error, 'endDate')).toContain('isAfterStart');
 		}
 	});
+
+	it('accepts a local offer with a known city', () => {
+		const result = createOfferSchema.safeParse({
+			...validOffer,
+			offerType: 'local',
+			city: 'Medellín'
+		});
+
+		expect(result.success).toBe(true);
+	});
+
+	it('rejects a local offer whose city is not in the list', () => {
+		const result = createOfferSchema.safeParse({
+			...validOffer,
+			offerType: 'local',
+			city: 'Gotham'
+		});
+
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			expect(fieldMessages(result.error, 'city')).toContain('unknownCity');
+		}
+	});
+
+	it('does not check the city for online offers (national sentinel)', () => {
+		const result = createOfferSchema.safeParse({
+			...validOffer,
+			offerType: 'online',
+			city: 'Nacional'
+		});
+
+		expect(result.success).toBe(true);
+	});
 });
 
 describe('updateOfferSchema', () => {

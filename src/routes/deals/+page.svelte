@@ -132,16 +132,9 @@
 
 <section class="space-y-6">
 	<div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-		<div class="flex items-center gap-3">
-			<span
-				class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary-400 to-primary-600 text-white shadow-sm shadow-primary-500/30"
-			>
-				<TagSolid class="h-5 w-5 -rotate-90" />
-			</span>
-			<h1 class="font-display text-3xl font-extrabold tracking-tight text-gray-900">
-				{$translationStore.deals.listingTitle}
-			</h1>
-		</div>
+		<h1 class="font-display text-3xl font-extrabold tracking-tight text-gray-900">
+			{$translationStore.deals.listingTitle}
+		</h1>
 		<DealFilters
 			cities={facets?.cities ?? []}
 			stores={facets?.stores ?? []}

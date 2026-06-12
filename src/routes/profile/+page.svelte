@@ -9,6 +9,8 @@
 		Card,
 		Dropdown,
 		DropdownItem,
+		Input,
+		Label,
 		Modal,
 		TabItem,
 		Tabs
@@ -17,23 +19,25 @@
 		ChevronDownOutline,
 		ChevronUpOutline,
 		DotsVerticalOutline,
+		EditOutline,
 		EyeSlashOutline,
 		FireSolid,
 		MessageDotsOutline,
 		TagSolid,
 		TrashBinOutline
 	} from 'flowbite-svelte-icons';
-	import { getMyStats } from '$lib/api/auth';
+	import { getMyStats, updateMe } from '$lib/api/auth';
 	import { ApiError } from '$lib/api/client';
 	import { deleteOffer, getMyOffers } from '$lib/api/offers';
 	import { getMyComments, getMyVotes } from '$lib/api/profile';
+	import { resolveAuthError } from '$lib/auth/authErrors';
 	import DealCard from '$lib/components/offers/DealCard.svelte';
 	import DealCardSkeleton from '$lib/components/offers/DealCardSkeleton.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
 	import { authStore } from '$lib/stores/auth';
 	import { localeStore, translationStore } from '$lib/i18n';
 	import { resolveOfferError, type OfferContext } from '$lib/offers/offerErrors';
-	import type { UserStats } from '$lib/types/auth';
+	import type { UpdateMeDto, UserStats } from '$lib/types/auth';
 	import type { Offer } from '$lib/types/offer';
 	import type { MyComment, MyVote } from '$lib/types/profile';
 
@@ -62,6 +66,15 @@
 	let deleteModalOpen = $state(false);
 	let deleteTarget = $state<Offer | null>(null);
 	let deletingOfferId = $state<string | null>(null);
+
+	let editModalOpen = $state(false);
+	let editUsername = $state('');
+	let editEmail = $state('');
+	let editPassword = $state('');
+	let editCurrentPassword = $state('');
+	let editFieldErrors = $state<Record<string, string>>({});
+	let editBannerError = $state<string | null>(null);
+	let editSubmitting = $state(false);
 
 	const offerSkeletons = [0, 1, 2];
 
@@ -241,6 +254,73 @@
 		}
 	}
 
+	function openEditModal() {
+		if (!$authStore.user) return;
+		editUsername = $authStore.user.username;
+		editEmail = $authStore.user.email;
+		editPassword = '';
+		editCurrentPassword = '';
+		editFieldErrors = {};
+		editBannerError = null;
+		editModalOpen = true;
+	}
+
+	function closeEditModal() {
+		if (editSubmitting) return;
+		editModalOpen = false;
+	}
+
+	async function handleUpdateProfile(event: SubmitEvent) {
+		event.preventDefault();
+		const current = $authStore.user;
+		if (!current || editSubmitting) return;
+
+		editFieldErrors = {};
+		editBannerError = null;
+
+		// Only send the fields that actually changed (an empty new-password field
+		// means "keep the current password").
+		const payload: UpdateMeDto = {};
+		const username = editUsername.trim();
+		const email = editEmail.trim();
+		if (username && username !== current.username) payload.username = username;
+		if (email && email !== current.email) payload.email = email;
+		if (editPassword) payload.password = editPassword;
+		if (editCurrentPassword) payload.currentPassword = editCurrentPassword;
+
+		const changesIdentity = payload.email !== undefined || payload.password !== undefined;
+		if (payload.username === undefined && !changesIdentity) {
+			editModalOpen = false;
+			return;
+		}
+
+		// Mirror the backend rules client-side for instant feedback.
+		if (payload.password !== undefined && payload.password.length < 8) {
+			editFieldErrors = { password: $translationStore.auth.passwordTooShort };
+			return;
+		}
+		if (changesIdentity && !payload.currentPassword) {
+			editFieldErrors = {
+				currentPassword: $translationStore.errors['user.current_password_required']
+			};
+			return;
+		}
+
+		editSubmitting = true;
+		try {
+			const updated = await updateMe(payload);
+			authStore.setUser(updated);
+			editModalOpen = false;
+		} catch (error) {
+			if (await redirectIfAuthError(error)) return;
+			const resolved = resolveAuthError(error, $translationStore, 'editProfile');
+			editFieldErrors = resolved.fieldErrors;
+			editBannerError = resolved.bannerMessage;
+		} finally {
+			editSubmitting = false;
+		}
+	}
+
 	onMount(async () => {
 		if (!browser) return;
 
@@ -325,6 +405,13 @@
 						>
 							{$translationStore.profile.role}: {$authStore.user.role}
 						</span>
+					</div>
+
+					<div class="mt-4 flex justify-center md:justify-start">
+						<Button color="alternative" size="sm" class="rounded-full" onclick={openEditModal}>
+							<EditOutline class="mr-2 h-4 w-4" />
+							{$translationStore.profile.editProfile}
+						</Button>
 					</div>
 
 					<div
@@ -646,3 +733,96 @@
 		{/snippet}
 	</Modal>
 {/if}
+
+<Modal bind:open={editModalOpen} title={$translationStore.profile.editProfile} size="md">
+	<form onsubmit={handleUpdateProfile} class="space-y-4">
+		{#if editBannerError}
+			<div
+				role="alert"
+				class="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+			>
+				{editBannerError}
+			</div>
+		{/if}
+
+		<div class="space-y-2">
+			<Label for="edit-username" class="text-sm font-medium text-gray-700">
+				{$translationStore.auth.username}
+			</Label>
+			<Input
+				id="edit-username"
+				type="text"
+				bind:value={editUsername}
+				autocomplete="username"
+				color={editFieldErrors.username ? 'red' : undefined}
+			/>
+			{#if editFieldErrors.username}
+				<p class="text-sm text-red-600">{editFieldErrors.username}</p>
+			{/if}
+		</div>
+
+		<div class="space-y-2">
+			<Label for="edit-email" class="text-sm font-medium text-gray-700">
+				{$translationStore.auth.email}
+			</Label>
+			<Input
+				id="edit-email"
+				type="email"
+				bind:value={editEmail}
+				autocomplete="email"
+				color={editFieldErrors.email ? 'red' : undefined}
+			/>
+			{#if editFieldErrors.email}
+				<p class="text-sm text-red-600">{editFieldErrors.email}</p>
+			{/if}
+		</div>
+
+		<div class="space-y-2">
+			<Label for="edit-password" class="text-sm font-medium text-gray-700">
+				{$translationStore.profile.newPasswordLabel}
+			</Label>
+			<Input
+				id="edit-password"
+				type="password"
+				bind:value={editPassword}
+				autocomplete="new-password"
+				color={editFieldErrors.password ? 'red' : undefined}
+			/>
+			<p class="text-sm text-gray-500">{$translationStore.profile.newPasswordHint}</p>
+			{#if editFieldErrors.password}
+				<p class="text-sm text-red-600">{editFieldErrors.password}</p>
+			{/if}
+		</div>
+
+		<div class="space-y-2">
+			<Label for="edit-current-password" class="text-sm font-medium text-gray-700">
+				{$translationStore.profile.currentPasswordLabel}
+			</Label>
+			<Input
+				id="edit-current-password"
+				type="password"
+				bind:value={editCurrentPassword}
+				autocomplete="current-password"
+				color={editFieldErrors.currentPassword ? 'red' : undefined}
+			/>
+			{#if editFieldErrors.currentPassword}
+				<p class="text-sm text-red-600">{editFieldErrors.currentPassword}</p>
+			{/if}
+		</div>
+
+		<div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end">
+			<Button
+				type="button"
+				color="alternative"
+				class="w-full sm:w-auto"
+				disabled={editSubmitting}
+				onclick={closeEditModal}
+			>
+				{$translationStore.profile.cancel}
+			</Button>
+			<Button type="submit" class="w-full sm:w-auto" disabled={editSubmitting}>
+				{editSubmitting ? $translationStore.profile.saving : $translationStore.profile.save}
+			</Button>
+		</div>
+	</form>
+</Modal>

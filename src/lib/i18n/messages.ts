@@ -9,6 +9,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'Inglés',
 			french: 'Francés',
 			home: 'Inicio',
+			explore: 'Explorar',
+			search: 'Buscar',
 			searchPlaceholder: 'Buscar ofertas, tiendas, ciudades...',
 			login: 'Entrar',
 			register: 'Crear cuenta',
@@ -97,6 +99,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Revisa los campos del formulario e inténtalo de nuevo.',
 			genericLoginError: 'No pudimos iniciar sesión en este momento.',
 			genericRegisterError: 'No pudimos crear tu cuenta en este momento.',
+			genericUpdateError: 'No pudimos actualizar tu perfil en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.',
 			profileTitle: 'Mi perfil',
 			notAuthenticated: 'Debes iniciar sesión para acceder a esta página.',
@@ -119,7 +122,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: 'Aún no has votado por ninguna oferta.',
 			publishOffer: 'Publicar oferta',
 			offerActions: 'Acciones de la oferta',
-			retry: 'Reintentar'
+			retry: 'Reintentar',
+			editProfile: 'Editar perfil',
+			newPasswordLabel: 'Nueva contraseña',
+			newPasswordHint: 'Déjala en blanco para no cambiarla.',
+			currentPasswordLabel: 'Contraseña actual',
+			save: 'Guardar cambios',
+			saving: 'Guardando...',
+			cancel: 'Cancelar',
+			updateSuccess: 'Perfil actualizado.'
 		},
 		offer: {
 			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
@@ -237,7 +248,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Compartir un descuento',
 			hotDealsTitle: 'Ofertas calientes',
 			recentDealsTitle: 'Agregadas recientemente',
-			popularStoresTitle: 'Tiendas populares',
 			viewAll: 'Ver todas'
 		},
 		comments: {
@@ -286,8 +296,64 @@ export const messages: Record<Locale, TranslationMessages> = {
 		footer: {
 			rights: 'Todos los derechos reservados.',
 			terms: 'Términos',
-			privacy: 'Privacidad',
-			contact: 'Contacto'
+			privacy: 'Privacidad'
+		},
+		legal: {
+			lastUpdated: 'Última actualización: junio de 2026',
+			backHome: 'Volver al inicio',
+			terms: {
+				title: 'Términos y condiciones',
+				intro: 'Al usar Ofertando aceptas estas condiciones. Léelas con atención.',
+				sections: [
+					{
+						heading: 'El servicio',
+						body: 'Ofertando es una plataforma comunitaria donde las personas comparten, comentan y votan ofertas y descuentos. No vendemos productos: solo facilitamos el intercambio de información entre usuarios.'
+					},
+					{
+						heading: 'Tu cuenta',
+						body: 'Eres responsable de mantener la confidencialidad de tus credenciales y de la actividad de tu cuenta. Podemos desactivar las cuentas que incumplan estas condiciones.'
+					},
+					{
+						heading: 'Contenido y conducta',
+						body: 'Eres responsable de las ofertas y comentarios que publicas. No se permite contenido spam, engañoso, ilegal ni abusivo; nuestro equipo de moderación puede ocultar o eliminar contenido y resolver los reportes de la comunidad.'
+					},
+					{
+						heading: 'Sobre las ofertas',
+						body: 'Las ofertas las envía la comunidad y pueden cambiar o caducar sin previo aviso. Verifica siempre el precio, las condiciones y la disponibilidad en la tienda antes de comprar; no garantizamos su exactitud.'
+					},
+					{
+						heading: 'Cambios',
+						body: 'Podemos actualizar estas condiciones para reflejar mejoras del servicio o requisitos legales. El uso continuado de Ofertando implica la aceptación de la versión vigente.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Política de privacidad',
+				intro:
+					'En Ofertando cuidamos tus datos. Aquí te explicamos qué recopilamos y cómo lo usamos.',
+				sections: [
+					{
+						heading: 'Datos que recopilamos',
+						body: 'Para crear tu cuenta guardamos tu correo electrónico y tu nombre de usuario. También registramos tu actividad en la plataforma: ofertas, comentarios y votos.'
+					},
+					{
+						heading: 'Cómo usamos tus datos',
+						body: 'Usamos tus datos para ofrecerte el servicio, mostrar tu actividad en tu perfil y permitir la moderación de la comunidad. No vendemos tus datos a terceros.'
+					},
+					{
+						heading: 'Cookies y sesión',
+						body: 'Usamos una cookie de sesión estrictamente necesaria para mantenerte conectado de forma segura. No usamos cookies de seguimiento publicitario.'
+					},
+					{
+						heading: 'Tus derechos',
+						body: 'Puedes consultar y editar tu nombre de usuario, tu correo y tu contraseña desde tu perfil en cualquier momento.'
+					},
+					{
+						heading: 'Cambios',
+						body: 'Podemos actualizar esta política. Publicaremos cualquier cambio en esta misma página.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Reportar oferta',
@@ -316,6 +382,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Editar',
 			report: 'Reportar',
 			share: 'Compartir',
+			shareCopied: 'Enlace copiado',
 			publishedBy: 'Publicado por',
 			relatedTitle: 'Ofertas relacionadas',
 			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
@@ -331,6 +398,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Tu cuenta está deshabilitada. Contacta con el soporte.',
 			'user.email_taken': 'Ese correo ya está registrado. Usa otro o inicia sesión.',
 			'user.username_taken': 'Ese nombre de usuario ya existe. Elige uno diferente.',
+			'user.current_password_required': 'Ingresa tu contraseña actual para confirmar el cambio.',
+			'user.invalid_current_password': 'La contraseña actual es incorrecta.',
 			'offer.not_found': 'No encontramos esa oferta. Puede haber sido eliminada.',
 			'offer.forbidden': 'No tienes permiso para modificar esta oferta.',
 			'offer.invalid_dates':
@@ -396,6 +465,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ciudad debe ser una cadena de texto.',
 					isNotEmpty: 'Ingresa una ciudad.',
+					unknownCity: 'Selecciona una ciudad de la lista.',
 					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
 				},
 				startDate: {
@@ -429,6 +499,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'English',
 			french: 'French',
 			home: 'Home',
+			explore: 'Explore',
+			search: 'Search',
 			searchPlaceholder: 'Search deals, stores, cities...',
 			login: 'Log in',
 			register: 'Create account',
@@ -517,6 +589,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Check the form fields and try again.',
 			genericLoginError: 'We could not log you in right now.',
 			genericRegisterError: 'We could not create your account right now.',
+			genericUpdateError: 'We could not update your profile right now.',
 			serverError: 'The server is unavailable right now. Please try again later.',
 			profileTitle: 'My profile',
 			notAuthenticated: 'You must log in to access this page.',
@@ -539,7 +612,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: "You haven't voted on any offers yet.",
 			publishOffer: 'Publish deal',
 			offerActions: 'Deal actions',
-			retry: 'Try again'
+			retry: 'Try again',
+			editProfile: 'Edit profile',
+			newPasswordLabel: 'New password',
+			newPasswordHint: 'Leave blank to keep it.',
+			currentPasswordLabel: 'Current password',
+			save: 'Save changes',
+			saving: 'Saving...',
+			cancel: 'Cancel',
+			updateSuccess: 'Profile updated.'
 		},
 		offer: {
 			genericBrowseError: 'We could not load the offers right now.',
@@ -655,7 +736,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Share a discount',
 			hotDealsTitle: 'Hot deals',
 			recentDealsTitle: 'Recently added',
-			popularStoresTitle: 'Popular stores',
 			viewAll: 'View all'
 		},
 		comments: {
@@ -704,8 +784,63 @@ export const messages: Record<Locale, TranslationMessages> = {
 		footer: {
 			rights: 'All rights reserved.',
 			terms: 'Terms',
-			privacy: 'Privacy',
-			contact: 'Contact'
+			privacy: 'Privacy'
+		},
+		legal: {
+			lastUpdated: 'Last updated: June 2026',
+			backHome: 'Back to home',
+			terms: {
+				title: 'Terms and conditions',
+				intro: 'By using Ofertando you accept these terms. Please read them carefully.',
+				sections: [
+					{
+						heading: 'The service',
+						body: 'Ofertando is a community platform where people share, comment on and vote for deals and discounts. We do not sell products: we only make it easier for users to exchange information.'
+					},
+					{
+						heading: 'Your account',
+						body: 'You are responsible for keeping your credentials confidential and for the activity on your account. We may disable accounts that break these terms.'
+					},
+					{
+						heading: 'Content and conduct',
+						body: 'You are responsible for the offers and comments you post. Spam, misleading, illegal or abusive content is not allowed; our moderation team may hide or remove content and resolve community reports.'
+					},
+					{
+						heading: 'About the offers',
+						body: 'Offers are submitted by the community and may change or expire without notice. Always check the price, conditions and availability at the store before buying; we do not guarantee their accuracy.'
+					},
+					{
+						heading: 'Changes',
+						body: 'We may update these terms to reflect improvements to the service or legal requirements. Continued use of Ofertando means you accept the current version.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Privacy policy',
+				intro: 'At Ofertando we look after your data. Here is what we collect and how we use it.',
+				sections: [
+					{
+						heading: 'Data we collect',
+						body: 'To create your account we store your email address and your username. We also record your activity on the platform: offers, comments and votes.'
+					},
+					{
+						heading: 'How we use your data',
+						body: 'We use your data to provide the service, show your activity on your profile and enable community moderation. We do not sell your data to third parties.'
+					},
+					{
+						heading: 'Cookies and session',
+						body: 'We use a strictly necessary session cookie to keep you securely signed in. We do not use advertising or tracking cookies.'
+					},
+					{
+						heading: 'Your rights',
+						body: 'You can view and edit your username, email and password from your profile at any time.'
+					},
+					{
+						heading: 'Changes',
+						body: 'We may update this policy. We will publish any changes on this same page.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Report offer',
@@ -734,6 +869,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Edit',
 			report: 'Report',
 			share: 'Share',
+			shareCopied: 'Link copied',
 			publishedBy: 'Posted by',
 			relatedTitle: 'Related offers',
 			relatedEmpty: 'No related offers at the moment.',
@@ -749,6 +885,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Your account is disabled. Please contact support.',
 			'user.email_taken': 'That email is already registered. Use another one or sign in.',
 			'user.username_taken': 'That username already exists. Choose a different one.',
+			'user.current_password_required': 'Enter your current password to confirm the change.',
+			'user.invalid_current_password': 'Your current password is incorrect.',
 			'offer.not_found': 'We could not find that offer. It may have been removed.',
 			'offer.forbidden': 'You do not have permission to modify this offer.',
 			'offer.invalid_dates':
@@ -813,6 +951,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'The city must be a string.',
 					isNotEmpty: 'Enter a city.',
+					unknownCity: 'Pick a city from the list.',
 					maxLength: 'The city name is too long (max 100 characters).'
 				},
 				startDate: {
@@ -846,6 +985,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'Anglais',
 			french: 'Français',
 			home: 'Accueil',
+			explore: 'Explorer',
+			search: 'Rechercher',
 			searchPlaceholder: 'Rechercher des offres, magasins, villes...',
 			login: 'Se connecter',
 			register: 'Créer un compte',
@@ -934,6 +1075,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Vérifiez les champs du formulaire et réessayez.',
 			genericLoginError: "Nous n'avons pas pu vous connecter pour le moment.",
 			genericRegisterError: "Nous n'avons pas pu créer votre compte pour le moment.",
+			genericUpdateError: "Nous n'avons pas pu mettre à jour ton profil pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard.",
 			profileTitle: 'Mon profil',
 			notAuthenticated: 'Vous devez vous connecter pour accéder à cette page.',
@@ -956,7 +1098,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noVotes: "Tu n'as encore voté pour aucune offre.",
 			publishOffer: 'Publier une offre',
 			offerActions: "Actions de l'offre",
-			retry: 'Réessayer'
+			retry: 'Réessayer',
+			editProfile: 'Modifier le profil',
+			newPasswordLabel: 'Nouveau mot de passe',
+			newPasswordHint: 'Laisse vide pour ne pas le changer.',
+			currentPasswordLabel: 'Mot de passe actuel',
+			save: 'Enregistrer',
+			saving: 'Enregistrement...',
+			cancel: 'Annuler',
+			updateSuccess: 'Profil mis à jour.'
 		},
 		offer: {
 			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
@@ -1076,7 +1226,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Partager une réduction',
 			hotDealsTitle: 'Offres en feu',
 			recentDealsTitle: 'Récemment ajoutées',
-			popularStoresTitle: 'Magasins populaires',
 			viewAll: 'Voir toutes'
 		},
 		comments: {
@@ -1125,8 +1274,64 @@ export const messages: Record<Locale, TranslationMessages> = {
 		footer: {
 			rights: 'Tous droits réservés.',
 			terms: 'Conditions',
-			privacy: 'Confidentialité',
-			contact: 'Contact'
+			privacy: 'Confidentialité'
+		},
+		legal: {
+			lastUpdated: 'Dernière mise à jour : juin 2026',
+			backHome: "Retour à l'accueil",
+			terms: {
+				title: 'Conditions générales',
+				intro: 'En utilisant Ofertando, tu acceptes ces conditions. Lis-les attentivement.',
+				sections: [
+					{
+						heading: 'Le service',
+						body: 'Ofertando est une plateforme communautaire où les gens partagent, commentent et votent pour des offres et des réductions. Nous ne vendons pas de produits : nous facilitons seulement l’échange d’informations entre utilisateurs.'
+					},
+					{
+						heading: 'Ton compte',
+						body: 'Tu es responsable de la confidentialité de tes identifiants et de l’activité de ton compte. Nous pouvons désactiver les comptes qui enfreignent ces conditions.'
+					},
+					{
+						heading: 'Contenu et conduite',
+						body: 'Tu es responsable des offres et des commentaires que tu publies. Le contenu indésirable, trompeur, illégal ou abusif est interdit ; notre équipe de modération peut masquer ou supprimer du contenu et traiter les signalements de la communauté.'
+					},
+					{
+						heading: 'À propos des offres',
+						body: 'Les offres sont soumises par la communauté et peuvent changer ou expirer sans préavis. Vérifie toujours le prix, les conditions et la disponibilité en boutique avant d’acheter ; nous ne garantissons pas leur exactitude.'
+					},
+					{
+						heading: 'Modifications',
+						body: 'Nous pouvons mettre à jour ces conditions pour refléter des améliorations du service ou des exigences légales. L’utilisation continue d’Ofertando vaut acceptation de la version en vigueur.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Politique de confidentialité',
+				intro:
+					'Chez Ofertando, nous prenons soin de tes données. Voici ce que nous collectons et comment nous l’utilisons.',
+				sections: [
+					{
+						heading: 'Données que nous collectons',
+						body: 'Pour créer ton compte, nous conservons ton adresse e-mail et ton nom d’utilisateur. Nous enregistrons aussi ton activité sur la plateforme : offres, commentaires et votes.'
+					},
+					{
+						heading: 'Comment nous utilisons tes données',
+						body: 'Nous utilisons tes données pour fournir le service, afficher ton activité sur ton profil et permettre la modération de la communauté. Nous ne vendons pas tes données à des tiers.'
+					},
+					{
+						heading: 'Cookies et session',
+						body: 'Nous utilisons un cookie de session strictement nécessaire pour te garder connecté en toute sécurité. Nous n’utilisons pas de cookies publicitaires ou de suivi.'
+					},
+					{
+						heading: 'Tes droits',
+						body: 'Tu peux consulter et modifier ton nom d’utilisateur, ton e-mail et ton mot de passe depuis ton profil à tout moment.'
+					},
+					{
+						heading: 'Modifications',
+						body: 'Nous pouvons mettre à jour cette politique. Nous publierons tout changement sur cette même page.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Signaler cette offre',
@@ -1155,6 +1360,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Modifier',
 			report: 'Signaler',
 			share: 'Partager',
+			shareCopied: 'Lien copié',
 			publishedBy: 'Publié par',
 			relatedTitle: 'Offres similaires',
 			relatedEmpty: "Pas d'offres similaires pour le moment.",
@@ -1170,6 +1376,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Votre compte est désactivé. Contactez le support.',
 			'user.email_taken': 'Cet e-mail est déjà enregistré. Utilisez-en un autre ou connectez-vous.',
 			'user.username_taken': "Ce nom d'utilisateur existe déjà. Choisissez-en un autre.",
+			'user.current_password_required':
+				'Saisis ton mot de passe actuel pour confirmer le changement.',
+			'user.invalid_current_password': 'Le mot de passe actuel est incorrect.',
 			'offer.not_found': "Nous n'avons pas trouvé cette offre. Elle a peut-être été supprimée.",
 			'offer.forbidden': "Vous n'avez pas la permission de modifier cette offre.",
 			'offer.invalid_dates':
@@ -1237,6 +1446,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ville doit être une chaîne de caractères.',
 					isNotEmpty: 'Saisissez une ville.',
+					unknownCity: 'Choisis une ville dans la liste.',
 					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
 				},
 				startDate: {

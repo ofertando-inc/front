@@ -23,25 +23,18 @@
 
 			<FooterLinkGroup class="flex flex-wrap gap-x-5 gap-y-2">
 				<FooterLink
-					href="#"
+					href={resolve('/terms')}
 					class="list-none"
 					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
 				>
 					{$translationStore.footer.terms}
 				</FooterLink>
 				<FooterLink
-					href="#"
+					href={resolve('/privacy')}
 					class="list-none"
 					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
 				>
 					{$translationStore.footer.privacy}
-				</FooterLink>
-				<FooterLink
-					href="#"
-					class="list-none"
-					classes={{ link: 'text-sm font-medium text-gray-500 hover:text-primary-600' }}
-				>
-					{$translationStore.footer.contact}
 				</FooterLink>
 			</FooterLinkGroup>
 		</div>

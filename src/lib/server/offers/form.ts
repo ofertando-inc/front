@@ -1,6 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import { fail, type SuperValidated } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { NATIONAL_CITY } from '$lib/offers/cities';
 import { createOfferSchema, type CreateOfferFormData } from '$lib/validation/offerSchema';
 import type { User } from '$lib/types/auth';
 import type { Category, Offer } from '$lib/types/offer';
@@ -48,7 +49,7 @@ export function getDefaultOfferData(): CreateOfferFormData {
 		offerType: 'online',
 		externalUrl: '',
 		storeName: '',
-		city: '',
+		city: NATIONAL_CITY,
 		startDate: toDatetimeLocal(startDate),
 		endDate: toDatetimeLocal(endDate),
 		categoryIds: []

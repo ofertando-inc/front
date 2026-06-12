@@ -7,6 +7,7 @@
 	import {
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
+		CheckOutline,
 		FlagOutline,
 		FlagSolid,
 		MapPinOutline,
@@ -40,6 +41,7 @@
 	let deleteErrorKey = $state<string | null>(null);
 	let reportModalOpen = $state(false);
 	let alreadyReported = $state(false);
+	let shareCopied = $state(false);
 
 	let canEdit = $derived(Boolean(offer && $authStore.user?.id === offer.createdById));
 	let expired = $derived(offer ? isOfferExpired(offer) : false);
@@ -105,6 +107,30 @@
 			await update({ reset: false });
 		};
 	};
+
+	async function handleShare() {
+		const url = page.url.href;
+		const title = offer?.title ?? $translationStore.common.appName;
+
+		// Native share sheet where available (mostly mobile); otherwise copy the
+		// link to the clipboard and flash a confirmation on the button.
+		if (typeof navigator !== 'undefined' && navigator.share) {
+			try {
+				await navigator.share({ title, url });
+			} catch {
+				// The user dismissed the share sheet — nothing to do.
+			}
+			return;
+		}
+
+		try {
+			await navigator.clipboard.writeText(url);
+			shareCopied = true;
+			setTimeout(() => (shareCopied = false), 2000);
+		} catch {
+			// Clipboard unavailable (insecure context / denied) — ignore.
+		}
+	}
 
 	onMount(async () => {
 		await loadOffer(page.params.id);
@@ -331,10 +357,22 @@
 							{/if}
 							<button
 								type="button"
-								aria-label={$translationStore.deal.share}
-								class="rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+								onclick={handleShare}
+								aria-label={shareCopied
+									? $translationStore.deal.shareCopied
+									: $translationStore.deal.share}
+								title={shareCopied
+									? $translationStore.deal.shareCopied
+									: $translationStore.deal.share}
+								class="rounded-full p-2 transition-colors {shareCopied
+									? 'text-green-600'
+									: 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'}"
 							>
-								<ShareNodesOutline class="h-5 w-5" />
+								{#if shareCopied}
+									<CheckOutline class="h-5 w-5" />
+								{:else}
+									<ShareNodesOutline class="h-5 w-5" />
+								{/if}
 							</button>
 							{#if $authStore.isAuthenticated}
 								{#if alreadyReported}
