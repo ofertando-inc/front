@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.0] - 2026-06-12
 
 ### Added
 
@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- The offer detail "share" button now works instead of being a no-op: it opens the native share sheet where available and otherwise copies the offer link to the clipboard with an "Enlace copiado" confirmation (check icon). New `deal.shareCopied` key in the three languages.
 - Reworked the global header: the primary navigation (Home / Explore) now sits next to the brand with the search bar centered and the account actions on the right, and the mobile menu was restructured into clear sections — search, navigation, account, language — separated by dividers. New `common.explore` key.
 - Wired the profile "my comments" and "my votes" tabs to the backend (`GET /users/me/comments` and `/users/me/votes`, cursor-paginated) via a new `getMyComments` / `getMyVotes` API client and `MyComment` / `MyVote` types. Each tab lazy-loads on first open and lists the activity linking to its offer — comments show the content, date, score, reply count, an `(edited)` marker and a moderator-hidden indicator; votes show the up/down direction and the offer's current score — with a "load more" button and localized empty/error states. Replaces the previous "coming soon" placeholders (the now-dead `profile.comingSoon` key was removed and the empty-votes copy refreshed). API and an authenticated e2e cover it.
 - Wired the profile stat cards to real data from `GET /users/me/stats` (`getMyStats` + a `UserStats` type): the "offers" and "comments" counters now show the backend totals instead of a placeholder `0` and the loaded-page length, and the reputation card was removed along with its now-dead `profile.reputation` i18n key. E2E asserts the rendered counts and the absence of the reputation card.
@@ -37,6 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 - The non-functional "Popular stores" section on the home page and the placeholder "Contact" footer link, along with their now-dead `home.popularStoresTitle` / `footer.contact` i18n keys and the `MOCK_POPULAR_STORES` sample data.
+
+### Fixed
+
+- Restored the pointer cursor on enabled buttons (Tailwind v4's reset no longer sets it by default), so every clickable button shows the hand cursor again.
 
 ## [0.7.0] - 2026-06-01
 
@@ -281,7 +286,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
-[unreleased]: https://github.com/ofertando-inc/front/compare/v0.7.0...HEAD
+[1.0.0]: https://github.com/ofertando-inc/front/releases/tag/v1.0.0
 [0.7.0]: https://github.com/ofertando-inc/front/releases/tag/v0.7.0
 [0.6.0]: https://github.com/ofertando-inc/front/releases/tag/v0.6.0
 [0.5.0]: https://github.com/ofertando-inc/front/releases/tag/v0.5.0
