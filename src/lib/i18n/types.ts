@@ -372,6 +372,7 @@ export interface TranslationMessages {
 		edit: string;
 		report: string;
 		share: string;
+		shareCopied: string;
 		publishedBy: string;
 		relatedTitle: string;
 		relatedEmpty: string;
