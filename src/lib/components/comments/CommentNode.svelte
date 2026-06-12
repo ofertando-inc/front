@@ -47,13 +47,16 @@
 	});
 
 	function canEdit(c: CommentResponse): boolean {
-		return $authStore.isAuthenticated && !c.deleted && $authStore.user?.id === c.user.id;
+		return (
+			$authStore.isAuthenticated && !c.deleted && !c.hidden && $authStore.user?.id === c.user.id
+		);
 	}
 
 	function canDelete(c: CommentResponse): boolean {
 		return (
 			$authStore.isAuthenticated &&
 			!c.deleted &&
+			!c.hidden &&
 			($authStore.user?.id === c.user.id || $authStore.user?.role === 'ADMIN')
 		);
 	}
@@ -195,7 +198,7 @@
 	<CommentItem
 		{offerId}
 		comment={root}
-		canReply={!root.deleted}
+		canReply={!root.deleted && !root.hidden}
 		canEdit={canEdit(root)}
 		canDelete={canDelete(root)}
 		onReply={() => openReplyTo(root.id, null)}
@@ -244,7 +247,7 @@
 					<CommentItem
 						{offerId}
 						comment={reply}
-						canReply={!reply.deleted}
+						canReply={!reply.deleted && !reply.hidden}
 						canEdit={canEdit(reply)}
 						canDelete={canDelete(reply)}
 						onReply={() => openReplyTo(reply.id, reply.user.username)}

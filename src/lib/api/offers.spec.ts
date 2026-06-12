@@ -5,6 +5,7 @@ import {
 	deleteOffer,
 	getMyOffers,
 	getOfferById,
+	getOfferFacets,
 	listOffers,
 	updateOffer
 } from '$lib/api/offers';
@@ -36,7 +37,8 @@ const validCreatePayload: CreateOfferDto = {
 	storeName: 'Acme',
 	city: 'Bogotá',
 	startDate: '2026-05-18T00:00:00.000Z',
-	endDate: '2026-05-25T00:00:00.000Z'
+	endDate: '2026-05-25T00:00:00.000Z',
+	categoryIds: ['cat-1']
 };
 
 describe('listOffers', () => {
@@ -59,20 +61,28 @@ describe('listOffers', () => {
 
 		await listOffers({
 			limit: 20,
-			sort: 'score',
+			q: 'smart tv',
+			sort: 'ending',
 			period: 'week',
 			city: 'Bogotá',
+			store: 'Acme',
+			category: 'technology',
 			offerType: 'discount',
+			includeExpired: false,
 			cursor: 'abc'
 		});
 
 		const url = fetchMock.mock.calls[0]?.[0] as string;
 		expect(url).toContain('cursor=abc');
 		expect(url).toContain('limit=20');
-		expect(url).toContain('sort=score');
+		expect(url).toContain('q=smart+tv');
+		expect(url).toContain('sort=ending');
 		expect(url).toContain('period=week');
 		expect(url).toContain('city=Bogot%C3%A1');
+		expect(url).toContain('store=Acme');
+		expect(url).toContain('category=technology');
 		expect(url).toContain('offerType=discount');
+		expect(url).toContain('includeExpired=false');
 	});
 
 	it('omits undefined params from the URL', async () => {
@@ -111,6 +121,26 @@ describe('getMyOffers', () => {
 		expect(url).toContain('/offers/mine?');
 		expect(url).toContain('sort=date');
 		expect(url).toContain('limit=10');
+	});
+});
+
+describe('getOfferFacets', () => {
+	it('GETs /offers/facets with credentials and returns the facet buckets', async () => {
+		const facets = {
+			cities: [{ value: 'Bogotá', count: 12 }],
+			stores: [{ value: 'Acme', count: 5 }],
+			categories: [{ slug: 'technology', name: 'Technology', count: 8 }]
+		};
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse(facets, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const res = await getOfferFacets();
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/facets`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+		expect(res).toEqual(facets);
 	});
 });
 

@@ -9,15 +9,20 @@ export interface ErrorMessages {
 	'auth.account_disabled': string;
 	'user.email_taken': string;
 	'user.username_taken': string;
+	'user.current_password_required': string;
+	'user.invalid_current_password': string;
 	'offer.not_found': string;
 	'offer.forbidden': string;
 	'offer.invalid_dates': string;
 	'offer.invalid_status_transition': string;
+	'offer.invalid_category': string;
 	'vote.offer_not_voteable': string;
 	'report.offer_not_reportable': string;
 	'comment.not_found': string;
 	'comment.forbidden': string;
 	'comment.offer_not_commentable': string;
+	'comment.not_reportable': string;
+	'comment.invalid_status_transition': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;
@@ -43,6 +48,8 @@ export interface TranslationMessages {
 		english: string;
 		french: string;
 		home: string;
+		explore: string;
+		search: string;
 		searchPlaceholder: string;
 		login: string;
 		register: string;
@@ -83,6 +90,26 @@ export interface TranslationMessages {
 		thDate: string;
 		reportsEmpty: string;
 		noComment: string;
+		tabComments: string;
+		thContent: string;
+		thNote: string;
+		actionHide: string;
+		actionDismiss: string;
+		actionDismissReports: string;
+		commentsEmpty: string;
+		viewReports: string;
+		hideReports: string;
+		noteEmpty: string;
+		brand: string;
+		tabDashboard: string;
+		dashboardTitle: string;
+		dashboardSubtitle: string;
+		statPendingComments: string;
+		statPendingReports: string;
+		statTotalPending: string;
+		statAllClear: string;
+		queuesTitle: string;
+		viewQueue: string;
 	};
 	auth: {
 		loginTitle: string;
@@ -109,6 +136,7 @@ export interface TranslationMessages {
 		validationError: string;
 		genericLoginError: string;
 		genericRegisterError: string;
+		genericUpdateError: string;
 		serverError: string;
 		profileTitle: string;
 		notAuthenticated: string;
@@ -121,7 +149,6 @@ export interface TranslationMessages {
 		role: string;
 		offers: string;
 		comments: string;
-		reputation: string;
 		votes: string;
 		myOffers: string;
 		myComments: string;
@@ -130,10 +157,17 @@ export interface TranslationMessages {
 		noOffersDescription: string;
 		noComments: string;
 		noVotes: string;
-		comingSoon: string;
 		publishOffer: string;
 		offerActions: string;
 		retry: string;
+		editProfile: string;
+		newPasswordLabel: string;
+		newPasswordHint: string;
+		currentPasswordLabel: string;
+		save: string;
+		saving: string;
+		cancel: string;
+		updateSuccess: string;
 	};
 	offer: {
 		genericBrowseError: string;
@@ -160,18 +194,41 @@ export interface TranslationMessages {
 		expiresOn: string;
 		filterCity: string;
 		filterType: string;
+		filterStore: string;
+		filterCategory: string;
 		allCities: string;
 		allTypes: string;
+		allStores: string;
+		allCategories: string;
 		sortRecent: string;
 		sortPopular: string;
+		sortEnding: string;
+		hideExpired: string;
 		periodAll: string;
 		periodDay: string;
 		periodWeek: string;
 		periodMonth: string;
 		periodYear: string;
 		listingTitle: string;
+		resultsCount: string;
+		searchResultsFor: string;
+		clearSearch: string;
 		loadMore: string;
 		empty: string;
+	};
+	categories: {
+		technology: string;
+		home: string;
+		fashion: string;
+		groceries: string;
+		restaurants: string;
+		travel: string;
+		entertainment: string;
+		beauty: string;
+		sports: string;
+		kids: string;
+		services: string;
+		other: string;
 	};
 	createDeal: {
 		pageTitle: string;
@@ -182,6 +239,7 @@ export interface TranslationMessages {
 		descriptionLabel: string;
 		descriptionPlaceholder: string;
 		offerTypeLabel: string;
+		categoriesLabel: string;
 		offerTypeOnline: string;
 		offerTypeLocal: string;
 		externalUrlLabel: string;
@@ -216,13 +274,13 @@ export interface TranslationMessages {
 		genericError: string;
 	};
 	home: {
+		heroEyebrow: string;
 		heroTitle: string;
 		heroSubtitle: string;
 		exploreCta: string;
 		publishCta: string;
 		hotDealsTitle: string;
 		recentDealsTitle: string;
-		popularStoresTitle: string;
 		viewAll: string;
 	};
 	comments: {
@@ -233,7 +291,6 @@ export interface TranslationMessages {
 		empty: string;
 		loadMore: string;
 		edited: string;
-		deletedPlaceholder: string;
 		reply: string;
 		replyingTo: string;
 		replyPlaceholder: string;
@@ -246,12 +303,47 @@ export interface TranslationMessages {
 		cancel: string;
 		delete: string;
 		deleteConfirm: string;
+		deletedPlaceholderAuthor: string;
+		hiddenPlaceholderModerator: string;
+		report: string;
+		reported: string;
+		reportTitle: string;
+		reportDescription: string;
+		reportReasonLabel: string;
+		reportReasonPlaceholder: string;
+		reportNoteLabel: string;
+		reportNotePlaceholder: string;
+		reportNoteHint: string;
+		reportSubmit: string;
+		reportSubmitting: string;
+		reportSuccess: string;
+		reportGenericError: string;
+		reportReasons: {
+			SPAM: string;
+			ABUSE: string;
+			OFF_TOPIC: string;
+			MISINFORMATION: string;
+			OTHER: string;
+		};
 	};
 	footer: {
 		rights: string;
 		terms: string;
 		privacy: string;
-		contact: string;
+	};
+	legal: {
+		lastUpdated: string;
+		backHome: string;
+		terms: {
+			title: string;
+			intro: string;
+			sections: { heading: string; body: string }[];
+		};
+		privacy: {
+			title: string;
+			intro: string;
+			sections: { heading: string; body: string }[];
+		};
 	};
 	report: {
 		modalTitle: string;
@@ -280,6 +372,7 @@ export interface TranslationMessages {
 		edit: string;
 		report: string;
 		share: string;
+		shareCopied: string;
 		publishedBy: string;
 		relatedTitle: string;
 		relatedEmpty: string;

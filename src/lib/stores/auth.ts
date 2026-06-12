@@ -32,6 +32,9 @@ export function createAuthStore() {
 
 	return {
 		subscribe,
+		setUser(user: User) {
+			applyUser(user);
+		},
 		async login(email: string, password: string) {
 			update((state) => ({ ...state, isLoading: true }));
 			try {

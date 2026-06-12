@@ -6,11 +6,14 @@ export const ErrorKey = {
 
 	UserEmailTaken: 'user.email_taken',
 	UserUsernameTaken: 'user.username_taken',
+	UserCurrentPasswordRequired: 'user.current_password_required',
+	UserInvalidCurrentPassword: 'user.invalid_current_password',
 
 	OfferNotFound: 'offer.not_found',
 	OfferForbidden: 'offer.forbidden',
 	OfferInvalidDates: 'offer.invalid_dates',
 	OfferInvalidStatusTransition: 'offer.invalid_status_transition',
+	OfferInvalidCategory: 'offer.invalid_category',
 
 	VoteOfferNotVoteable: 'vote.offer_not_voteable',
 
@@ -19,6 +22,8 @@ export const ErrorKey = {
 	CommentNotFound: 'comment.not_found',
 	CommentForbidden: 'comment.forbidden',
 	CommentOfferNotCommentable: 'comment.offer_not_commentable',
+	CommentNotReportable: 'comment.not_reportable',
+	CommentInvalidStatusTransition: 'comment.invalid_status_transition',
 
 	PaginationInvalidCursor: 'pagination.invalid_cursor',
 

@@ -32,6 +32,76 @@ test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
 
+		if (url === '/users/me/stats') {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, { offerCount: 3, commentCount: 7 });
+			return;
+		}
+
+		if (url === '/users/me/comments' || url.startsWith('/users/me/comments?')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, {
+				items: [
+					{
+						id: 'mc1',
+						content: 'Mi comentario de prueba',
+						createdAt: '2026-05-20T10:00:00.000Z',
+						editedAt: null,
+						score: 5,
+						replyCount: 2,
+						hidden: false,
+						offer: { id: 'e2e-comment-offer', title: 'Oferta comentada' }
+					}
+				],
+				nextCursor: null
+			});
+			return;
+		}
+
+		if (url === '/users/me/votes' || url.startsWith('/users/me/votes?')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			sendJson(response, 200, {
+				items: [
+					{
+						type: 'UP',
+						createdAt: '2026-05-21T10:00:00.000Z',
+						offer: { id: 'e2e-vote-offer', title: 'Oferta votada', score: 16 }
+					}
+				],
+				nextCursor: null
+			});
+			return;
+		}
+
+		if (url === '/users/me' && request.method === 'PATCH') {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			void readJsonBody(request).then((body) => {
+				const patch = (body ?? {}) as { username?: unknown; email?: unknown };
+				sendJson(response, 200, {
+					id: 'e2e-user-id',
+					email: typeof patch.email === 'string' ? patch.email : 'e2e@example.com',
+					username: typeof patch.username === 'string' ? patch.username : 'e2euser',
+					role: 'USER',
+					status: 'ACTIVE',
+					createdAt: '2026-05-01T10:00:00.000Z',
+					updatedAt: '2026-05-22T10:00:00.000Z'
+				});
+			});
+			return;
+		}
+
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
 				const admin = isAdmin(request);
@@ -71,12 +141,25 @@ test.beforeAll(async () => {
 				return;
 			}
 
-			sendJson(response, 200, { items: [], nextCursor: null });
+			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
+			return;
+		}
+
+		if (url === '/offers/facets') {
+			sendJson(response, 200, { cities: [], stores: [], categories: [] });
+			return;
+		}
+
+		if (url === '/categories') {
+			sendJson(response, 200, [
+				{ id: 'cat-technology', slug: 'technology', name: 'Technology', order: 1 },
+				{ id: 'cat-other', slug: 'other', name: 'Other', order: 12 }
+			]);
 			return;
 		}
 
 		if (url === '/offers' || url.startsWith('/offers?')) {
-			sendJson(response, 200, { items: [], nextCursor: null });
+			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
 		}
 
@@ -129,7 +212,8 @@ test.beforeAll(async () => {
 			score: 0,
 			userVote: null,
 			replyCount: 0,
-			deleted: false
+			deleted: false,
+			hidden: false
 		};
 		const tombstoneRoot = {
 			id: 'c-tomb',
@@ -141,12 +225,42 @@ test.beforeAll(async () => {
 			score: 0,
 			userVote: null,
 			replyCount: 1,
-			deleted: true
+			deleted: true,
+			hidden: false
+		};
+		const hiddenRoot = {
+			id: 'c-hidden',
+			content: null,
+			createdAt: '2026-05-18T10:00:00.000Z',
+			editedAt: null,
+			user: { id: 'troll', username: 'troll' },
+			replyTo: null,
+			score: 0,
+			userVote: null,
+			replyCount: 1,
+			deleted: false,
+			hidden: true
 		};
 
 		const repliesMatch = url.match(/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/replies(?:\?.*)?$/);
 		if (repliesMatch) {
 			sendJson(response, 200, { items: [], nextCursor: null });
+			return;
+		}
+
+		const commentReportsMatch = url.match(
+			/^\/offers\/([^/?]+)\/comments\/([^/?]+)\/reports(\/me)?(?:\?.*)?$/
+		);
+		if (commentReportsMatch) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (commentReportsMatch[3]) {
+				sendJson(response, 200, { reason: null });
+				return;
+			}
+			sendJson(response, 200, { reportCount: 1 });
 			return;
 		}
 
@@ -203,13 +317,15 @@ test.beforeAll(async () => {
 						score: 0,
 						userVote: null,
 						replyCount: 0,
-						deleted: false
+						deleted: false,
+						hidden: false
 					});
 				});
 				return;
 			}
 
-			const seeded = commentsMatch[1] === 'e2e-comment-offer' ? [liveRoot, tombstoneRoot] : [];
+			const seeded =
+				commentsMatch[1] === 'e2e-comment-offer' ? [liveRoot, tombstoneRoot, hiddenRoot] : [];
 			sendJson(response, 200, { items: seeded, nextCursor: null });
 			return;
 		}
@@ -233,7 +349,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -257,7 +374,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -283,7 +401,8 @@ test.beforeAll(async () => {
 				updatedAt: '2020-01-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -307,7 +426,8 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'other-author',
 				createdByUsername: 'other-author',
-				userVote: null
+				userVote: null,
+				categories: []
 			});
 			return;
 		}
@@ -348,11 +468,17 @@ test.beforeAll(async () => {
 				updatedAt: '2026-05-01T10:00:00.000Z',
 				createdById: 'author-id',
 				createdByUsername: 'autor-test',
-				userVote: null
+				userVote: null,
+				categories: []
 			};
 
+			if (url === '/admin/moderation/summary') {
+				sendJson(response, 200, { pendingComments: 4, pendingOfferReports: 2 });
+				return;
+			}
+
 			if (url === '/admin/offers' || url.startsWith('/admin/offers?')) {
-				sendJson(response, 200, { items: [adminOffer], nextCursor: null });
+				sendJson(response, 200, { items: [adminOffer], nextCursor: null, total: 1 });
 				return;
 			}
 
@@ -380,6 +506,54 @@ test.beforeAll(async () => {
 					],
 					nextCursor: null
 				});
+				return;
+			}
+
+			if (/^\/admin\/offers\/[^/]+\/dismiss$/.test(url)) {
+				sendJson(response, 200, { ...adminOffer, status: 'ACTIVE', reportCount: 0 });
+				return;
+			}
+
+			const moderationComment = {
+				id: 'mod-c1',
+				content: 'Comentario reportado de prueba',
+				reportCount: 3,
+				hiddenAt: null,
+				createdAt: '2026-05-20T10:00:00.000Z',
+				user: { id: 'troll-id', username: 'troll' },
+				offer: { id: 'e2e-admin-offer', title: 'Oferta moderable' }
+			};
+
+			const commentReportsAdminMatch = url.match(/^\/admin\/comments\/([^/?]+)\/reports(?:\?.*)?$/);
+			if (commentReportsAdminMatch) {
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'rd-1',
+							reason: 'SPAM',
+							note: 'publicidad evidente',
+							status: 'PENDING',
+							createdAt: '2026-05-20T10:00:00.000Z',
+							user: { id: 'r1', username: 'denunciante' }
+						}
+					],
+					nextCursor: null
+				});
+				return;
+			}
+
+			if (/^\/admin\/comments\/[^/]+\/hide$/.test(url)) {
+				sendJson(response, 200, { ...moderationComment, hiddenAt: '2026-05-21T10:00:00.000Z' });
+				return;
+			}
+
+			if (/^\/admin\/comments\/[^/]+\/dismiss$/.test(url)) {
+				sendJson(response, 200, { ...moderationComment, reportCount: 0 });
+				return;
+			}
+
+			if (url === '/admin/comments' || url.startsWith('/admin/comments?')) {
+				sendJson(response, 200, { items: [moderationComment], nextCursor: null });
 				return;
 			}
 
@@ -484,10 +658,53 @@ test('profile offers tab renders an empty state for authenticated users without 
 	const main = page.locator('main');
 	await expect(page).toHaveURL(/\/profile$/);
 	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	// Real stats come from GET /users/me/stats; reputation was removed.
+	await expect(main.getByText('3', { exact: true })).toBeVisible();
+	await expect(main.getByText('7', { exact: true })).toBeVisible();
+	await expect(main.getByText('Reputación')).toHaveCount(0);
+
 	await expect(main.getByText('Mis ofertas')).toBeVisible();
 	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
 	await expect(main.getByText('Publica tu primera oferta para que aparezca aquí.')).toBeVisible();
 	await expect(main.getByRole('link', { name: 'Publicar oferta' })).toBeVisible();
+});
+
+test('profile comments and votes tabs list the user activity', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/profile');
+	const main = page.locator('main');
+	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	// Comments tab lazy-loads GET /users/me/comments.
+	await main.getByText('Mis comentarios').click();
+	await expect(main.getByText('Oferta comentada')).toBeVisible();
+	await expect(main.getByText('Mi comentario de prueba')).toBeVisible();
+
+	// Votes tab lazy-loads GET /users/me/votes and shows the offer score.
+	await main.getByText('Mis votos').click();
+	await expect(main.getByText('Oferta votada')).toBeVisible();
+	await expect(main.getByText('16°')).toBeVisible();
+});
+
+test('profile lets the user edit their username', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/profile');
+	const main = page.locator('main');
+	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
+
+	await main.getByRole('button', { name: 'Editar perfil' }).click();
+	await page.getByLabel('Nombre de usuario').fill('nicolas2');
+	await page.getByRole('button', { name: 'Guardar cambios' }).click();
+
+	// PATCH /users/me echoes the new username; the store update refreshes the header.
+	await expect(main.getByRole('heading', { name: 'nicolas2' })).toBeVisible();
 });
 
 test('create deal redirects unauthenticated users to login', async ({ page }) => {
@@ -495,6 +712,32 @@ test('create deal redirects unauthenticated users to login', async ({ page }) =>
 
 	await expect(page).toHaveURL(/\/login$/);
 	await expect(page.getByRole('heading', { name: 'Inicia sesión' }).first()).toBeVisible();
+});
+
+test('create deal shows a required category picker for an authenticated user', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+
+	// Categories come from the server load (GET /categories) and render as chips
+	// with localized labels (default locale is Spanish: technology -> Tecnología).
+	const techChip = page.getByText('Tecnología', { exact: true });
+	await expect(techChip).toBeVisible();
+	await expect(page.getByText('Otros', { exact: true })).toBeVisible();
+
+	// Selecting a chip toggles the hidden checkbox bound to categoryIds.
+	await techChip.click();
+	await expect(page.locator('input[name="categoryIds"][value="cat-technology"]')).toBeChecked();
+
+	// Switching to a local offer reveals the city autocomplete (bundled dataset).
+	await page.selectOption('select#offerType', 'local');
+	await page.fill('input#city', 'mede');
+	await expect(page.getByRole('option', { name: /Medellín/ })).toBeVisible();
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
@@ -593,9 +836,8 @@ test('admin panel returns 403 for authenticated non-admins', async ({ page, cont
 test('admin offers tab lists offers and disables one for an admin', async ({ page, context }) => {
 	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
 
-	await page.goto('/admin');
+	await page.goto('/admin/offers');
 
-	await expect(page.getByRole('heading', { name: 'Panel de administración' })).toBeVisible();
 	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
 
 	await page.getByRole('button', { name: 'Desactivar', exact: true }).click();
@@ -610,6 +852,50 @@ test('admin reports tab lists pending reports for an admin', async ({ page, cont
 	await expect(page.getByRole('link', { name: 'Oferta moderable' })).toBeVisible();
 	await expect(page.getByText('Parece una estafa')).toBeVisible();
 	await expect(page.getByText('reportante')).toBeVisible();
+});
+
+test('admin reports tab dismisses an offer report', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/reports');
+	await expect(page.getByText('Parece una estafa')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Descartar' }).click();
+
+	await expect(page.getByText('No hay reportes pendientes.')).toBeVisible();
+});
+
+test('admin comments tab shows the queue, report details, and hides a comment', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/comments');
+
+	await expect(page.getByText('Comentario reportado de prueba')).toBeVisible();
+	await expect(page.getByText('troll')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Ver reportes' }).click();
+	await expect(page.getByText('publicidad evidente')).toBeVisible();
+
+	await page.getByRole('button', { name: 'Ocultar', exact: true }).click();
+	await expect(page.getByText('No hay comentarios en la cola de moderación.')).toBeVisible();
+});
+
+test('admin dashboard shows moderation summary cards and nav badges', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin');
+
+	await expect(page.getByText('Comentarios por revisar')).toBeVisible();
+	await expect(page.getByText('Ofertas reportadas')).toBeVisible();
+	await expect(page.getByText('Total pendiente')).toBeVisible();
+
+	// Sidebar badges: pendingComments (4) on Comentarios, pendingOfferReports (2) on Reportes.
+	const sidebar = page.getByRole('navigation', { name: 'Moderación' });
+	await expect(sidebar.getByText('4')).toBeVisible();
+	await expect(sidebar.getByText('2')).toBeVisible();
 });
 
 test('offer detail marks a past-date offer as expired and locks vote/report', async ({
@@ -637,7 +923,7 @@ test('offer detail shows the comment thread with a tombstone and redirects anony
 	await page.goto('/deals/e2e-comment-offer');
 
 	await expect(page.getByText('Primer comentario de prueba')).toBeVisible();
-	await expect(page.getByText('[comentario eliminado]')).toBeVisible();
+	await expect(page.getByText('[eliminado por el autor]')).toBeVisible();
 
 	await page.getByPlaceholder('Escribe un comentario...').fill('Hola comunidad');
 	await page.getByRole('button', { name: 'Comentar' }).click();
@@ -684,6 +970,30 @@ test('anonymous comment vote redirects to login', async ({ page }) => {
 	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
 	await commentItem.getByRole('button', { name: 'Votar positivo' }).click();
 	await expect(page).toHaveURL(/\/login$/);
+});
+
+test('offer detail shows a moderator-hidden comment placeholder', async ({ page }) => {
+	await page.goto('/deals/e2e-comment-offer');
+
+	await expect(page.getByText('[ocultado por un moderador]')).toBeVisible();
+});
+
+test('authenticated user can report a comment', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/deals/e2e-comment-offer');
+
+	const commentItem = page.locator('div.grow').filter({ hasText: 'Primer comentario de prueba' });
+	await commentItem.getByRole('button', { name: 'Reportar' }).click();
+
+	await expect(page.getByRole('heading', { name: 'Reportar comentario' })).toBeVisible();
+	await page.getByLabel('Motivo *').selectOption('SPAM');
+	await page.getByRole('button', { name: 'Enviar reporte' }).click();
+
+	await expect(page.getByRole('heading', { name: 'Reportar comentario' })).toBeHidden();
+	await expect(commentItem.getByText('Reportado')).toBeVisible();
 });
 
 test('never persists an auth token in localStorage (cookie-only session)', async ({ page }) => {

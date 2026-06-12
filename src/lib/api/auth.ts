@@ -1,5 +1,5 @@
 import { apiRequest } from '$lib/api/client';
-import type { User } from '$lib/types/auth';
+import type { UpdateMeDto, User, UserStats } from '$lib/types/auth';
 
 interface LoginPayload {
 	email: string;
@@ -27,6 +27,19 @@ export function register(payload: RegisterPayload) {
 export function getCurrentUser() {
 	return apiRequest<User>('/users/me', {
 		method: 'GET'
+	});
+}
+
+export function getMyStats() {
+	return apiRequest<UserStats>('/users/me/stats', {
+		method: 'GET'
+	});
+}
+
+export function updateMe(payload: UpdateMeDto) {
+	return apiRequest<User>('/users/me', {
+		method: 'PATCH',
+		body: JSON.stringify(payload)
 	});
 }
 

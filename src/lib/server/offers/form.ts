@@ -1,9 +1,10 @@
 import { error, redirect } from '@sveltejs/kit';
 import { fail, type SuperValidated } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
+import { NATIONAL_CITY } from '$lib/offers/cities';
 import { createOfferSchema, type CreateOfferFormData } from '$lib/validation/offerSchema';
 import type { User } from '$lib/types/auth';
-import type { Offer } from '$lib/types/offer';
+import type { Category, Offer } from '$lib/types/offer';
 
 export const offerFormAdapter = zod4(createOfferSchema);
 
@@ -15,7 +16,8 @@ const offerFields = new Set<keyof CreateOfferFormData>([
 	'storeName',
 	'city',
 	'startDate',
-	'endDate'
+	'endDate',
+	'categoryIds'
 ]);
 
 interface BackendErrorPayload {
@@ -47,9 +49,10 @@ export function getDefaultOfferData(): CreateOfferFormData {
 		offerType: 'online',
 		externalUrl: '',
 		storeName: '',
-		city: '',
+		city: NATIONAL_CITY,
 		startDate: toDatetimeLocal(startDate),
-		endDate: toDatetimeLocal(endDate)
+		endDate: toDatetimeLocal(endDate),
+		categoryIds: []
 	};
 }
 
@@ -62,8 +65,19 @@ export function offerToFormData(offer: Offer): CreateOfferFormData {
 		storeName: offer.storeName,
 		city: offer.city,
 		startDate: toDatetimeLocal(new Date(offer.startDate)),
-		endDate: toDatetimeLocal(new Date(offer.endDate))
+		endDate: toDatetimeLocal(new Date(offer.endDate)),
+		categoryIds: offer.categories.map((category) => category.id)
 	};
+}
+
+export async function fetchOfferCategories(eventFetch: typeof fetch): Promise<Category[]> {
+	try {
+		const response = await eventFetch('/api/categories');
+		if (!response.ok) return [];
+		return (await response.json()) as Category[];
+	} catch {
+		return [];
+	}
 }
 
 export async function requireAuthenticated(eventFetch: typeof fetch): Promise<User> {

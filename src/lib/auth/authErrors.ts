@@ -3,7 +3,7 @@ import { ErrorKey, isKnownErrorKey } from '$lib/errors/errorKeys';
 import { getFieldErrorMap } from '$lib/errors/getErrorMessage';
 import type { TranslationMessages } from '$lib/i18n/types';
 
-export type AuthContext = 'login' | 'register';
+export type AuthContext = 'login' | 'register' | 'editProfile';
 
 export interface ResolvedAuthError {
 	bannerMessage: string | null;
@@ -41,6 +41,20 @@ export function resolveAuthError(
 		};
 	}
 
+	if (error.key === ErrorKey.UserCurrentPasswordRequired) {
+		return {
+			bannerMessage: null,
+			fieldErrors: { currentPassword: t.errors['user.current_password_required'] }
+		};
+	}
+
+	if (error.key === ErrorKey.UserInvalidCurrentPassword) {
+		return {
+			bannerMessage: null,
+			fieldErrors: { currentPassword: t.errors['user.invalid_current_password'] }
+		};
+	}
+
 	if (isKnownErrorKey(error.key)) {
 		return { bannerMessage: t.errors[error.key], fieldErrors: {} };
 	}
@@ -53,7 +67,9 @@ export function resolveAuthError(
 }
 
 function genericFallback(t: TranslationMessages, context: AuthContext) {
-	return context === 'login' ? t.auth.genericLoginError : t.auth.genericRegisterError;
+	if (context === 'login') return t.auth.genericLoginError;
+	if (context === 'editProfile') return t.auth.genericUpdateError;
+	return t.auth.genericRegisterError;
 }
 
 export const DEFAULT_RATE_LIMIT_COOLDOWN_SECONDS = 60;

@@ -8,6 +8,7 @@
 	import { localeStore, translationStore } from '$lib/i18n';
 	import type { CommentResponse } from '$lib/types/comment';
 	import type { VoteType } from '$lib/types/vote';
+	import CommentReportModal from './CommentReportModal.svelte';
 
 	interface Props {
 		offerId: string;
@@ -36,6 +37,8 @@
 	let saving = $state(false);
 	let confirmingDelete = $state(false);
 	let deleting = $state(false);
+	let reportModalOpen = $state(false);
+	let reported = $state(false);
 
 	// svelte-ignore state_referenced_locally
 	let score = $state(comment.score);
@@ -91,7 +94,18 @@
 	);
 
 	let initial = $derived(comment.user.username.slice(0, 1).toUpperCase());
-	let showActions = $derived(!comment.deleted && (canReply || canEdit || canDelete));
+	let removed = $derived(comment.deleted || comment.hidden);
+	let isOwn = $derived($authStore.user?.id === comment.user.id);
+	let canReport = $derived(!removed && !isOwn);
+	let showActions = $derived(!removed && (canReply || canEdit || canDelete || canReport));
+
+	function openReport() {
+		if (!$authStore.isAuthenticated) {
+			void goto(resolve('/login'));
+			return;
+		}
+		reportModalOpen = true;
+	}
 
 	function startEdit() {
 		editDraft = comment.content ?? '';
@@ -127,19 +141,23 @@
 		<div class="mb-1 flex flex-wrap items-baseline gap-x-2">
 			<span class="font-bold text-gray-900">{comment.user.username}</span>
 			<span class="text-xs text-gray-500">{dateLabel}</span>
-			{#if comment.editedAt && !comment.deleted}
+			{#if comment.editedAt && !removed}
 				<span class="text-xs text-gray-400">{$translationStore.comments.edited}</span>
 			{/if}
 		</div>
 
-		{#if comment.replyTo && !comment.deleted}
+		{#if comment.replyTo && !removed}
 			<p class="mb-1 text-xs text-primary-600">
 				{$translationStore.comments.replyingTo.replace('{username}', comment.replyTo.username)}
 			</p>
 		{/if}
 
-		{#if comment.deleted}
-			<p class="text-sm text-gray-400 italic">{$translationStore.comments.deletedPlaceholder}</p>
+		{#if removed}
+			<p class="text-sm text-gray-400 italic">
+				{comment.hidden
+					? $translationStore.comments.hiddenPlaceholderModerator
+					: $translationStore.comments.deletedPlaceholderAuthor}
+			</p>
 		{:else if editing}
 			<div class="space-y-2">
 				<Textarea
@@ -238,8 +256,26 @@
 							</button>
 						{/if}
 					{/if}
+					{#if canReport}
+						{#if reported}
+							<span class="text-gray-400">{$translationStore.comments.reported}</span>
+						{:else}
+							<button type="button" class="hover:text-red-600" onclick={openReport}>
+								{$translationStore.comments.report}
+							</button>
+						{/if}
+					{/if}
 				{/if}
 			</div>
 		{/if}
 	</div>
 </div>
+
+{#if canReport}
+	<CommentReportModal
+		{offerId}
+		commentId={comment.id}
+		bind:open={reportModalOpen}
+		onSuccess={() => (reported = true)}
+	/>
+{/if}

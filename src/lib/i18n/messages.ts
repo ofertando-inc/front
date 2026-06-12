@@ -9,6 +9,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'Inglés',
 			french: 'Francés',
 			home: 'Inicio',
+			explore: 'Explorar',
+			search: 'Buscar',
 			searchPlaceholder: 'Buscar ofertas, tiendas, ciudades...',
 			login: 'Entrar',
 			register: 'Crear cuenta',
@@ -49,7 +51,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Oferta',
 			thDate: 'Fecha',
 			reportsEmpty: 'No hay reportes pendientes.',
-			noComment: 'Sin comentario'
+			noComment: 'Sin comentario',
+			tabComments: 'Comentarios',
+			thContent: 'Comentario',
+			thNote: 'Nota',
+			actionHide: 'Ocultar',
+			actionDismiss: 'Descartar',
+			actionDismissReports: 'Descartar reportes',
+			commentsEmpty: 'No hay comentarios en la cola de moderación.',
+			viewReports: 'Ver reportes',
+			hideReports: 'Ocultar reportes',
+			noteEmpty: 'Sin nota',
+			brand: 'Moderación',
+			tabDashboard: 'Resumen',
+			dashboardTitle: 'Resumen de moderación',
+			dashboardSubtitle: 'Estado de las colas y accesos rápidos.',
+			statPendingComments: 'Comentarios por revisar',
+			statPendingReports: 'Ofertas reportadas',
+			statTotalPending: 'Total pendiente',
+			statAllClear: 'Todo al día. No hay nada pendiente.',
+			queuesTitle: 'Colas de moderación',
+			viewQueue: 'Abrir cola'
 		},
 		auth: {
 			loginTitle: 'Inicia sesión',
@@ -77,6 +99,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Revisa los campos del formulario e inténtalo de nuevo.',
 			genericLoginError: 'No pudimos iniciar sesión en este momento.',
 			genericRegisterError: 'No pudimos crear tu cuenta en este momento.',
+			genericUpdateError: 'No pudimos actualizar tu perfil en este momento.',
 			serverError: 'El servidor no está disponible en este momento. Inténtalo más tarde.',
 			profileTitle: 'Mi perfil',
 			notAuthenticated: 'Debes iniciar sesión para acceder a esta página.',
@@ -89,7 +112,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			role: 'Rol',
 			offers: 'Ofertas',
 			comments: 'Comentarios',
-			reputation: 'Reputación',
 			votes: 'Votos',
 			myOffers: 'Mis ofertas',
 			myComments: 'Mis comentarios',
@@ -97,11 +119,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: 'Aún no has publicado ofertas.',
 			noOffersDescription: 'Publica tu primera oferta para que aparezca aquí.',
 			noComments: 'Aún no has comentado ninguna oferta.',
-			noVotes: 'Historial de votos no disponible.',
-			comingSoon: 'Disponible cuando conectemos los datos de actividad.',
+			noVotes: 'Aún no has votado por ninguna oferta.',
 			publishOffer: 'Publicar oferta',
 			offerActions: 'Acciones de la oferta',
-			retry: 'Reintentar'
+			retry: 'Reintentar',
+			editProfile: 'Editar perfil',
+			newPasswordLabel: 'Nueva contraseña',
+			newPasswordHint: 'Déjala en blanco para no cambiarla.',
+			currentPasswordLabel: 'Contraseña actual',
+			save: 'Guardar cambios',
+			saving: 'Guardando...',
+			cancel: 'Cancelar',
+			updateSuccess: 'Perfil actualizado.'
 		},
 		offer: {
 			genericBrowseError: 'No pudimos cargar las ofertas en este momento.',
@@ -128,18 +157,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 			expiresOn: 'Expira',
 			filterCity: 'Ciudad',
 			filterType: 'Tipo',
+			filterStore: 'Tienda',
+			filterCategory: 'Categoría',
 			allCities: 'Todas las ciudades',
 			allTypes: 'Todos los tipos',
+			allStores: 'Todas las tiendas',
+			allCategories: 'Todas las categorías',
 			sortRecent: 'Más recientes',
 			sortPopular: 'Más populares',
+			sortEnding: 'Termina pronto',
+			hideExpired: 'Ocultar expiradas',
 			periodAll: 'Siempre',
 			periodDay: 'Hoy',
 			periodWeek: 'Esta semana',
 			periodMonth: 'Este mes',
 			periodYear: 'Este año',
 			listingTitle: 'Todas las ofertas',
+			resultsCount: '{count} resultados',
+			searchResultsFor: 'Resultados para',
+			clearSearch: 'Quitar búsqueda',
 			loadMore: 'Cargar más',
 			empty: 'No hay ofertas que coincidan con tus filtros.'
+		},
+		categories: {
+			technology: 'Tecnología',
+			home: 'Hogar',
+			fashion: 'Moda',
+			groceries: 'Mercado',
+			restaurants: 'Restaurantes',
+			travel: 'Viajes',
+			entertainment: 'Entretenimiento',
+			beauty: 'Belleza',
+			sports: 'Deportes',
+			kids: 'Niños',
+			services: 'Servicios',
+			other: 'Otros'
 		},
 		createDeal: {
 			pageTitle: 'Compartir una oferta',
@@ -152,6 +204,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
 			offerTypeLabel: 'Tipo de oferta',
+			categoriesLabel: 'Categorías',
 			offerTypeOnline: 'Online',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: 'Enlace de la oferta',
@@ -187,6 +240,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: 'No pudimos eliminar la oferta. Inténtalo de nuevo.'
 		},
 		home: {
+			heroEyebrow: 'La comunidad de ofertas de Colombia',
 			heroTitle: 'Descubre las mejores ofertas en Colombia',
 			heroSubtitle:
 				'Únete a la comunidad de ahorradores más grande del país. Encuentra, comparte y vota por los mejores descuentos en tiendas físicas y online.',
@@ -194,7 +248,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Compartir un descuento',
 			hotDealsTitle: 'Ofertas calientes',
 			recentDealsTitle: 'Agregadas recientemente',
-			popularStoresTitle: 'Tiendas populares',
 			viewAll: 'Ver todas'
 		},
 		comments: {
@@ -205,7 +258,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			empty: 'Sé el primero en comentar.',
 			loadMore: 'Ver más comentarios',
 			edited: '(editado)',
-			deletedPlaceholder: '[comentario eliminado]',
 			reply: 'Responder',
 			replyingTo: 'En respuesta a @{username}',
 			replyPlaceholder: 'Escribe una respuesta...',
@@ -217,13 +269,91 @@ export const messages: Record<Locale, TranslationMessages> = {
 			saving: 'Guardando...',
 			cancel: 'Cancelar',
 			delete: 'Eliminar',
-			deleteConfirm: '¿Eliminar este comentario?'
+			deleteConfirm: '¿Eliminar este comentario?',
+			deletedPlaceholderAuthor: '[eliminado por el autor]',
+			hiddenPlaceholderModerator: '[ocultado por un moderador]',
+			report: 'Reportar',
+			reported: 'Reportado',
+			reportTitle: 'Reportar comentario',
+			reportDescription: 'Dinos por qué este comentario debería ser revisado.',
+			reportReasonLabel: 'Motivo',
+			reportReasonPlaceholder: 'Selecciona un motivo',
+			reportNoteLabel: 'Nota',
+			reportNotePlaceholder: 'Añade detalles para la moderación (opcional)',
+			reportNoteHint: 'Opcional',
+			reportSubmit: 'Enviar reporte',
+			reportSubmitting: 'Enviando...',
+			reportSuccess: 'Reporte enviado. Gracias.',
+			reportGenericError: 'No pudimos enviar el reporte. Inténtalo de nuevo.',
+			reportReasons: {
+				SPAM: 'Spam',
+				ABUSE: 'Acoso o abuso',
+				OFF_TOPIC: 'Fuera de tema',
+				MISINFORMATION: 'Información falsa',
+				OTHER: 'Otro'
+			}
 		},
 		footer: {
 			rights: 'Todos los derechos reservados.',
 			terms: 'Términos',
-			privacy: 'Privacidad',
-			contact: 'Contacto'
+			privacy: 'Privacidad'
+		},
+		legal: {
+			lastUpdated: 'Última actualización: junio de 2026',
+			backHome: 'Volver al inicio',
+			terms: {
+				title: 'Términos y condiciones',
+				intro: 'Al usar Ofertando aceptas estas condiciones. Léelas con atención.',
+				sections: [
+					{
+						heading: 'El servicio',
+						body: 'Ofertando es una plataforma comunitaria donde las personas comparten, comentan y votan ofertas y descuentos. No vendemos productos: solo facilitamos el intercambio de información entre usuarios.'
+					},
+					{
+						heading: 'Tu cuenta',
+						body: 'Eres responsable de mantener la confidencialidad de tus credenciales y de la actividad de tu cuenta. Podemos desactivar las cuentas que incumplan estas condiciones.'
+					},
+					{
+						heading: 'Contenido y conducta',
+						body: 'Eres responsable de las ofertas y comentarios que publicas. No se permite contenido spam, engañoso, ilegal ni abusivo; nuestro equipo de moderación puede ocultar o eliminar contenido y resolver los reportes de la comunidad.'
+					},
+					{
+						heading: 'Sobre las ofertas',
+						body: 'Las ofertas las envía la comunidad y pueden cambiar o caducar sin previo aviso. Verifica siempre el precio, las condiciones y la disponibilidad en la tienda antes de comprar; no garantizamos su exactitud.'
+					},
+					{
+						heading: 'Cambios',
+						body: 'Podemos actualizar estas condiciones para reflejar mejoras del servicio o requisitos legales. El uso continuado de Ofertando implica la aceptación de la versión vigente.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Política de privacidad',
+				intro:
+					'En Ofertando cuidamos tus datos. Aquí te explicamos qué recopilamos y cómo lo usamos.',
+				sections: [
+					{
+						heading: 'Datos que recopilamos',
+						body: 'Para crear tu cuenta guardamos tu correo electrónico y tu nombre de usuario. También registramos tu actividad en la plataforma: ofertas, comentarios y votos.'
+					},
+					{
+						heading: 'Cómo usamos tus datos',
+						body: 'Usamos tus datos para ofrecerte el servicio, mostrar tu actividad en tu perfil y permitir la moderación de la comunidad. No vendemos tus datos a terceros.'
+					},
+					{
+						heading: 'Cookies y sesión',
+						body: 'Usamos una cookie de sesión estrictamente necesaria para mantenerte conectado de forma segura. No usamos cookies de seguimiento publicitario.'
+					},
+					{
+						heading: 'Tus derechos',
+						body: 'Puedes consultar y editar tu nombre de usuario, tu correo y tu contraseña desde tu perfil en cualquier momento.'
+					},
+					{
+						heading: 'Cambios',
+						body: 'Podemos actualizar esta política. Publicaremos cualquier cambio en esta misma página.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Reportar oferta',
@@ -252,6 +382,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Editar',
 			report: 'Reportar',
 			share: 'Compartir',
+			shareCopied: 'Enlace copiado',
 			publishedBy: 'Publicado por',
 			relatedTitle: 'Ofertas relacionadas',
 			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
@@ -267,16 +398,21 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Tu cuenta está deshabilitada. Contacta con el soporte.',
 			'user.email_taken': 'Ese correo ya está registrado. Usa otro o inicia sesión.',
 			'user.username_taken': 'Ese nombre de usuario ya existe. Elige uno diferente.',
+			'user.current_password_required': 'Ingresa tu contraseña actual para confirmar el cambio.',
+			'user.invalid_current_password': 'La contraseña actual es incorrecta.',
 			'offer.not_found': 'No encontramos esa oferta. Puede haber sido eliminada.',
 			'offer.forbidden': 'No tienes permiso para modificar esta oferta.',
 			'offer.invalid_dates':
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
+			'offer.invalid_category': 'Selecciona al menos una categoría válida.',
 			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'report.offer_not_reportable': 'No puedes reportar esta oferta porque ya no está activa.',
 			'comment.not_found': 'No encontramos ese comentario. Puede haber sido eliminado.',
 			'comment.forbidden': 'No tienes permiso para modificar este comentario.',
 			'comment.offer_not_commentable': 'No puedes comentar esta oferta en este momento.',
+			'comment.not_reportable': 'Este comentario ya no se puede reportar.',
+			'comment.invalid_status_transition': 'Esta acción ya no es posible sobre este comentario.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -329,6 +465,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ciudad debe ser una cadena de texto.',
 					isNotEmpty: 'Ingresa una ciudad.',
+					unknownCity: 'Selecciona una ciudad de la lista.',
 					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
 				},
 				startDate: {
@@ -362,6 +499,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'English',
 			french: 'French',
 			home: 'Home',
+			explore: 'Explore',
+			search: 'Search',
 			searchPlaceholder: 'Search deals, stores, cities...',
 			login: 'Log in',
 			register: 'Create account',
@@ -402,7 +541,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Offer',
 			thDate: 'Date',
 			reportsEmpty: 'No pending reports.',
-			noComment: 'No comment'
+			noComment: 'No comment',
+			tabComments: 'Comments',
+			thContent: 'Comment',
+			thNote: 'Note',
+			actionHide: 'Hide',
+			actionDismiss: 'Dismiss',
+			actionDismissReports: 'Dismiss reports',
+			commentsEmpty: 'No comments in the moderation queue.',
+			viewReports: 'View reports',
+			hideReports: 'Hide reports',
+			noteEmpty: 'No note',
+			brand: 'Moderation',
+			tabDashboard: 'Overview',
+			dashboardTitle: 'Moderation overview',
+			dashboardSubtitle: 'Queue status and quick access.',
+			statPendingComments: 'Comments to review',
+			statPendingReports: 'Reported offers',
+			statTotalPending: 'Total pending',
+			statAllClear: 'All caught up. Nothing pending.',
+			queuesTitle: 'Moderation queues',
+			viewQueue: 'Open queue'
 		},
 		auth: {
 			loginTitle: 'Log in',
@@ -430,6 +589,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Check the form fields and try again.',
 			genericLoginError: 'We could not log you in right now.',
 			genericRegisterError: 'We could not create your account right now.',
+			genericUpdateError: 'We could not update your profile right now.',
 			serverError: 'The server is unavailable right now. Please try again later.',
 			profileTitle: 'My profile',
 			notAuthenticated: 'You must log in to access this page.',
@@ -442,7 +602,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			role: 'Role',
 			offers: 'Offers',
 			comments: 'Comments',
-			reputation: 'Reputation',
 			votes: 'Votes',
 			myOffers: 'My offers',
 			myComments: 'My comments',
@@ -450,11 +609,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: 'You have not published any offers yet.',
 			noOffersDescription: 'Publish your first deal so it appears here.',
 			noComments: 'You have not commented on any offer yet.',
-			noVotes: 'Vote history is not available yet.',
-			comingSoon: 'Available when activity data is connected.',
+			noVotes: "You haven't voted on any offers yet.",
 			publishOffer: 'Publish deal',
 			offerActions: 'Deal actions',
-			retry: 'Try again'
+			retry: 'Try again',
+			editProfile: 'Edit profile',
+			newPasswordLabel: 'New password',
+			newPasswordHint: 'Leave blank to keep it.',
+			currentPasswordLabel: 'Current password',
+			save: 'Save changes',
+			saving: 'Saving...',
+			cancel: 'Cancel',
+			updateSuccess: 'Profile updated.'
 		},
 		offer: {
 			genericBrowseError: 'We could not load the offers right now.',
@@ -481,18 +647,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 			expiresOn: 'Expires',
 			filterCity: 'City',
 			filterType: 'Type',
+			filterStore: 'Store',
+			filterCategory: 'Category',
 			allCities: 'All cities',
 			allTypes: 'All types',
+			allStores: 'All stores',
+			allCategories: 'All categories',
 			sortRecent: 'Most recent',
 			sortPopular: 'Most popular',
+			sortEnding: 'Ending soon',
+			hideExpired: 'Hide expired',
 			periodAll: 'All time',
 			periodDay: 'Today',
 			periodWeek: 'This week',
 			periodMonth: 'This month',
 			periodYear: 'This year',
 			listingTitle: 'All offers',
+			resultsCount: '{count} results',
+			searchResultsFor: 'Results for',
+			clearSearch: 'Clear search',
 			loadMore: 'Load more',
 			empty: 'No offers match your filters.'
+		},
+		categories: {
+			technology: 'Technology',
+			home: 'Home',
+			fashion: 'Fashion',
+			groceries: 'Groceries',
+			restaurants: 'Restaurants',
+			travel: 'Travel',
+			entertainment: 'Entertainment',
+			beauty: 'Beauty',
+			sports: 'Sports',
+			kids: 'Kids',
+			services: 'Services',
+			other: 'Other'
 		},
 		createDeal: {
 			pageTitle: 'Share a deal',
@@ -504,6 +693,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe the deal, important conditions, availability, and steps to use it.',
 			offerTypeLabel: 'Deal type',
+			categoriesLabel: 'Categories',
 			offerTypeOnline: 'Online',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: 'Deal link',
@@ -538,6 +728,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: 'We could not delete the deal. Please try again.'
 		},
 		home: {
+			heroEyebrow: "Colombia's deal-hunting community",
 			heroTitle: 'Discover the best deals in Colombia',
 			heroSubtitle:
 				'Join the largest community of bargain hunters in the country. Find, share, and vote on the best discounts in physical stores and online.',
@@ -545,7 +736,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Share a discount',
 			hotDealsTitle: 'Hot deals',
 			recentDealsTitle: 'Recently added',
-			popularStoresTitle: 'Popular stores',
 			viewAll: 'View all'
 		},
 		comments: {
@@ -556,7 +746,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			empty: 'Be the first to comment.',
 			loadMore: 'View more comments',
 			edited: '(edited)',
-			deletedPlaceholder: '[comment deleted]',
 			reply: 'Reply',
 			replyingTo: 'In reply to @{username}',
 			replyPlaceholder: 'Write a reply...',
@@ -568,13 +757,90 @@ export const messages: Record<Locale, TranslationMessages> = {
 			saving: 'Saving...',
 			cancel: 'Cancel',
 			delete: 'Delete',
-			deleteConfirm: 'Delete this comment?'
+			deleteConfirm: 'Delete this comment?',
+			deletedPlaceholderAuthor: '[removed by the author]',
+			hiddenPlaceholderModerator: '[hidden by a moderator]',
+			report: 'Report',
+			reported: 'Reported',
+			reportTitle: 'Report comment',
+			reportDescription: 'Tell us why this comment should be reviewed.',
+			reportReasonLabel: 'Reason',
+			reportReasonPlaceholder: 'Select a reason',
+			reportNoteLabel: 'Note',
+			reportNotePlaceholder: 'Add details for the moderation team (optional)',
+			reportNoteHint: 'Optional',
+			reportSubmit: 'Send report',
+			reportSubmitting: 'Sending...',
+			reportSuccess: 'Report sent. Thank you.',
+			reportGenericError: 'We could not send the report. Please try again.',
+			reportReasons: {
+				SPAM: 'Spam',
+				ABUSE: 'Harassment or abuse',
+				OFF_TOPIC: 'Off topic',
+				MISINFORMATION: 'Misinformation',
+				OTHER: 'Other'
+			}
 		},
 		footer: {
 			rights: 'All rights reserved.',
 			terms: 'Terms',
-			privacy: 'Privacy',
-			contact: 'Contact'
+			privacy: 'Privacy'
+		},
+		legal: {
+			lastUpdated: 'Last updated: June 2026',
+			backHome: 'Back to home',
+			terms: {
+				title: 'Terms and conditions',
+				intro: 'By using Ofertando you accept these terms. Please read them carefully.',
+				sections: [
+					{
+						heading: 'The service',
+						body: 'Ofertando is a community platform where people share, comment on and vote for deals and discounts. We do not sell products: we only make it easier for users to exchange information.'
+					},
+					{
+						heading: 'Your account',
+						body: 'You are responsible for keeping your credentials confidential and for the activity on your account. We may disable accounts that break these terms.'
+					},
+					{
+						heading: 'Content and conduct',
+						body: 'You are responsible for the offers and comments you post. Spam, misleading, illegal or abusive content is not allowed; our moderation team may hide or remove content and resolve community reports.'
+					},
+					{
+						heading: 'About the offers',
+						body: 'Offers are submitted by the community and may change or expire without notice. Always check the price, conditions and availability at the store before buying; we do not guarantee their accuracy.'
+					},
+					{
+						heading: 'Changes',
+						body: 'We may update these terms to reflect improvements to the service or legal requirements. Continued use of Ofertando means you accept the current version.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Privacy policy',
+				intro: 'At Ofertando we look after your data. Here is what we collect and how we use it.',
+				sections: [
+					{
+						heading: 'Data we collect',
+						body: 'To create your account we store your email address and your username. We also record your activity on the platform: offers, comments and votes.'
+					},
+					{
+						heading: 'How we use your data',
+						body: 'We use your data to provide the service, show your activity on your profile and enable community moderation. We do not sell your data to third parties.'
+					},
+					{
+						heading: 'Cookies and session',
+						body: 'We use a strictly necessary session cookie to keep you securely signed in. We do not use advertising or tracking cookies.'
+					},
+					{
+						heading: 'Your rights',
+						body: 'You can view and edit your username, email and password from your profile at any time.'
+					},
+					{
+						heading: 'Changes',
+						body: 'We may update this policy. We will publish any changes on this same page.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Report offer',
@@ -603,6 +869,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Edit',
 			report: 'Report',
 			share: 'Share',
+			shareCopied: 'Link copied',
 			publishedBy: 'Posted by',
 			relatedTitle: 'Related offers',
 			relatedEmpty: 'No related offers at the moment.',
@@ -618,16 +885,21 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Your account is disabled. Please contact support.',
 			'user.email_taken': 'That email is already registered. Use another one or sign in.',
 			'user.username_taken': 'That username already exists. Choose a different one.',
+			'user.current_password_required': 'Enter your current password to confirm the change.',
+			'user.invalid_current_password': 'Your current password is incorrect.',
 			'offer.not_found': 'We could not find that offer. It may have been removed.',
 			'offer.forbidden': 'You do not have permission to modify this offer.',
 			'offer.invalid_dates':
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
+			'offer.invalid_category': 'Pick at least one valid category.',
 			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'report.offer_not_reportable': 'You cannot report this offer because it is no longer active.',
 			'comment.not_found': 'We could not find that comment. It may have been removed.',
 			'comment.forbidden': 'You do not have permission to modify this comment.',
 			'comment.offer_not_commentable': 'You cannot comment on this offer right now.',
+			'comment.not_reportable': 'This comment can no longer be reported.',
+			'comment.invalid_status_transition': 'This action is no longer possible on this comment.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -679,6 +951,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'The city must be a string.',
 					isNotEmpty: 'Enter a city.',
+					unknownCity: 'Pick a city from the list.',
 					maxLength: 'The city name is too long (max 100 characters).'
 				},
 				startDate: {
@@ -712,6 +985,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			english: 'Anglais',
 			french: 'Français',
 			home: 'Accueil',
+			explore: 'Explorer',
+			search: 'Rechercher',
 			searchPlaceholder: 'Rechercher des offres, magasins, villes...',
 			login: 'Se connecter',
 			register: 'Créer un compte',
@@ -752,7 +1027,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 			thReportedOffer: 'Offre',
 			thDate: 'Date',
 			reportsEmpty: 'Aucun signalement en attente.',
-			noComment: 'Sans commentaire'
+			noComment: 'Sans commentaire',
+			tabComments: 'Commentaires',
+			thContent: 'Commentaire',
+			thNote: 'Note',
+			actionHide: 'Masquer',
+			actionDismiss: 'Rejeter',
+			actionDismissReports: 'Rejeter les signalements',
+			commentsEmpty: 'Aucun commentaire dans la file de modération.',
+			viewReports: 'Voir les signalements',
+			hideReports: 'Masquer les signalements',
+			noteEmpty: 'Sans note',
+			brand: 'Modération',
+			tabDashboard: 'Aperçu',
+			dashboardTitle: 'Aperçu de la modération',
+			dashboardSubtitle: 'État des files et accès rapides.',
+			statPendingComments: 'Commentaires à examiner',
+			statPendingReports: 'Offres signalées',
+			statTotalPending: 'Total en attente',
+			statAllClear: 'Tout est à jour. Rien en attente.',
+			queuesTitle: 'Files de modération',
+			viewQueue: 'Ouvrir la file'
 		},
 		auth: {
 			loginTitle: 'Se connecter',
@@ -780,6 +1075,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			validationError: 'Vérifiez les champs du formulaire et réessayez.',
 			genericLoginError: "Nous n'avons pas pu vous connecter pour le moment.",
 			genericRegisterError: "Nous n'avons pas pu créer votre compte pour le moment.",
+			genericUpdateError: "Nous n'avons pas pu mettre à jour ton profil pour le moment.",
 			serverError: "Le serveur n'est pas disponible pour le moment. Réessayez plus tard.",
 			profileTitle: 'Mon profil',
 			notAuthenticated: 'Vous devez vous connecter pour accéder à cette page.',
@@ -792,7 +1088,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			role: 'Rôle',
 			offers: 'Offres',
 			comments: 'Commentaires',
-			reputation: 'Réputation',
 			votes: 'Votes',
 			myOffers: 'Mes offres',
 			myComments: 'Mes commentaires',
@@ -800,11 +1095,18 @@ export const messages: Record<Locale, TranslationMessages> = {
 			noOffers: "Vous n'avez pas encore publié d'offres.",
 			noOffersDescription: 'Publiez votre première offre pour la voir apparaître ici.',
 			noComments: "Vous n'avez encore commenté aucune offre.",
-			noVotes: "L'historique des votes n'est pas encore disponible.",
-			comingSoon: "Disponible lorsque les données d'activité seront connectées.",
+			noVotes: "Tu n'as encore voté pour aucune offre.",
 			publishOffer: 'Publier une offre',
 			offerActions: "Actions de l'offre",
-			retry: 'Réessayer'
+			retry: 'Réessayer',
+			editProfile: 'Modifier le profil',
+			newPasswordLabel: 'Nouveau mot de passe',
+			newPasswordHint: 'Laisse vide pour ne pas le changer.',
+			currentPasswordLabel: 'Mot de passe actuel',
+			save: 'Enregistrer',
+			saving: 'Enregistrement...',
+			cancel: 'Annuler',
+			updateSuccess: 'Profil mis à jour.'
 		},
 		offer: {
 			genericBrowseError: "Nous n'avons pas pu charger les offres pour le moment.",
@@ -832,18 +1134,41 @@ export const messages: Record<Locale, TranslationMessages> = {
 			expiresOn: 'Expire',
 			filterCity: 'Ville',
 			filterType: 'Type',
+			filterStore: 'Magasin',
+			filterCategory: 'Catégorie',
 			allCities: 'Toutes les villes',
 			allTypes: 'Tous les types',
+			allStores: 'Tous les magasins',
+			allCategories: 'Toutes les catégories',
 			sortRecent: 'Plus récentes',
 			sortPopular: 'Plus populaires',
+			sortEnding: 'Bientôt finies',
+			hideExpired: 'Masquer expirées',
 			periodAll: 'Toujours',
 			periodDay: "Aujourd'hui",
 			periodWeek: 'Cette semaine',
 			periodMonth: 'Ce mois-ci',
 			periodYear: 'Cette année',
 			listingTitle: 'Toutes les offres',
+			resultsCount: '{count} résultats',
+			searchResultsFor: 'Résultats pour',
+			clearSearch: 'Effacer la recherche',
 			loadMore: 'Charger plus',
 			empty: 'Aucune offre ne correspond à vos filtres.'
+		},
+		categories: {
+			technology: 'Technologie',
+			home: 'Maison',
+			fashion: 'Mode',
+			groceries: 'Courses',
+			restaurants: 'Restaurants',
+			travel: 'Voyages',
+			entertainment: 'Divertissement',
+			beauty: 'Beauté',
+			sports: 'Sport',
+			kids: 'Enfants',
+			services: 'Services',
+			other: 'Autres'
 		},
 		createDeal: {
 			pageTitle: 'Partager une offre',
@@ -856,6 +1181,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
 			offerTypeLabel: "Type d'offre",
+			categoriesLabel: 'Catégories',
 			offerTypeOnline: 'En ligne',
 			offerTypeLocal: 'Local',
 			externalUrlLabel: "Lien de l'offre",
@@ -892,6 +1218,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			genericError: "Nous n'avons pas pu supprimer l'offre. Réessayez."
 		},
 		home: {
+			heroEyebrow: 'La communauté des bons plans en Colombie',
 			heroTitle: 'Découvrez les meilleures offres en Colombie',
 			heroSubtitle:
 				'Rejoignez la plus grande communauté de chasseurs de bonnes affaires du pays. Trouvez, partagez et votez pour les meilleurs rabais en magasin et en ligne.',
@@ -899,7 +1226,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			publishCta: 'Partager une réduction',
 			hotDealsTitle: 'Offres en feu',
 			recentDealsTitle: 'Récemment ajoutées',
-			popularStoresTitle: 'Magasins populaires',
 			viewAll: 'Voir toutes'
 		},
 		comments: {
@@ -910,7 +1236,6 @@ export const messages: Record<Locale, TranslationMessages> = {
 			empty: 'Soyez le premier à commenter.',
 			loadMore: 'Voir plus de commentaires',
 			edited: '(modifié)',
-			deletedPlaceholder: '[commentaire supprimé]',
 			reply: 'Répondre',
 			replyingTo: 'En réponse à @{username}',
 			replyPlaceholder: 'Écrivez une réponse...',
@@ -922,13 +1247,91 @@ export const messages: Record<Locale, TranslationMessages> = {
 			saving: 'Enregistrement...',
 			cancel: 'Annuler',
 			delete: 'Supprimer',
-			deleteConfirm: 'Supprimer ce commentaire ?'
+			deleteConfirm: 'Supprimer ce commentaire ?',
+			deletedPlaceholderAuthor: "[supprimé par l'auteur]",
+			hiddenPlaceholderModerator: '[masqué par un modérateur]',
+			report: 'Signaler',
+			reported: 'Signalé',
+			reportTitle: 'Signaler le commentaire',
+			reportDescription: 'Indiquez pourquoi ce commentaire devrait être examiné.',
+			reportReasonLabel: 'Motif',
+			reportReasonPlaceholder: 'Sélectionnez un motif',
+			reportNoteLabel: 'Note',
+			reportNotePlaceholder: 'Ajoutez des détails pour la modération (optionnel)',
+			reportNoteHint: 'Optionnel',
+			reportSubmit: 'Envoyer le signalement',
+			reportSubmitting: 'Envoi...',
+			reportSuccess: 'Signalement envoyé. Merci.',
+			reportGenericError: "Nous n'avons pas pu envoyer le signalement. Réessayez.",
+			reportReasons: {
+				SPAM: 'Spam',
+				ABUSE: 'Harcèlement ou abus',
+				OFF_TOPIC: 'Hors sujet',
+				MISINFORMATION: 'Désinformation',
+				OTHER: 'Autre'
+			}
 		},
 		footer: {
 			rights: 'Tous droits réservés.',
 			terms: 'Conditions',
-			privacy: 'Confidentialité',
-			contact: 'Contact'
+			privacy: 'Confidentialité'
+		},
+		legal: {
+			lastUpdated: 'Dernière mise à jour : juin 2026',
+			backHome: "Retour à l'accueil",
+			terms: {
+				title: 'Conditions générales',
+				intro: 'En utilisant Ofertando, tu acceptes ces conditions. Lis-les attentivement.',
+				sections: [
+					{
+						heading: 'Le service',
+						body: 'Ofertando est une plateforme communautaire où les gens partagent, commentent et votent pour des offres et des réductions. Nous ne vendons pas de produits : nous facilitons seulement l’échange d’informations entre utilisateurs.'
+					},
+					{
+						heading: 'Ton compte',
+						body: 'Tu es responsable de la confidentialité de tes identifiants et de l’activité de ton compte. Nous pouvons désactiver les comptes qui enfreignent ces conditions.'
+					},
+					{
+						heading: 'Contenu et conduite',
+						body: 'Tu es responsable des offres et des commentaires que tu publies. Le contenu indésirable, trompeur, illégal ou abusif est interdit ; notre équipe de modération peut masquer ou supprimer du contenu et traiter les signalements de la communauté.'
+					},
+					{
+						heading: 'À propos des offres',
+						body: 'Les offres sont soumises par la communauté et peuvent changer ou expirer sans préavis. Vérifie toujours le prix, les conditions et la disponibilité en boutique avant d’acheter ; nous ne garantissons pas leur exactitude.'
+					},
+					{
+						heading: 'Modifications',
+						body: 'Nous pouvons mettre à jour ces conditions pour refléter des améliorations du service ou des exigences légales. L’utilisation continue d’Ofertando vaut acceptation de la version en vigueur.'
+					}
+				]
+			},
+			privacy: {
+				title: 'Politique de confidentialité',
+				intro:
+					'Chez Ofertando, nous prenons soin de tes données. Voici ce que nous collectons et comment nous l’utilisons.',
+				sections: [
+					{
+						heading: 'Données que nous collectons',
+						body: 'Pour créer ton compte, nous conservons ton adresse e-mail et ton nom d’utilisateur. Nous enregistrons aussi ton activité sur la plateforme : offres, commentaires et votes.'
+					},
+					{
+						heading: 'Comment nous utilisons tes données',
+						body: 'Nous utilisons tes données pour fournir le service, afficher ton activité sur ton profil et permettre la modération de la communauté. Nous ne vendons pas tes données à des tiers.'
+					},
+					{
+						heading: 'Cookies et session',
+						body: 'Nous utilisons un cookie de session strictement nécessaire pour te garder connecté en toute sécurité. Nous n’utilisons pas de cookies publicitaires ou de suivi.'
+					},
+					{
+						heading: 'Tes droits',
+						body: 'Tu peux consulter et modifier ton nom d’utilisateur, ton e-mail et ton mot de passe depuis ton profil à tout moment.'
+					},
+					{
+						heading: 'Modifications',
+						body: 'Nous pouvons mettre à jour cette politique. Nous publierons tout changement sur cette même page.'
+					}
+				]
+			}
 		},
 		report: {
 			modalTitle: 'Signaler cette offre',
@@ -957,6 +1360,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			edit: 'Modifier',
 			report: 'Signaler',
 			share: 'Partager',
+			shareCopied: 'Lien copié',
 			publishedBy: 'Publié par',
 			relatedTitle: 'Offres similaires',
 			relatedEmpty: "Pas d'offres similaires pour le moment.",
@@ -972,11 +1376,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'auth.account_disabled': 'Votre compte est désactivé. Contactez le support.',
 			'user.email_taken': 'Cet e-mail est déjà enregistré. Utilisez-en un autre ou connectez-vous.',
 			'user.username_taken': "Ce nom d'utilisateur existe déjà. Choisissez-en un autre.",
+			'user.current_password_required':
+				'Saisis ton mot de passe actuel pour confirmer le changement.',
+			'user.invalid_current_password': 'Le mot de passe actuel est incorrect.',
 			'offer.not_found': "Nous n'avons pas trouvé cette offre. Elle a peut-être été supprimée.",
 			'offer.forbidden': "Vous n'avez pas la permission de modifier cette offre.",
 			'offer.invalid_dates':
 				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
+			'offer.invalid_category': 'Choisis au moins une catégorie valide.',
 			'vote.offer_not_voteable':
 				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'report.offer_not_reportable':
@@ -984,6 +1392,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.not_found': "Nous n'avons pas trouvé ce commentaire. Il a peut-être été supprimé.",
 			'comment.forbidden': "Vous n'avez pas la permission de modifier ce commentaire.",
 			'comment.offer_not_commentable': 'Vous ne pouvez pas commenter cette offre pour le moment.',
+			'comment.not_reportable': 'Ce commentaire ne peut plus être signalé.',
+			'comment.invalid_status_transition': "Cette action n'est plus possible sur ce commentaire.",
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',
@@ -1036,6 +1446,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 				city: {
 					isString: 'La ville doit être une chaîne de caractères.',
 					isNotEmpty: 'Saisissez une ville.',
+					unknownCity: 'Choisis une ville dans la liste.',
 					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
 				},
 				startDate: {

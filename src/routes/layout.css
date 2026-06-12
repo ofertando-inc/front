@@ -4,6 +4,11 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+	--font-sans:
+		'Hanken Grotesk Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-display:
+		'Bricolage Grotesque Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
 	--color-primary-50: #fff7ed;
 	--color-primary-100: #ffedd5;
 	--color-primary-200: #fed7aa;
@@ -14,19 +19,51 @@
 	--color-primary-700: #c2410c;
 	--color-primary-800: #9a3412;
 	--color-primary-900: #7c2d12;
+
+	/* Heat — warm red for "hot deals" and high-energy accents */
+	--color-heat-50: #fff1ee;
+	--color-heat-100: #ffe0d9;
+	--color-heat-200: #ffc2b5;
+	--color-heat-400: #f4654a;
+	--color-heat-500: #e23e2c;
+	--color-heat-600: #c52f1f;
+
+	/* Savings — forest green for discounts / "% off" */
+	--color-savings-50: #ecfdf5;
+	--color-savings-100: #d1fae5;
+	--color-savings-500: #10b981;
+	--color-savings-600: #047857;
+	--color-savings-700: #065f46;
 }
 
 @source '../../node_modules/flowbite-svelte/dist';
 @source '../../node_modules/flowbite-svelte-icons/dist';
 
-:root {
-	color: #111827;
-	background: #f9fafb;
-}
+@layer base {
+	:root {
+		color: #1c1917;
+		background: #fffbf5;
+	}
 
-body {
-	min-height: 100vh;
-	background: #f9fafb;
+	body {
+		min-height: 100vh;
+		background: #fffbf5;
+		font-family: var(--font-sans);
+	}
+
+	h1,
+	h2,
+	h3 {
+		font-family: var(--font-display);
+		letter-spacing: -0.015em;
+	}
+
+	/* Tailwind v4's reset no longer sets a pointer cursor on buttons — restore it
+	   for every enabled clickable so the whole UI feels actionable. */
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
 }
 
 .page-shell {

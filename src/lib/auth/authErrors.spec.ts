@@ -33,6 +33,31 @@ describe('resolveAuthError', () => {
 		});
 	});
 
+	it('maps user.current_password_required to a field error on currentPassword', () => {
+		const error = new ApiError('user.current_password_required', 400);
+
+		expect(resolveAuthError(error, t, 'editProfile')).toEqual({
+			bannerMessage: null,
+			fieldErrors: { currentPassword: t.errors['user.current_password_required'] }
+		});
+	});
+
+	it('maps user.invalid_current_password to a field error on currentPassword', () => {
+		const error = new ApiError('user.invalid_current_password', 400);
+
+		expect(resolveAuthError(error, t, 'editProfile')).toEqual({
+			bannerMessage: null,
+			fieldErrors: { currentPassword: t.errors['user.invalid_current_password'] }
+		});
+	});
+
+	it('falls back to the profile-update generic for editProfile errors', () => {
+		expect(resolveAuthError(new Error('network'), t, 'editProfile')).toEqual({
+			bannerMessage: t.auth.genericUpdateError,
+			fieldErrors: {}
+		});
+	});
+
 	it('extracts validation.failed details into per-field errors', () => {
 		const error = new ApiError('validation.failed', 400, {
 			fields: [

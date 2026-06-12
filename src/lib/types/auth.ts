@@ -13,3 +13,17 @@ export interface User {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface UserStats {
+	offerCount: number;
+	commentCount: number;
+}
+
+// All fields optional. Changing email or password requires `currentPassword`;
+// changing the username alone does not.
+export interface UpdateMeDto {
+	username?: string;
+	email?: string;
+	password?: string;
+	currentPassword?: string;
+}
