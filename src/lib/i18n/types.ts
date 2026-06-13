@@ -249,6 +249,9 @@ export interface TranslationMessages {
 		externalUrlHint: string;
 		storeNameLabel: string;
 		storeNamePlaceholder: string;
+		storeGeocodeGroup: string;
+		storeVerified: string;
+		storeSearching: string;
 		cityLabel: string;
 		cityPlaceholder: string;
 		startDateLabel: string;
