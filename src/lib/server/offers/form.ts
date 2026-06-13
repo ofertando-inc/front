@@ -52,7 +52,8 @@ export function getDefaultOfferData(): CreateOfferFormData {
 		city: NATIONAL_CITY,
 		startDate: toDatetimeLocal(startDate),
 		endDate: toDatetimeLocal(endDate),
-		categoryIds: []
+		categoryIds: [],
+		storeId: undefined
 	};
 }
 
@@ -66,7 +67,8 @@ export function offerToFormData(offer: Offer): CreateOfferFormData {
 		city: offer.city,
 		startDate: toDatetimeLocal(new Date(offer.startDate)),
 		endDate: toDatetimeLocal(new Date(offer.endDate)),
-		categoryIds: offer.categories.map((category) => category.id)
+		categoryIds: offer.categories.map((category) => category.id),
+		storeId: offer.store?.id
 	};
 }
 

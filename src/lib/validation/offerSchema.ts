@@ -57,7 +57,13 @@ const offerShape = {
 	city: requiredText(OFFER_CITY_MAX_LENGTH),
 	startDate: dateString(),
 	endDate: dateString(),
-	categoryIds: z.array(z.string()).min(1, { message: 'isNotEmpty' })
+	categoryIds: z.array(z.string()).min(1, { message: 'isNotEmpty' }),
+	// Optional link to a structured store (UUID). Empty string → undefined so an
+	// unlinked offer omits it; the backend validates existence (404 if unknown).
+	storeId: z.preprocess(
+		(value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
+		z.string({ error: 'isString' }).optional()
+	)
 };
 
 function validateOffer(

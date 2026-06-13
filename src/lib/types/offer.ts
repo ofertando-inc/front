@@ -1,3 +1,4 @@
+import type { OfferStore } from '$lib/types/store';
 import type { VoteType } from '$lib/types/vote';
 
 export const OFFER_STATUSES = ['ACTIVE', 'REPORTED', 'DISABLED', 'DELETED', 'EXPIRED'] as const;
@@ -62,6 +63,7 @@ export interface Offer {
 	createdByUsername: string;
 	userVote: VoteType | null;
 	categories: OfferCategory[];
+	store: OfferStore | null;
 }
 
 export interface PaginatedOffers {
@@ -81,6 +83,7 @@ export interface CreateOfferDto {
 	startDate: string;
 	endDate: string;
 	categoryIds: string[];
+	storeId?: string;
 }
 
 export type UpdateOfferDto = Partial<CreateOfferDto>;
