@@ -23,6 +23,8 @@ export interface ErrorMessages {
 	'comment.offer_not_commentable': string;
 	'comment.not_reportable': string;
 	'comment.invalid_status_transition': string;
+	'store.not_found': string;
+	'geocoding.unavailable': string;
 	'pagination.invalid_cursor': string;
 	'validation.failed': string;
 	'db.unique_violation': string;

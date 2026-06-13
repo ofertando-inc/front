@@ -25,6 +25,9 @@ export const ErrorKey = {
 	CommentNotReportable: 'comment.not_reportable',
 	CommentInvalidStatusTransition: 'comment.invalid_status_transition',
 
+	StoreNotFound: 'store.not_found',
+	GeocodingUnavailable: 'geocoding.unavailable',
+
 	PaginationInvalidCursor: 'pagination.invalid_cursor',
 
 	ValidationFailed: 'validation.failed',

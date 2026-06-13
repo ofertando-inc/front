@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Stores domain foundation for the post-MVP geo evolution: a `store` API client (`searchStores`, `getStore`, `createStore`, `geocode`) over the BFF with `StoreResponse` / `OfferStore` / `GeocodeSuggestion` / `CreateStoreDto` types, plus `store.not_found` / `geocoding.unavailable` error keys localized in Spanish, English, and French. Unit-tested (query/body shape, id encoding). No UI yet.
+
 ## [1.0.0] - 2026-06-12
 
 ### Added
