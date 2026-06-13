@@ -158,6 +158,42 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url === '/stores/geocode' || url.startsWith('/stores/geocode?')) {
+			sendJson(response, 200, []);
+			return;
+		}
+
+		if (url === '/stores' || url.startsWith('/stores?')) {
+			if (request.method === 'POST') {
+				sendJson(response, 201, {
+					id: 'store-new',
+					name: 'Nueva tienda',
+					city: 'Bogotá',
+					region: null,
+					address: null,
+					latitude: null,
+					longitude: null,
+					verified: false,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+			sendJson(response, 200, [
+				{
+					id: 'store-acme',
+					name: 'Acme Store',
+					city: 'Medellín',
+					region: 'Antioquia',
+					address: null,
+					latitude: 6.25,
+					longitude: -75.56,
+					verified: true,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				}
+			]);
+			return;
+		}
+
 		if (url === '/offers' || url.startsWith('/offers?')) {
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
@@ -738,6 +774,10 @@ test('create deal shows a required category picker for an authenticated user', a
 	await page.selectOption('select#offerType', 'local');
 	await page.fill('input#city', 'mede');
 	await expect(page.getByRole('option', { name: /Medellín/ })).toBeVisible();
+
+	// Store autocomplete: typing surfaces existing stores from GET /stores.
+	await page.fill('input#storeName', 'acme');
+	await expect(page.getByRole('option', { name: /Acme Store/ })).toBeVisible();
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
