@@ -413,6 +413,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'No puedes comentar esta oferta en este momento.',
 			'comment.not_reportable': 'Este comentario ya no se puede reportar.',
 			'comment.invalid_status_transition': 'Esta acción ya no es posible sobre este comentario.',
+			'store.not_found': 'No encontramos esta tienda.',
+			'geocoding.unavailable':
+				'No pudimos buscar la dirección en este momento. Inténtalo más tarde.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
 			'validation.failed': 'Revisa los campos del formulario e inténtalo de nuevo.',
 			'db.unique_violation': 'Ya existe un registro con esos datos.',
@@ -900,6 +903,8 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'You cannot comment on this offer right now.',
 			'comment.not_reportable': 'This comment can no longer be reported.',
 			'comment.invalid_status_transition': 'This action is no longer possible on this comment.',
+			'store.not_found': 'We could not find this store.',
+			'geocoding.unavailable': 'We could not look up the address right now. Try again later.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
 			'db.unique_violation': 'A record with these details already exists.',
@@ -1394,6 +1399,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'Vous ne pouvez pas commenter cette offre pour le moment.',
 			'comment.not_reportable': 'Ce commentaire ne peut plus être signalé.',
 			'comment.invalid_status_transition': "Cette action n'est plus possible sur ce commentaire.",
+			'store.not_found': "Nous n'avons pas trouvé ce magasin.",
+			'geocoding.unavailable':
+				"Nous n'avons pas pu rechercher l'adresse pour le moment. Réessaie plus tard.",
 			'pagination.invalid_cursor':
 				'La pagination a expiré. Nous repartons depuis la première page.',
 			'validation.failed': 'Vérifiez les champs du formulaire et réessayez.',
