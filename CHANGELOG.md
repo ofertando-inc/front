@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Store autocomplete on the offer form: the free-text "store" field becomes a `StoreCombobox` that searches the store referential (`GET /stores`) and, for a new address, geocodes it (`GET /stores/geocode`) and find-or-creates the store (`POST /stores`) on selection — returning a `storeId`. Picking a store copies its name into the form and its city for local offers, and links the offer via the new optional `storeId`; verified stores are flagged in the dropdown. New `Offer.store` (`OfferStore`) and `CreateOfferDto.storeId`, zod schema + server form mapping, `createDeal.storeGeocodeGroup` / `storeVerified` / `storeSearching` keys in the three languages, and e2e coverage.
 - Stores domain foundation for the post-MVP geo evolution: a `store` API client (`searchStores`, `getStore`, `createStore`, `geocode`) over the BFF with `StoreResponse` / `OfferStore` / `GeocodeSuggestion` / `CreateStoreDto` types, plus `store.not_found` / `geocoding.unavailable` error keys localized in Spanish, English, and French. Unit-tested (query/body shape, id encoding). No UI yet.
 
 ## [1.0.0] - 2026-06-12
