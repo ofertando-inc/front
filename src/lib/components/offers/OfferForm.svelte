@@ -8,6 +8,7 @@
 	import type { Category } from '$lib/types/offer';
 	import type { CreateOfferFormData } from '$lib/validation/offerSchema';
 	import CityCombobox from './CityCombobox.svelte';
+	import StoreCombobox from './StoreCombobox.svelte';
 
 	export interface OfferFormLabels {
 		heading: string;
@@ -77,6 +78,12 @@
 		} else if ($form.city === NATIONAL_CITY) {
 			$form.city = '';
 		}
+	}
+
+	// Picking/creating a store syncs the free-text city for local offers (online
+	// keeps its "Nacional" sentinel). Store name + id are bound by the combobox.
+	function handleStorePicked(store: { name: string; city: string }) {
+		if ($form.offerType === 'local') $form.city = store.city;
 	}
 
 	type FieldName = keyof CreateOfferFormData;
@@ -273,17 +280,16 @@
 						<Label for="storeName" class="text-sm font-medium text-gray-700"
 							>{$translationStore.createDeal.storeNameLabel} *</Label
 						>
-						<Input
+						<StoreCombobox
 							id="storeName"
 							name="storeName"
-							type="text"
-							bind:value={$form.storeName}
+							linkName="storeId"
+							bind:storeName={$form.storeName}
+							bind:storeId={$form.storeId}
 							placeholder={$translationStore.createDeal.storeNamePlaceholder}
 							required
-							maxlength={100}
-							aria-invalid={resolveFieldError('storeName') ? 'true' : undefined}
-							color={resolveFieldError('storeName') ? 'red' : undefined}
-							class={resolveFieldError('storeName') ? fieldErrorClass : fieldClass}
+							invalid={Boolean(resolveFieldError('storeName'))}
+							onSelect={handleStorePicked}
 						/>
 						{#if resolveFieldError('storeName')}
 							<p class="text-sm text-red-600">{resolveFieldError('storeName')}</p>
