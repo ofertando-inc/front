@@ -10,6 +10,8 @@ export interface User {
 	username: string;
 	role: UserRole;
 	status: UserStatus;
+	// Server-derived score (upvotes received, resolved reports…). Can be negative.
+	reputation: number;
 	createdAt: string;
 	updatedAt: string;
 }

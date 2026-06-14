@@ -34,8 +34,8 @@ const validCreatePayload: CreateOfferDto = {
 	description: '50% off',
 	offerType: 'discount',
 	externalUrl: 'https://example.com/promo',
-	storeName: 'Acme',
-	city: 'Bogotá',
+	merchantName: 'Acme',
+	location: { address: 'Calle 10 #20-30', city: 'Bogotá' },
 	startDate: '2026-05-18T00:00:00.000Z',
 	endDate: '2026-05-25T00:00:00.000Z',
 	categoryIds: ['cat-1']
@@ -65,9 +65,11 @@ describe('listOffers', () => {
 			sort: 'ending',
 			period: 'week',
 			city: 'Bogotá',
-			store: 'Acme',
+			merchant: 'merchant-1',
 			category: 'technology',
-			offerType: 'discount',
+			online: false,
+			near: '4.6,-74.08',
+			radiusKm: 10,
 			includeExpired: false,
 			cursor: 'abc'
 		});
@@ -79,9 +81,11 @@ describe('listOffers', () => {
 		expect(url).toContain('sort=ending');
 		expect(url).toContain('period=week');
 		expect(url).toContain('city=Bogot%C3%A1');
-		expect(url).toContain('store=Acme');
+		expect(url).toContain('merchant=merchant-1');
 		expect(url).toContain('category=technology');
-		expect(url).toContain('offerType=discount');
+		expect(url).toContain('online=false');
+		expect(url).toContain('near=4.6%2C-74.08');
+		expect(url).toContain('radiusKm=10');
 		expect(url).toContain('includeExpired=false');
 	});
 
@@ -128,7 +132,6 @@ describe('getOfferFacets', () => {
 	it('GETs /offers/facets with credentials and returns the facet buckets', async () => {
 		const facets = {
 			cities: [{ value: 'Bogotá', count: 12 }],
-			stores: [{ value: 'Acme', count: 5 }],
 			categories: [{ slug: 'technology', name: 'Technology', count: 8 }]
 		};
 		const fetchMock = vi.fn().mockResolvedValue(jsonResponse(facets, 200));

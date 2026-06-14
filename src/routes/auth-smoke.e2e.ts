@@ -28,6 +28,38 @@ function isAdmin(request: import('node:http').IncomingMessage) {
 	return (request.headers.cookie ?? '').includes('e2e_session=admin');
 }
 
+// Offer returned by POST /offers (and its GET) for the create happy-path test.
+const createdOffer = {
+	id: 'new-offer',
+	title: 'Gran descuento de prueba',
+	description: 'Una descripción de prueba suficientemente larga.',
+	offerType: 'discount',
+	isOnline: false,
+	externalUrl: null,
+	startDate: '2026-06-01T00:00:00.000Z',
+	endDate: '2026-12-31T00:00:00.000Z',
+	status: 'ACTIVE',
+	score: 0,
+	reportCount: 0,
+	commentCount: 0,
+	createdAt: '2026-06-01T10:00:00.000Z',
+	updatedAt: '2026-06-01T10:00:00.000Z',
+	createdById: 'e2e-user-id',
+	createdByUsername: 'e2euser',
+	userVote: null,
+	categories: [{ id: 'cat-technology', slug: 'technology', name: 'Technology' }],
+	merchant: { id: 'merchant-acme', name: 'Acme Store', verified: true },
+	location: {
+		id: 'loc-new',
+		address: 'Calle 10 #20-30',
+		city: 'Bogotá',
+		region: 'Bogotá D.C.',
+		latitude: 4.6,
+		longitude: -74.08,
+		verified: false
+	}
+};
+
 test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
@@ -96,6 +128,7 @@ test.beforeAll(async () => {
 					role: 'USER',
 					status: 'ACTIVE',
 					createdAt: '2026-05-01T10:00:00.000Z',
+					reputation: 12,
 					updatedAt: '2026-05-22T10:00:00.000Z'
 				});
 			});
@@ -111,6 +144,7 @@ test.beforeAll(async () => {
 					username: admin ? 'e2eadmin' : 'e2euser',
 					role: admin ? 'ADMIN' : 'USER',
 					status: 'ACTIVE',
+					reputation: 12,
 					createdAt: '2026-05-01T10:00:00.000Z',
 					updatedAt: '2026-05-01T10:00:00.000Z'
 				});
@@ -146,7 +180,7 @@ test.beforeAll(async () => {
 		}
 
 		if (url === '/offers/facets') {
-			sendJson(response, 200, { cities: [], stores: [], categories: [] });
+			sendJson(response, 200, { cities: [], categories: [] });
 			return;
 		}
 
@@ -158,8 +192,64 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url.startsWith('/geocode/reverse')) {
+			sendJson(response, 200, {
+				displayName: 'Carrera 7 #45-10, Bogotá, Colombia',
+				latitude: 4.62,
+				longitude: -74.07,
+				city: 'Bogotá',
+				region: 'Bogotá D.C.',
+				address: 'Carrera 7 #45-10'
+			});
+			return;
+		}
+
+		if (url === '/geocode' || url.startsWith('/geocode?')) {
+			sendJson(response, 200, [
+				{
+					displayName: 'Calle 10 #20-30, Bogotá, Colombia',
+					latitude: 4.6,
+					longitude: -74.08,
+					city: 'Bogotá',
+					region: 'Bogotá D.C.',
+					address: 'Calle 10 #20-30'
+				}
+			]);
+			return;
+		}
+
+		if (url === '/merchants' || url.startsWith('/merchants?')) {
+			if (request.method === 'POST') {
+				sendJson(response, 201, {
+					id: 'merchant-new',
+					name: 'Nuevo comercio',
+					verified: false,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+			sendJson(response, 200, [
+				{
+					id: 'merchant-acme',
+					name: 'Acme Store',
+					verified: true,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				}
+			]);
+			return;
+		}
+
 		if (url === '/offers' || url.startsWith('/offers?')) {
+			if (request.method === 'POST') {
+				sendJson(response, 201, createdOffer);
+				return;
+			}
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
+			return;
+		}
+
+		if (url === '/offers/new-offer' || url.startsWith('/offers/new-offer?')) {
+			sendJson(response, 200, createdOffer);
 			return;
 		}
 
@@ -335,10 +425,19 @@ test.beforeAll(async () => {
 				id: 'e2e-comment-offer',
 				title: 'Oferta de prueba de comentarios',
 				description: 'Descripción de la oferta para el test de comentarios.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -360,10 +459,19 @@ test.beforeAll(async () => {
 				id: 'e2e-report-offer',
 				title: 'Oferta de prueba de reporte',
 				description: 'Descripción de la oferta para el test de reporte.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -387,10 +495,19 @@ test.beforeAll(async () => {
 				id: 'e2e-expired-offer',
 				title: 'Oferta caducada de prueba',
 				description: 'Descripción de la oferta caducada para el test.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2020-01-01T00:00:00.000Z',
 				endDate: '2020-02-01T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -412,10 +529,19 @@ test.beforeAll(async () => {
 				id: 'e2e-vote-offer',
 				title: 'Oferta de prueba de votación',
 				description: 'Descripción de la oferta para el test de votación.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -454,10 +580,19 @@ test.beforeAll(async () => {
 				id: 'e2e-admin-offer',
 				title: 'Oferta moderable',
 				description: 'Oferta usada por el test admin.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -474,6 +609,197 @@ test.beforeAll(async () => {
 
 			if (url === '/admin/moderation/summary') {
 				sendJson(response, 200, { pendingComments: 4, pendingOfferReports: 2 });
+				return;
+			}
+
+			if (url === '/admin/merchants/merge' && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: 'merchant-keep',
+					name: 'Comercio destino',
+					verified: true,
+					blockedAt: null,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantVerify = url.match(/^\/admin\/merchants\/([^/?]+)\/verify/);
+			if (merchantVerify) {
+				sendJson(response, 200, {
+					id: merchantVerify[1],
+					name: 'Comercio pendiente',
+					verified: true,
+					blockedAt: null,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantBlock = url.match(/^\/admin\/merchants\/([^/?]+)\/block/);
+			if (merchantBlock && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: merchantBlock[1],
+					name: 'Comercio pendiente',
+					verified: false,
+					blockedAt: '2026-06-12T10:00:00.000Z',
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantUnblock = url.match(/^\/admin\/merchants\/([^/?]+)\/unblock/);
+			if (merchantUnblock && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: merchantUnblock[1],
+					name: 'Comercio bloqueado',
+					verified: true,
+					blockedAt: null,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantEdit = url.match(/^\/admin\/merchants\/([^/?]+)$/);
+			if (merchantEdit && request.method === 'PATCH') {
+				void readJsonBody(request).then((body) => {
+					const patch = (body ?? {}) as { name?: unknown };
+					sendJson(response, 200, {
+						id: merchantEdit[1],
+						name: typeof patch.name === 'string' ? patch.name : 'Comercio pendiente',
+						verified: false,
+						blockedAt: null,
+						createdAt: '2026-06-01T10:00:00.000Z'
+					});
+				});
+				return;
+			}
+
+			const locationVerify = url.match(/^\/admin\/locations\/([^/?]+)\/verify/);
+			if (locationVerify) {
+				sendJson(response, 200, {
+					id: locationVerify[1],
+					merchantId: 'm-loc',
+					address: 'Carrera 5 #10-20',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: true,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const locationEdit = url.match(/^\/admin\/locations\/([^/?]+)$/);
+			if (locationEdit && request.method === 'PATCH') {
+				void readJsonBody(request).then((body) => {
+					const patch = (body ?? {}) as { address?: unknown; city?: unknown; region?: unknown };
+					sendJson(response, 200, {
+						id: locationEdit[1],
+						merchantId: 'm-loc',
+						address: typeof patch.address === 'string' ? patch.address : 'Carrera 5 #10-20',
+						city: typeof patch.city === 'string' ? patch.city : 'Bogotá',
+						region: typeof patch.region === 'string' ? patch.region : null,
+						latitude: 4.6,
+						longitude: -74.08,
+						verified: false,
+						createdAt: '2026-06-01T10:00:00.000Z'
+					});
+				});
+				return;
+			}
+
+			const locationDelete = url.match(/^\/admin\/locations\/([^/?]+)(\?|$)/);
+			if (locationDelete && request.method === 'DELETE') {
+				const reassign = new URL(url, 'http://mock').searchParams.get('reassignTo');
+				// loc-in-use has attached offers: refuse unless a reassignment target is given.
+				if (locationDelete[1] === 'loc-in-use' && !reassign) {
+					sendJson(response, 409, { key: 'location.in_use', statusCode: 409 });
+					return;
+				}
+				response.writeHead(204);
+				response.end();
+				return;
+			}
+
+			if (url === '/admin/merchants' || url.startsWith('/admin/merchants?')) {
+				const params = new URL(url, 'http://mock').searchParams;
+				let items;
+				if (params.get('blocked') === 'true') {
+					items = [
+						{
+							id: 'merchant-blocked',
+							name: 'Comercio bloqueado',
+							verified: true,
+							blockedAt: '2026-06-10T10:00:00.000Z',
+							createdAt: '2026-05-01T10:00:00.000Z'
+						}
+					];
+				} else if (params.get('verified') === 'true') {
+					items = [
+						{
+							id: 'merchant-verified',
+							name: 'Comercio verificado',
+							verified: true,
+							blockedAt: null,
+							createdAt: '2026-05-01T10:00:00.000Z'
+						}
+					];
+				} else {
+					items = [
+						{
+							id: 'merchant-pending',
+							name: 'Comercio pendiente',
+							verified: false,
+							blockedAt: null,
+							createdAt: '2026-06-01T10:00:00.000Z'
+						}
+					];
+				}
+				sendJson(response, 200, { items, nextCursor: null });
+				return;
+			}
+
+			if (url === '/admin/locations' || url.startsWith('/admin/locations?')) {
+				const params = new URL(url, 'http://mock').searchParams;
+				// When scoped to a merchant, return its other address as a reassignment target.
+				if (params.get('merchant')) {
+					sendJson(response, 200, {
+						items: [
+							{
+								id: 'loc-alt',
+								merchantId: 'm-loc',
+								address: 'Avenida 1 #2-3',
+								city: 'Bogotá',
+								region: 'Bogotá D.C.',
+								latitude: 4.61,
+								longitude: -74.07,
+								verified: true,
+								createdAt: '2026-06-01T10:00:00.000Z',
+								merchant: { id: 'm-loc', name: 'Tienda asociada' }
+							}
+						],
+						nextCursor: null
+					});
+					return;
+				}
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'loc-pending',
+							merchantId: 'm-loc',
+							address: 'Carrera 5 #10-20',
+							city: 'Bogotá',
+							region: 'Bogotá D.C.',
+							latitude: 4.6,
+							longitude: -74.08,
+							verified: false,
+							createdAt: '2026-06-01T10:00:00.000Z',
+							merchant: { id: 'm-loc', name: 'Tienda asociada' }
+						}
+					],
+					nextCursor: null
+				});
 				return;
 			}
 
@@ -659,10 +985,11 @@ test('profile offers tab renders an empty state for authenticated users without 
 	await expect(page).toHaveURL(/\/profile$/);
 	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
 
-	// Real stats come from GET /users/me/stats; reputation was removed.
+	// Stats come from GET /users/me/stats; reputation from GET /users/me.
 	await expect(main.getByText('3', { exact: true })).toBeVisible();
 	await expect(main.getByText('7', { exact: true })).toBeVisible();
-	await expect(main.getByText('Reputación')).toHaveCount(0);
+	await expect(main.getByText('Reputación')).toBeVisible();
+	await expect(main.getByText('12', { exact: true })).toBeVisible();
 
 	await expect(main.getByText('Mis ofertas')).toBeVisible();
 	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
@@ -724,8 +1051,7 @@ test('create deal shows a required category picker for an authenticated user', a
 
 	await page.goto('/create-deal');
 
-	// Categories come from the server load (GET /categories) and render as chips
-	// with localized labels (default locale is Spanish: technology -> Tecnología).
+	// Categories render right away (the form is no longer gated behind the type).
 	const techChip = page.getByText('Tecnología', { exact: true });
 	await expect(techChip).toBeVisible();
 	await expect(page.getByText('Otros', { exact: true })).toBeVisible();
@@ -734,10 +1060,97 @@ test('create deal shows a required category picker for an authenticated user', a
 	await techChip.click();
 	await expect(page.locator('input[name="categoryIds"][value="cat-technology"]')).toBeChecked();
 
-	// Switching to a local offer reveals the city autocomplete (bundled dataset).
-	await page.selectOption('select#offerType', 'local');
-	await page.fill('input#city', 'mede');
-	await expect(page.getByRole('option', { name: /Medellín/ })).toBeVisible();
+	// Merchant autocomplete: typing surfaces existing merchants from GET /merchants.
+	await page.fill('input#merchantName', 'acme');
+	await expect(page.getByRole('option', { name: /Acme Store/ })).toBeVisible();
+
+	// The address field is revealed only once a city is entered.
+	await expect(page.locator('input#locationAddress')).toHaveCount(0);
+	await page.fill('input#locationCity', 'Bogotá');
+	await expect(page.locator('input#locationAddress')).toBeVisible();
+
+	// Toggling the deal to "online" drops the city and address fields entirely.
+	await page.getByText('Oferta en línea', { exact: true }).click();
+	await expect(page.locator('input#locationCity')).toHaveCount(0);
+	await expect(page.locator('input#locationAddress')).toHaveCount(0);
+});
+
+test('create deal links a merchant and geocodes the address', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	// Pick an existing merchant from the referential (GET /merchants).
+	await page.fill('input#merchantName', 'Acme');
+	await page.getByRole('option', { name: /Acme Store/ }).click();
+	await expect(page.locator('input#merchantName')).toHaveValue('Acme Store');
+
+	// The city is chosen from the bundled list (constrained, no free text).
+	await page.fill('input#locationCity', 'mede');
+	await page.getByRole('option', { name: /Medellín/ }).click();
+	await expect(page.locator('input#locationCity')).toHaveValue('Medellín');
+
+	// The address then geocodes (GET /geocode). Picking a suggestion keeps the
+	// exact typed address and leaves the chosen city untouched.
+	await page.fill('input#locationAddress', 'Calle 10');
+	const suggestion = page.getByRole('option', { name: /Calle 10/ });
+	await expect(suggestion).toBeVisible();
+	await suggestion.click();
+	await expect(page.locator('input#locationAddress')).toHaveValue('Calle 10');
+	await expect(page.locator('input#locationCity')).toHaveValue('Medellín');
+});
+
+test('create deal surfaces the missing-category error on submit', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	// Fill every required field except the category, then submit.
+	await page.selectOption('select#offerType', 'discount');
+	await page.fill('input#title', 'Gran descuento de prueba');
+	await page.fill('textarea#description', 'Una descripción de prueba suficientemente larga.');
+	await page.fill('input#merchantName', 'Acme Store');
+	await page.fill('input#locationCity', 'Bogotá');
+	await page.fill('input#locationAddress', 'Calle 10 #20-30');
+
+	await page.getByRole('button', { name: 'Publicar oferta' }).click();
+
+	// The array-level categoryIds error must surface under the category picker.
+	await expect(page.getByText('Selecciona al menos una categoría.')).toBeVisible();
+});
+
+test('create deal publishes a local offer end to end', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	await page.selectOption('select#offerType', 'discount');
+	await page.fill('input#title', 'Gran descuento de prueba');
+	await page.fill('textarea#description', 'Una descripción de prueba suficientemente larga.');
+	await page.getByText('Tecnología', { exact: true }).click();
+
+	// Pick the merchant from the referential.
+	await page.fill('input#merchantName', 'Acme');
+	await page.getByRole('option', { name: /Acme Store/ }).click();
+
+	// City reveals the address; pick a geocoded suggestion to anchor the location.
+	await page.fill('input#locationCity', 'Bogotá');
+	await page.fill('input#locationAddress', 'Calle 10');
+	await page.getByRole('option', { name: /Calle 10/ }).click();
+
+	await page.getByRole('button', { name: 'Publicar oferta' }).click();
+
+	// The action POSTs the offer and redirects to its detail page.
+	await expect(page).toHaveURL(/\/deals\/new-offer$/);
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
@@ -842,6 +1255,116 @@ test('admin offers tab lists offers and disables one for an admin', async ({ pag
 
 	await page.getByRole('button', { name: 'Desactivar', exact: true }).click();
 	await expect(page.getByRole('button', { name: 'Restaurar' })).toBeVisible();
+});
+
+test('admin merchants tab lists pending items and verifies a merchant', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	// Both queues render their pending items.
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await expect(merchantRow).toBeVisible();
+	const locationRow = page.getByRole('row', { name: /Carrera 5 #10-20/ });
+	await expect(locationRow).toBeVisible();
+
+	// A pending address with coordinates can expand an inline map.
+	await expect(page.locator('.leaflet-container')).toHaveCount(0);
+	await locationRow.getByRole('button', { name: 'Ver mapa' }).click();
+	await expect(page.locator('.leaflet-container')).toHaveCount(1);
+
+	// Verifying the merchant removes it from the queue.
+	await merchantRow.getByRole('button', { name: 'Verificar' }).click();
+	await expect(page.getByText('Comercio pendiente')).toBeHidden();
+});
+
+test('admin filters merchants and blocks then unblocks one', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await expect(merchantRow).toBeVisible();
+
+	// Blocking the pending merchant keeps it in place but flags it as blocked.
+	await merchantRow.getByRole('button', { name: 'Bloquear' }).click();
+	await expect(merchantRow.getByText('Bloqueado')).toBeVisible();
+	await expect(merchantRow.getByRole('button', { name: 'Desbloquear' })).toBeVisible();
+
+	// The "blocked" filter loads only blocked merchants.
+	await page.getByRole('button', { name: 'Bloqueados' }).click();
+	const blockedRow = page.getByRole('row', { name: /Comercio bloqueado/ });
+	await expect(blockedRow).toBeVisible();
+
+	// Unblocking from the blocked filter drops it from the queue.
+	await blockedRow.getByRole('button', { name: 'Desbloquear' }).click();
+	await expect(page.getByText('Comercio bloqueado')).toBeHidden();
+});
+
+test('admin renames a merchant from the edit dialog', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await merchantRow.getByRole('button', { name: 'Editar' }).click();
+
+	const dialog = page.getByRole('dialog');
+	await dialog.getByRole('textbox').fill('Comercio renombrado');
+	await dialog.getByRole('button', { name: 'Guardar' }).click();
+
+	await expect(page.getByText('Comercio renombrado')).toBeVisible();
+	await expect(page.getByText('Comercio pendiente')).toBeHidden();
+});
+
+test('admin edits then deletes a pending address', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const locationRow = page.getByRole('row', { name: /Carrera 5 #10-20/ });
+	await expect(locationRow).toBeVisible();
+
+	// Editing the address writes the new value back into the table.
+	await locationRow.getByRole('button', { name: 'Editar' }).click();
+	const editDialog = page.getByRole('dialog');
+	await editDialog.getByLabel('Dirección').fill('Calle Nueva 99');
+	await editDialog.getByRole('button', { name: 'Guardar' }).click();
+	await expect(page.getByText('Calle Nueva 99')).toBeVisible();
+
+	// Deleting the address (no attached offers) removes its row.
+	const updatedRow = page.getByRole('row', { name: /Calle Nueva 99/ });
+	await updatedRow.getByRole('button', { name: 'Eliminar' }).click();
+	const deleteDialog = page.getByRole('dialog');
+	await deleteDialog.getByRole('button', { name: 'Eliminar' }).click();
+	await expect(page.getByRole('row', { name: /Calle Nueva 99/ })).toBeHidden();
+});
+
+test("admin views and edits a merchant's addresses from its panel", async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await merchantRow.getByRole('button', { name: 'Direcciones' }).click();
+
+	// All the merchant's addresses (verified + pending) load in the expanded panel.
+	await expect(page.getByText('Avenida 1 #2-3')).toBeVisible();
+
+	// Editing an address from the panel updates it in place. The merchant row keeps
+	// its own "Editar" button (index 0); the panel address edit is the next one.
+	await page.getByRole('button', { name: 'Editar' }).nth(1).click();
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Dirección').fill('Avenida Reformada 5');
+	await dialog.getByRole('button', { name: 'Guardar' }).click();
+	await expect(page.getByText('Avenida Reformada 5')).toBeVisible();
+
+	// Collapsing the panel hides the addresses again.
+	await merchantRow.getByRole('button', { name: 'Ocultar direcciones' }).click();
+	await expect(page.getByText('Avenida Reformada 5')).toBeHidden();
 });
 
 test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {

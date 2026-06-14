@@ -1,20 +1,30 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '$lib/api/client';
 import {
+	blockMerchant,
+	deleteLocation,
 	disableOffer,
 	disableUser,
 	dismissComment,
 	dismissOffer,
+	editLocation,
+	editMerchant,
 	getModerationSummary,
 	hideComment,
 	listAdminCommentReports,
 	listAdminComments,
+	listAdminLocations,
+	listAdminMerchants,
 	listAdminOfferReports,
 	listAdminOffers,
 	listAdminReports,
+	mergeMerchants,
 	restoreComment,
 	restoreOffer,
-	restoreUser
+	restoreUser,
+	unblockMerchant,
+	verifyLocation,
+	verifyMerchant
 } from '$lib/api/admin';
 
 const BASE_URL = 'http://test.local';
@@ -292,5 +302,219 @@ describe('getModerationSummary', () => {
 			expect.objectContaining({ method: 'GET', credentials: 'include' })
 		);
 		expect(res).toEqual({ pendingComments: 5, pendingOfferReports: 2 });
+	});
+});
+
+describe('verifyMerchant', () => {
+	it('PATCHes the verify endpoint with an optional reason/note body', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ id: 'm1', name: 'Acme', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await verifyMerchant('m/1', { note: 'looks legit' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/m%2F1/verify`,
+			expect.objectContaining({
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({ note: 'looks legit' })
+			})
+		);
+	});
+});
+
+describe('verifyLocation', () => {
+	it('PATCHes the location verify endpoint', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'l1', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await verifyLocation('l1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/locations/l1/verify`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include', body: '{}' })
+		);
+	});
+});
+
+describe('mergeMerchants', () => {
+	it('POSTs the source/target pair', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ id: 'target', name: 'Acme', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await mergeMerchants({ sourceId: 's1', targetId: 't1' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/merge`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ sourceId: 's1', targetId: 't1' })
+			})
+		);
+	});
+
+	it('propagates merchant.merge_invalid', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(jsonResponse({ key: 'merchant.merge_invalid', statusCode: 400 }, 400))
+		);
+
+		await expect(mergeMerchants({ sourceId: 'x', targetId: 'x' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'merchant.merge_invalid',
+			status: 400
+		});
+	});
+});
+
+describe('listAdminMerchants', () => {
+	it('serializes the verified/blocked/q filters', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAdminMerchants({ blocked: true, q: 'café', limit: 20 });
+
+		const url = fetchMock.mock.calls[0]?.[0] as string;
+		expect(url).toContain('blocked=true');
+		expect(url).toContain('q=caf%C3%A9');
+		expect(url).toContain('limit=20');
+	});
+});
+
+describe('listAdminLocations', () => {
+	it('serializes the merchant filter', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAdminLocations({ verified: false, merchant: 'm1' });
+
+		const url = fetchMock.mock.calls[0]?.[0] as string;
+		expect(url).toContain('verified=false');
+		expect(url).toContain('merchant=m1');
+	});
+});
+
+describe('editMerchant', () => {
+	it('PATCHes the new name', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'm1', name: 'New' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await editMerchant('m1', { name: 'New' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/m1`,
+			expect.objectContaining({
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({ name: 'New' })
+			})
+		);
+	});
+
+	it('propagates merchant.name_taken', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'merchant.name_taken', statusCode: 400 }, 400))
+		);
+
+		await expect(editMerchant('m1', { name: 'Dup' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'merchant.name_taken',
+			status: 400
+		});
+	});
+});
+
+describe('blockMerchant / unblockMerchant', () => {
+	it('POSTs to /block', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'm1', blockedAt: 'now' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await blockMerchant('m1', { reason: 'spam' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/m1/block`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ reason: 'spam' })
+			})
+		);
+	});
+
+	it('POSTs to /unblock', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'm1', blockedAt: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await unblockMerchant('m1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/m1/unblock`,
+			expect.objectContaining({ method: 'POST', credentials: 'include', body: '{}' })
+		);
+	});
+});
+
+describe('editLocation', () => {
+	it('PATCHes the supplied fields', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'l1', city: 'Cali' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await editLocation('l1', { city: 'Cali' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/locations/l1`,
+			expect.objectContaining({
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({ city: 'Cali' })
+			})
+		);
+	});
+});
+
+describe('deleteLocation', () => {
+	it('DELETEs without a reassign target', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 200 }));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await deleteLocation('l1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/locations/l1`,
+			expect.objectContaining({ method: 'DELETE', credentials: 'include' })
+		);
+	});
+
+	it('passes reassignTo as a query param', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 200 }));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await deleteLocation('l1', 'l2');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/locations/l1?reassignTo=l2`,
+			expect.objectContaining({ method: 'DELETE' })
+		);
+	});
+
+	it('propagates location.in_use', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'location.in_use', statusCode: 409 }, 409))
+		);
+
+		await expect(deleteLocation('l1')).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'location.in_use',
+			status: 409
+		});
 	});
 });

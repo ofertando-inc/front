@@ -1,4 +1,5 @@
 import type { ListOffersQuery, OfferStatus } from '$lib/types/offer';
+import type { LocationResponse, MerchantResponse } from '$lib/types/merchant';
 import type { ReportReason } from '$lib/types/report';
 import type { User } from '$lib/types/auth';
 
@@ -28,7 +29,7 @@ export interface PaginatedReports {
 
 export type PublicUser = Pick<
 	User,
-	'id' | 'username' | 'role' | 'status' | 'createdAt' | 'updatedAt'
+	'id' | 'username' | 'role' | 'status' | 'reputation' | 'createdAt' | 'updatedAt'
 >;
 
 export interface ModerationListQuery {
@@ -70,4 +71,53 @@ export interface PaginatedReportDetails {
 export interface ModerationSummary {
 	pendingComments: number;
 	pendingOfferReports: number;
+}
+
+// Optional reason/note carried by moderation actions (verify, merge).
+export interface ModerationActionBody {
+	reason?: string;
+	note?: string;
+}
+
+export interface MergeMerchantsDto extends ModerationActionBody {
+	sourceId: string;
+	targetId: string;
+}
+
+// Admin edits (only the supplied fields are changed).
+export interface EditMerchantDto {
+	name?: string;
+}
+
+export interface EditLocationDto {
+	address?: string;
+	city?: string;
+	region?: string;
+	latitude?: number;
+	longitude?: number;
+}
+
+// Moderation listing filters for the merchant/location queues.
+export interface AdminModerationListQuery {
+	verified?: boolean;
+	blocked?: boolean;
+	q?: string;
+	merchant?: string;
+	cursor?: string;
+	limit?: number;
+}
+
+export interface PaginatedMerchants {
+	items: MerchantResponse[];
+	nextCursor: string | null;
+}
+
+// A location with its owning merchant embedded for the admin queue.
+export interface AdminLocation extends LocationResponse {
+	merchant: { id: string; name: string };
+}
+
+export interface PaginatedAdminLocations {
+	items: AdminLocation[];
+	nextCursor: string | null;
 }
