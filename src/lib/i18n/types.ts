@@ -117,6 +117,26 @@ export interface TranslationMessages {
 		statAllClear: string;
 		queuesTitle: string;
 		viewQueue: string;
+		tabMerchants: string;
+		merchantsSection: string;
+		locationsSection: string;
+		thMerchant: string;
+		thAddress: string;
+		thCreated: string;
+		actionVerify: string;
+		actionMerge: string;
+		viewMap: string;
+		hideMap: string;
+		verifying: string;
+		merchantsEmpty: string;
+		locationsEmpty: string;
+		mergeTitle: string;
+		mergeDescription: string;
+		mergeTargetLabel: string;
+		mergeTargetPlaceholder: string;
+		mergeConfirm: string;
+		mergeSubmitting: string;
+		mergeCancel: string;
 	};
 	auth: {
 		loginTitle: string;
