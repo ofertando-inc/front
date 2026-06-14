@@ -28,6 +28,38 @@ function isAdmin(request: import('node:http').IncomingMessage) {
 	return (request.headers.cookie ?? '').includes('e2e_session=admin');
 }
 
+// Offer returned by POST /offers (and its GET) for the create happy-path test.
+const createdOffer = {
+	id: 'new-offer',
+	title: 'Gran descuento de prueba',
+	description: 'Una descripción de prueba suficientemente larga.',
+	offerType: 'discount',
+	isOnline: false,
+	externalUrl: null,
+	startDate: '2026-06-01T00:00:00.000Z',
+	endDate: '2026-12-31T00:00:00.000Z',
+	status: 'ACTIVE',
+	score: 0,
+	reportCount: 0,
+	commentCount: 0,
+	createdAt: '2026-06-01T10:00:00.000Z',
+	updatedAt: '2026-06-01T10:00:00.000Z',
+	createdById: 'e2e-user-id',
+	createdByUsername: 'e2euser',
+	userVote: null,
+	categories: [{ id: 'cat-technology', slug: 'technology', name: 'Technology' }],
+	merchant: { id: 'merchant-acme', name: 'Acme Store', verified: true },
+	location: {
+		id: 'loc-new',
+		address: 'Calle 10 #20-30',
+		city: 'Bogotá',
+		region: 'Bogotá D.C.',
+		latitude: 4.6,
+		longitude: -74.08,
+		verified: false
+	}
+};
+
 test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
@@ -146,7 +178,7 @@ test.beforeAll(async () => {
 		}
 
 		if (url === '/offers/facets') {
-			sendJson(response, 200, { cities: [], stores: [], categories: [] });
+			sendJson(response, 200, { cities: [], categories: [] });
 			return;
 		}
 
@@ -158,8 +190,64 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		if (url.startsWith('/geocode/reverse')) {
+			sendJson(response, 200, {
+				displayName: 'Carrera 7 #45-10, Bogotá, Colombia',
+				latitude: 4.62,
+				longitude: -74.07,
+				city: 'Bogotá',
+				region: 'Bogotá D.C.',
+				address: 'Carrera 7 #45-10'
+			});
+			return;
+		}
+
+		if (url === '/geocode' || url.startsWith('/geocode?')) {
+			sendJson(response, 200, [
+				{
+					displayName: 'Calle 10 #20-30, Bogotá, Colombia',
+					latitude: 4.6,
+					longitude: -74.08,
+					city: 'Bogotá',
+					region: 'Bogotá D.C.',
+					address: 'Calle 10 #20-30'
+				}
+			]);
+			return;
+		}
+
+		if (url === '/merchants' || url.startsWith('/merchants?')) {
+			if (request.method === 'POST') {
+				sendJson(response, 201, {
+					id: 'merchant-new',
+					name: 'Nuevo comercio',
+					verified: false,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+			sendJson(response, 200, [
+				{
+					id: 'merchant-acme',
+					name: 'Acme Store',
+					verified: true,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				}
+			]);
+			return;
+		}
+
 		if (url === '/offers' || url.startsWith('/offers?')) {
+			if (request.method === 'POST') {
+				sendJson(response, 201, createdOffer);
+				return;
+			}
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
+			return;
+		}
+
+		if (url === '/offers/new-offer' || url.startsWith('/offers/new-offer?')) {
+			sendJson(response, 200, createdOffer);
 			return;
 		}
 
@@ -335,10 +423,19 @@ test.beforeAll(async () => {
 				id: 'e2e-comment-offer',
 				title: 'Oferta de prueba de comentarios',
 				description: 'Descripción de la oferta para el test de comentarios.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -360,10 +457,19 @@ test.beforeAll(async () => {
 				id: 'e2e-report-offer',
 				title: 'Oferta de prueba de reporte',
 				description: 'Descripción de la oferta para el test de reporte.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -387,10 +493,19 @@ test.beforeAll(async () => {
 				id: 'e2e-expired-offer',
 				title: 'Oferta caducada de prueba',
 				description: 'Descripción de la oferta caducada para el test.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2020-01-01T00:00:00.000Z',
 				endDate: '2020-02-01T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -412,10 +527,19 @@ test.beforeAll(async () => {
 				id: 'e2e-vote-offer',
 				title: 'Oferta de prueba de votación',
 				description: 'Descripción de la oferta para el test de votación.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -454,10 +578,19 @@ test.beforeAll(async () => {
 				id: 'e2e-admin-offer',
 				title: 'Oferta moderable',
 				description: 'Oferta usada por el test admin.',
-				offerType: 'online',
+				offerType: 'discount',
+				isOnline: false,
 				externalUrl: 'https://example.com/promo',
-				storeName: 'TestStore',
-				city: 'Bogotá',
+				merchant: { id: 'merchant-test', name: 'TestStore', verified: false },
+				location: {
+					id: 'loc-test',
+					address: 'Calle 1 #2-3',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: false
+				},
 				startDate: '2026-05-01T00:00:00.000Z',
 				endDate: '2026-12-31T00:00:00.000Z',
 				status: 'ACTIVE',
@@ -724,8 +857,7 @@ test('create deal shows a required category picker for an authenticated user', a
 
 	await page.goto('/create-deal');
 
-	// Categories come from the server load (GET /categories) and render as chips
-	// with localized labels (default locale is Spanish: technology -> Tecnología).
+	// Categories render right away (the form is no longer gated behind the type).
 	const techChip = page.getByText('Tecnología', { exact: true });
 	await expect(techChip).toBeVisible();
 	await expect(page.getByText('Otros', { exact: true })).toBeVisible();
@@ -734,10 +866,97 @@ test('create deal shows a required category picker for an authenticated user', a
 	await techChip.click();
 	await expect(page.locator('input[name="categoryIds"][value="cat-technology"]')).toBeChecked();
 
-	// Switching to a local offer reveals the city autocomplete (bundled dataset).
-	await page.selectOption('select#offerType', 'local');
-	await page.fill('input#city', 'mede');
-	await expect(page.getByRole('option', { name: /Medellín/ })).toBeVisible();
+	// Merchant autocomplete: typing surfaces existing merchants from GET /merchants.
+	await page.fill('input#merchantName', 'acme');
+	await expect(page.getByRole('option', { name: /Acme Store/ })).toBeVisible();
+
+	// The address field is revealed only once a city is entered.
+	await expect(page.locator('input#locationAddress')).toHaveCount(0);
+	await page.fill('input#locationCity', 'Bogotá');
+	await expect(page.locator('input#locationAddress')).toBeVisible();
+
+	// Toggling the deal to "online" drops the city and address fields entirely.
+	await page.getByText('Oferta en línea', { exact: true }).click();
+	await expect(page.locator('input#locationCity')).toHaveCount(0);
+	await expect(page.locator('input#locationAddress')).toHaveCount(0);
+});
+
+test('create deal links a merchant and geocodes the address', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	// Pick an existing merchant from the referential (GET /merchants).
+	await page.fill('input#merchantName', 'Acme');
+	await page.getByRole('option', { name: /Acme Store/ }).click();
+	await expect(page.locator('input#merchantName')).toHaveValue('Acme Store');
+
+	// The city is chosen from the bundled list (constrained, no free text).
+	await page.fill('input#locationCity', 'mede');
+	await page.getByRole('option', { name: /Medellín/ }).click();
+	await expect(page.locator('input#locationCity')).toHaveValue('Medellín');
+
+	// The address then geocodes (GET /geocode). Picking a suggestion keeps the
+	// exact typed address and leaves the chosen city untouched.
+	await page.fill('input#locationAddress', 'Calle 10');
+	const suggestion = page.getByRole('option', { name: /Calle 10/ });
+	await expect(suggestion).toBeVisible();
+	await suggestion.click();
+	await expect(page.locator('input#locationAddress')).toHaveValue('Calle 10');
+	await expect(page.locator('input#locationCity')).toHaveValue('Medellín');
+});
+
+test('create deal surfaces the missing-category error on submit', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	// Fill every required field except the category, then submit.
+	await page.selectOption('select#offerType', 'discount');
+	await page.fill('input#title', 'Gran descuento de prueba');
+	await page.fill('textarea#description', 'Una descripción de prueba suficientemente larga.');
+	await page.fill('input#merchantName', 'Acme Store');
+	await page.fill('input#locationCity', 'Bogotá');
+	await page.fill('input#locationAddress', 'Calle 10 #20-30');
+
+	await page.getByRole('button', { name: 'Publicar oferta' }).click();
+
+	// The array-level categoryIds error must surface under the category picker.
+	await expect(page.getByText('Selecciona al menos una categoría.')).toBeVisible();
+});
+
+test('create deal publishes a local offer end to end', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/create-deal');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	await page.selectOption('select#offerType', 'discount');
+	await page.fill('input#title', 'Gran descuento de prueba');
+	await page.fill('textarea#description', 'Una descripción de prueba suficientemente larga.');
+	await page.getByText('Tecnología', { exact: true }).click();
+
+	// Pick the merchant from the referential.
+	await page.fill('input#merchantName', 'Acme');
+	await page.getByRole('option', { name: /Acme Store/ }).click();
+
+	// City reveals the address; pick a geocoded suggestion to anchor the location.
+	await page.fill('input#locationCity', 'Bogotá');
+	await page.fill('input#locationAddress', 'Calle 10');
+	await page.getByRole('option', { name: /Calle 10/ }).click();
+
+	await page.getByRole('button', { name: 'Publicar oferta' }).click();
+
+	// The action POSTs the offer and redirects to its detail page.
+	await expect(page).toHaveURL(/\/deals\/new-offer$/);
 });
 
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {

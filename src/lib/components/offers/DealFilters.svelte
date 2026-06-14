@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { Select } from 'flowbite-svelte';
+	import { MapPinAltOutline } from 'flowbite-svelte-icons';
 	import { translationStore } from '$lib/i18n';
 	import { categoryLabel } from '$lib/offers/categoryLabel';
 	import type { CategoryFacet, FacetValue, OfferPeriod, OfferSort } from '$lib/types/offer';
 
 	interface Props {
 		cities: FacetValue[];
-		stores: FacetValue[];
 		categories: CategoryFacet[];
-		offerTypes: string[];
 		selectedCity?: string;
-		selectedStore?: string;
 		selectedCategory?: string;
-		selectedOfferType?: string;
+		// Channel filter: '' (all) | 'online' | 'local', mapped to ?online by the page.
+		selectedChannel?: string;
+		// "Near me": "lat,lng" once a position is granted, '' otherwise.
+		selectedNear?: string;
 		selectedSort?: OfferSort;
 		selectedPeriod?: OfferPeriod;
 		hideExpired?: boolean;
@@ -21,13 +22,11 @@
 
 	let {
 		cities,
-		stores,
 		categories,
-		offerTypes,
 		selectedCity = $bindable(''),
-		selectedStore = $bindable(''),
 		selectedCategory = $bindable(''),
-		selectedOfferType = $bindable(''),
+		selectedChannel = $bindable(''),
+		selectedNear = $bindable(''),
 		selectedSort = $bindable<OfferSort>('date'),
 		selectedPeriod = $bindable<OfferPeriod>('all'),
 		hideExpired = $bindable(false),
@@ -42,13 +41,29 @@
 		{ value: 'ending', label: $translationStore.deals.sortEnding }
 	]);
 
-	function typeLabel(type: string): string {
-		if (type === 'online') return $translationStore.deals.typeOnline;
-		if (type === 'local') return $translationStore.deals.typeLocal;
-		return type;
-	}
-
 	const facetLabel = (f: FacetValue) => `${f.value} (${f.count})`;
+
+	let locating = $state(false);
+
+	// Toggle geolocation: ask for a position the first time, clear it on a second
+	// click. The page picks up `selectedNear` and adds ?near/&radiusKm.
+	function toggleNearMe() {
+		if (selectedNear) {
+			selectedNear = '';
+			return;
+		}
+		if (typeof navigator === 'undefined' || !navigator.geolocation) return;
+		locating = true;
+		navigator.geolocation.getCurrentPosition(
+			(position) => {
+				selectedNear = `${position.coords.latitude},${position.coords.longitude}`;
+				locating = false;
+			},
+			() => {
+				locating = false;
+			}
+		);
+	}
 </script>
 
 <div class="flex flex-wrap items-center gap-2.5 {className}">
@@ -61,18 +76,6 @@
 		<option value="">{$translationStore.deals.allCities}</option>
 		{#each cities as city (city.value)}
 			<option value={city.value}>{facetLabel(city)}</option>
-		{/each}
-	</Select>
-
-	<Select
-		bind:value={selectedStore}
-		placeholder=""
-		class={selectClass}
-		aria-label={$translationStore.deals.filterStore}
-	>
-		<option value="">{$translationStore.deals.allStores}</option>
-		{#each stores as store (store.value)}
-			<option value={store.value}>{facetLabel(store)}</option>
 		{/each}
 	</Select>
 
@@ -91,16 +94,28 @@
 	</Select>
 
 	<Select
-		bind:value={selectedOfferType}
+		bind:value={selectedChannel}
 		placeholder=""
 		class={selectClass}
 		aria-label={$translationStore.deals.filterType}
 	>
 		<option value="">{$translationStore.deals.allTypes}</option>
-		{#each offerTypes as type (type)}
-			<option value={type}>{typeLabel(type)}</option>
-		{/each}
+		<option value="online">{$translationStore.deals.typeOnline}</option>
+		<option value="local">{$translationStore.deals.typeLocal}</option>
 	</Select>
+
+	<button
+		type="button"
+		onclick={toggleNearMe}
+		disabled={locating}
+		aria-pressed={Boolean(selectedNear)}
+		class="inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60 {selectedNear
+			? 'border-primary-500 bg-primary-500 text-white shadow-sm'
+			: 'border-orange-100 bg-white text-gray-600 hover:text-primary-600'}"
+	>
+		<MapPinAltOutline class="h-4 w-4" />
+		{$translationStore.deals.nearMe}
+	</button>
 
 	<div class="inline-flex rounded-full border border-orange-100 bg-white p-1">
 		{#each sortOptions as opt (opt.value)}

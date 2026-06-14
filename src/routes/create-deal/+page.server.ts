@@ -6,7 +6,8 @@ import {
 	getDefaultOfferData,
 	offerFormAdapter,
 	readBackendError,
-	requireAuthenticated
+	requireAuthenticated,
+	toCreateOfferPayload
 } from '$lib/server/offers/form';
 import type { Offer } from '$lib/types/offer';
 import type { Actions, PageServerLoad } from './$types';
@@ -37,7 +38,7 @@ export const actions: Actions = {
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify(form.data)
+			body: JSON.stringify(toCreateOfferPayload(form.data))
 		});
 
 		if (response.status === 401 || response.status === 403) {

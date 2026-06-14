@@ -21,13 +21,15 @@
 		OfferSort
 	} from '$lib/types/offer';
 
-	const OFFER_TYPES = ['online', 'local'];
 	const PAGE_LIMIT = 20;
+	const NEAR_RADIUS_KM = 10;
 
 	let cityFilter = $state<string>('');
-	let storeFilter = $state<string>('');
 	let categoryFilter = $state<string>('');
-	let typeFilter = $state<string>('');
+	// Channel filter: '' (all) | 'online' | 'local'.
+	let channelFilter = $state<string>('');
+	// "Near me": "lat,lng" once a position is granted, '' otherwise.
+	let nearFilter = $state<string>('');
 	let sortFilter = $state<OfferSort>('date');
 	let periodFilter = $state<OfferPeriod>('all');
 	let hideExpired = $state(false);
@@ -55,9 +57,10 @@
 			sort: sortFilter,
 			period: sortFilter === 'score' ? periodFilter : undefined,
 			city: cityFilter || undefined,
-			store: storeFilter || undefined,
 			category: categoryFilter || undefined,
-			offerType: typeFilter || undefined,
+			online: channelFilter === '' ? undefined : channelFilter === 'online',
+			near: nearFilter || undefined,
+			radiusKm: nearFilter ? NEAR_RADIUS_KM : undefined,
 			includeExpired: hideExpired ? false : undefined,
 			limit: PAGE_LIMIT
 		};
@@ -137,13 +140,11 @@
 		</h1>
 		<DealFilters
 			cities={facets?.cities ?? []}
-			stores={facets?.stores ?? []}
 			categories={facets?.categories ?? []}
-			offerTypes={OFFER_TYPES}
 			bind:selectedCity={cityFilter}
-			bind:selectedStore={storeFilter}
 			bind:selectedCategory={categoryFilter}
-			bind:selectedOfferType={typeFilter}
+			bind:selectedChannel={channelFilter}
+			bind:selectedNear={nearFilter}
 			bind:selectedSort={sortFilter}
 			bind:selectedPeriod={periodFilter}
 			bind:hideExpired

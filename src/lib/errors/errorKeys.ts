@@ -14,6 +14,9 @@ export const ErrorKey = {
 	OfferInvalidDates: 'offer.invalid_dates',
 	OfferInvalidStatusTransition: 'offer.invalid_status_transition',
 	OfferInvalidCategory: 'offer.invalid_category',
+	OfferOnlineRequiresUrl: 'offer.online_requires_url',
+	OfferLocationRequired: 'offer.location_required',
+	OfferInvalidNear: 'offer.invalid_near',
 
 	VoteOfferNotVoteable: 'vote.offer_not_voteable',
 
@@ -25,7 +28,9 @@ export const ErrorKey = {
 	CommentNotReportable: 'comment.not_reportable',
 	CommentInvalidStatusTransition: 'comment.invalid_status_transition',
 
-	StoreNotFound: 'store.not_found',
+	MerchantNotFound: 'merchant.not_found',
+	MerchantMergeInvalid: 'merchant.merge_invalid',
+	LocationNotFound: 'location.not_found',
 	GeocodingUnavailable: 'geocoding.unavailable',
 
 	PaginationInvalidCursor: 'pagination.invalid_cursor',

@@ -7,6 +7,7 @@
 	import {
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
+		CheckCircleOutline,
 		CheckOutline,
 		FlagOutline,
 		FlagSolid,
@@ -20,6 +21,7 @@
 	import { getMyReport } from '$lib/api/reports';
 	import CommentThread from '$lib/components/comments/CommentThread.svelte';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
+	import LocationMap from '$lib/components/offers/LocationMap.svelte';
 	import ReportModal from '$lib/components/offers/ReportModal.svelte';
 	import VotePanel from '$lib/components/offers/VotePanel.svelte';
 	import { ErrorKey } from '$lib/errors/errorKeys';
@@ -180,7 +182,7 @@
 
 	async function loadRelated(current: Offer) {
 		try {
-			const res = await listOffers({ city: current.city, limit: 4 });
+			const res = await listOffers({ city: current.location?.city ?? undefined, limit: 4 });
 			related = res.items.filter((item) => item.id !== current.id).slice(0, 3);
 		} catch {
 			related = [];
@@ -269,12 +271,18 @@
 						<DealStatusBadge status={offer.status} />
 						<span class="flex items-center gap-1 text-sm text-gray-500">
 							<StoreOutline class="h-4 w-4" />
-							{offer.storeName}
+							{offer.merchant.name}
+							{#if offer.merchant.verified}
+								<CheckCircleOutline class="h-4 w-4 text-savings-600" />
+							{/if}
 						</span>
-						{#if offer.offerType === 'local'}
+						{#if !offer.isOnline && offer.location}
 							<span class="flex items-center gap-1 text-sm text-gray-500">
 								<MapPinOutline class="h-4 w-4" />
-								{offer.city}
+								{offer.location.address}, {offer.location.city}
+								{#if offer.location.verified}
+									<CheckCircleOutline class="h-4 w-4 text-savings-600" />
+								{/if}
 							</span>
 						{/if}
 						<span class="ml-auto flex items-center gap-1 text-sm text-gray-500">
@@ -425,6 +433,18 @@
 			</div>
 
 			<aside class="space-y-6">
+				{#if !offer.isOnline && offer.location && offer.location.latitude != null && offer.location.longitude != null}
+					<Card class="max-w-full! p-6!">
+						<h3 class="mb-4 font-bold text-gray-900">{$translationStore.deal.locationTitle}</h3>
+						{#if offer.location.address}
+							<p class="mb-3 text-sm text-gray-600">
+								{offer.location.address}, {offer.location.city}
+							</p>
+						{/if}
+						<LocationMap latitude={offer.location.latitude} longitude={offer.location.longitude} />
+					</Card>
+				{/if}
+
 				<Card class="max-w-full! p-6!">
 					<h3 class="mb-4 font-bold text-gray-900">{$translationStore.deal.relatedTitle}</h3>
 					{#if related.length === 0}
@@ -444,7 +464,7 @@
 									<div class="mt-1 flex items-center gap-2 text-xs text-gray-500">
 										<span class="font-bold text-primary-600">{item.score}°</span>
 										<span>•</span>
-										<span>{item.storeName}</span>
+										<span>{item.merchant.name}</span>
 									</div>
 								</a>
 							{/each}

@@ -9,9 +9,6 @@ export interface ColombianCity {
 // lookup is instant and offline. Lazy-loaded with the offer form route.
 export const COLOMBIAN_CITIES: ColombianCity[] = citiesData;
 
-// Sentinel city for non-local (online) offers — they cover the whole country.
-export const NATIONAL_CITY = 'Nacional';
-
 // Combining diacritical marks (U+0300–U+036F) left over after NFD normalization.
 const DIACRITICS = /[̀-ͯ]/g;
 

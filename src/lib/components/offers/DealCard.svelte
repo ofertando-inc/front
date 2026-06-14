@@ -4,6 +4,7 @@
 	import { Card } from 'flowbite-svelte';
 	import {
 		CalendarMonthOutline,
+		CheckCircleOutline,
 		GlobeOutline,
 		MapPinOutline,
 		MessagesOutline,
@@ -30,8 +31,8 @@
 
 	let expired = $derived(isOfferExpired(offer));
 	let isDimmed = $derived(expired || offer.status === 'DISABLED' || offer.status === 'DELETED');
-	let isOnline = $derived(offer.offerType === 'online');
-	let isLocal = $derived(offer.offerType === 'local');
+	let isOnline = $derived(offer.isOnline);
+	let isLocal = $derived(!offer.isOnline);
 
 	let expirationLabel = $derived(
 		new Intl.DateTimeFormat($localeStore, {
@@ -117,12 +118,15 @@
 		>
 			<div class="flex items-center gap-1 font-medium text-gray-700">
 				<StoreOutline class="h-3.5 w-3.5 text-gray-400" />
-				{offer.storeName}
+				{offer.merchant.name}
+				{#if offer.merchant.verified}
+					<CheckCircleOutline class="h-3.5 w-3.5 text-savings-600" />
+				{/if}
 			</div>
-			{#if isLocal}
+			{#if isLocal && offer.location}
 				<div class="flex items-center gap-1">
 					<MapPinOutline class="h-3.5 w-3.5 text-gray-400" />
-					{offer.city}
+					{offer.location.city}
 				</div>
 			{/if}
 			<div class="flex items-center gap-1">
