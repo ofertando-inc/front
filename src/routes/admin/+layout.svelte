@@ -2,7 +2,13 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { ChartOutline, FlagOutline, MessagesOutline, TagOutline } from 'flowbite-svelte-icons';
+	import {
+		ChartOutline,
+		FlagOutline,
+		MessagesOutline,
+		StoreOutline,
+		TagOutline
+	} from 'flowbite-svelte-icons';
 	import { translationStore } from '$lib/i18n';
 	import { moderationSummary } from '$lib/stores/moderationSummary';
 	import type { Component } from 'svelte';
@@ -13,7 +19,12 @@
 		void moderationSummary.load();
 	});
 
-	type AdminRoute = '/admin' | '/admin/offers' | '/admin/reports' | '/admin/comments';
+	type AdminRoute =
+		| '/admin'
+		| '/admin/offers'
+		| '/admin/merchants'
+		| '/admin/reports'
+		| '/admin/comments';
 
 	interface NavItem {
 		routeId: AdminRoute;
@@ -33,6 +44,12 @@
 			routeId: '/admin/offers',
 			label: $translationStore.admin.tabOffers,
 			icon: TagOutline,
+			badge: 0
+		},
+		{
+			routeId: '/admin/merchants',
+			label: $translationStore.admin.tabMerchants,
+			icon: StoreOutline,
 			badge: 0
 		},
 		{
