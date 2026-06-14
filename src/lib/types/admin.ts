@@ -84,9 +84,23 @@ export interface MergeMerchantsDto extends ModerationActionBody {
 	targetId: string;
 }
 
+// Admin edits (only the supplied fields are changed).
+export interface EditMerchantDto {
+	name?: string;
+}
+
+export interface EditLocationDto {
+	address?: string;
+	city?: string;
+	region?: string;
+	latitude?: number;
+	longitude?: number;
+}
+
 // Moderation listing filters for the merchant/location queues.
 export interface AdminModerationListQuery {
 	verified?: boolean;
+	blocked?: boolean;
 	q?: string;
 	merchant?: string;
 	cursor?: string;

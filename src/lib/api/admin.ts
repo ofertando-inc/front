@@ -5,6 +5,8 @@ import type {
 	AdminListOffersQuery,
 	AdminModerationListQuery,
 	CommentModerationSummary,
+	EditLocationDto,
+	EditMerchantDto,
 	MergeMerchantsDto,
 	ModerationActionBody,
 	ModerationListQuery,
@@ -132,6 +134,7 @@ export function getModerationSummary() {
 function buildModerationListQuery(query?: AdminModerationListQuery): string {
 	const params = new URLSearchParams();
 	if (query?.verified !== undefined) params.set('verified', String(query.verified));
+	if (query?.blocked !== undefined) params.set('blocked', String(query.blocked));
 	if (query?.q !== undefined) params.set('q', query.q);
 	if (query?.merchant !== undefined) params.set('merchant', query.merchant);
 	if (query?.cursor !== undefined) params.set('cursor', query.cursor);
@@ -176,5 +179,49 @@ export function mergeMerchants(payload: MergeMerchantsDto) {
 	return apiRequest<MerchantResponse>('/admin/merchants/merge', {
 		method: 'POST',
 		body: JSON.stringify(payload)
+	});
+}
+
+// Renames a merchant. `merchant.name_taken` (400) means another merchant already
+// owns the name — the admin should merge instead.
+export function editMerchant(id: string, payload: EditMerchantDto) {
+	return apiRequest<MerchantResponse>(`/admin/merchants/${encodeURIComponent(id)}`, {
+		method: 'PATCH',
+		body: JSON.stringify(payload)
+	});
+}
+
+// Blocks a merchant: its offers drop out of the public lists (derived from
+// `blockedAt`). Optional reason/note are recorded.
+export function blockMerchant(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<MerchantResponse>(`/admin/merchants/${encodeURIComponent(id)}/block`, {
+		method: 'POST',
+		body: JSON.stringify(body)
+	});
+}
+
+export function unblockMerchant(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<MerchantResponse>(`/admin/merchants/${encodeURIComponent(id)}/unblock`, {
+		method: 'POST',
+		body: JSON.stringify(body)
+	});
+}
+
+// Edits a location (only the supplied fields change). Changing the city resyncs
+// the denormalized city of its offers server-side.
+export function editLocation(id: string, payload: EditLocationDto) {
+	return apiRequest<LocationResponse>(`/admin/locations/${encodeURIComponent(id)}`, {
+		method: 'PATCH',
+		body: JSON.stringify(payload)
+	});
+}
+
+// Deletes a location. With attached offers it yields `location.in_use` (409)
+// unless `reassignTo` (another address of the same merchant) is provided, in
+// which case the offers move there first.
+export function deleteLocation(id: string, reassignTo?: string) {
+	const query = reassignTo ? `?reassignTo=${encodeURIComponent(reassignTo)}` : '';
+	return apiRequest<void>(`/admin/locations/${encodeURIComponent(id)}${query}`, {
+		method: 'DELETE'
 	});
 }
