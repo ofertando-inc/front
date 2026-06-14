@@ -128,6 +128,7 @@ test.beforeAll(async () => {
 					role: 'USER',
 					status: 'ACTIVE',
 					createdAt: '2026-05-01T10:00:00.000Z',
+					reputation: 12,
 					updatedAt: '2026-05-22T10:00:00.000Z'
 				});
 			});
@@ -143,6 +144,7 @@ test.beforeAll(async () => {
 					username: admin ? 'e2eadmin' : 'e2euser',
 					role: admin ? 'ADMIN' : 'USER',
 					status: 'ACTIVE',
+					reputation: 12,
 					createdAt: '2026-05-01T10:00:00.000Z',
 					updatedAt: '2026-05-01T10:00:00.000Z'
 				});
@@ -865,10 +867,11 @@ test('profile offers tab renders an empty state for authenticated users without 
 	await expect(page).toHaveURL(/\/profile$/);
 	await expect(main.getByRole('heading', { name: 'e2euser' })).toBeVisible();
 
-	// Real stats come from GET /users/me/stats; reputation was removed.
+	// Stats come from GET /users/me/stats; reputation from GET /users/me.
 	await expect(main.getByText('3', { exact: true })).toBeVisible();
 	await expect(main.getByText('7', { exact: true })).toBeVisible();
-	await expect(main.getByText('Reputación')).toHaveCount(0);
+	await expect(main.getByText('Reputación')).toBeVisible();
+	await expect(main.getByText('12', { exact: true })).toBeVisible();
 
 	await expect(main.getByText('Mis ofertas')).toBeVisible();
 	await expect(main.getByText('Aún no has publicado ofertas.')).toBeVisible();
