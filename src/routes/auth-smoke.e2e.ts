@@ -617,6 +617,7 @@ test.beforeAll(async () => {
 					id: 'merchant-keep',
 					name: 'Comercio destino',
 					verified: true,
+					blockedAt: null,
 					createdAt: '2026-05-01T10:00:00.000Z'
 				});
 				return;
@@ -628,7 +629,47 @@ test.beforeAll(async () => {
 					id: merchantVerify[1],
 					name: 'Comercio pendiente',
 					verified: true,
+					blockedAt: null,
 					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantBlock = url.match(/^\/admin\/merchants\/([^/?]+)\/block/);
+			if (merchantBlock && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: merchantBlock[1],
+					name: 'Comercio pendiente',
+					verified: false,
+					blockedAt: '2026-06-12T10:00:00.000Z',
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantUnblock = url.match(/^\/admin\/merchants\/([^/?]+)\/unblock/);
+			if (merchantUnblock && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: merchantUnblock[1],
+					name: 'Comercio bloqueado',
+					verified: true,
+					blockedAt: null,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantEdit = url.match(/^\/admin\/merchants\/([^/?]+)$/);
+			if (merchantEdit && request.method === 'PATCH') {
+				void readJsonBody(request).then((body) => {
+					const patch = (body ?? {}) as { name?: unknown };
+					sendJson(response, 200, {
+						id: merchantEdit[1],
+						name: typeof patch.name === 'string' ? patch.name : 'Comercio pendiente',
+						verified: false,
+						blockedAt: null,
+						createdAt: '2026-06-01T10:00:00.000Z'
+					});
 				});
 				return;
 			}
@@ -649,22 +690,99 @@ test.beforeAll(async () => {
 				return;
 			}
 
-			if (url === '/admin/merchants' || url.startsWith('/admin/merchants?')) {
-				sendJson(response, 200, {
-					items: [
-						{
-							id: 'merchant-pending',
-							name: 'Comercio pendiente',
-							verified: false,
-							createdAt: '2026-06-01T10:00:00.000Z'
-						}
-					],
-					nextCursor: null
+			const locationEdit = url.match(/^\/admin\/locations\/([^/?]+)$/);
+			if (locationEdit && request.method === 'PATCH') {
+				void readJsonBody(request).then((body) => {
+					const patch = (body ?? {}) as { address?: unknown; city?: unknown; region?: unknown };
+					sendJson(response, 200, {
+						id: locationEdit[1],
+						merchantId: 'm-loc',
+						address: typeof patch.address === 'string' ? patch.address : 'Carrera 5 #10-20',
+						city: typeof patch.city === 'string' ? patch.city : 'Bogotá',
+						region: typeof patch.region === 'string' ? patch.region : null,
+						latitude: 4.6,
+						longitude: -74.08,
+						verified: false,
+						createdAt: '2026-06-01T10:00:00.000Z'
+					});
 				});
 				return;
 			}
 
+			const locationDelete = url.match(/^\/admin\/locations\/([^/?]+)(\?|$)/);
+			if (locationDelete && request.method === 'DELETE') {
+				const reassign = new URL(url, 'http://mock').searchParams.get('reassignTo');
+				// loc-in-use has attached offers: refuse unless a reassignment target is given.
+				if (locationDelete[1] === 'loc-in-use' && !reassign) {
+					sendJson(response, 409, { key: 'location.in_use', statusCode: 409 });
+					return;
+				}
+				response.writeHead(204);
+				response.end();
+				return;
+			}
+
+			if (url === '/admin/merchants' || url.startsWith('/admin/merchants?')) {
+				const params = new URL(url, 'http://mock').searchParams;
+				let items;
+				if (params.get('blocked') === 'true') {
+					items = [
+						{
+							id: 'merchant-blocked',
+							name: 'Comercio bloqueado',
+							verified: true,
+							blockedAt: '2026-06-10T10:00:00.000Z',
+							createdAt: '2026-05-01T10:00:00.000Z'
+						}
+					];
+				} else if (params.get('verified') === 'true') {
+					items = [
+						{
+							id: 'merchant-verified',
+							name: 'Comercio verificado',
+							verified: true,
+							blockedAt: null,
+							createdAt: '2026-05-01T10:00:00.000Z'
+						}
+					];
+				} else {
+					items = [
+						{
+							id: 'merchant-pending',
+							name: 'Comercio pendiente',
+							verified: false,
+							blockedAt: null,
+							createdAt: '2026-06-01T10:00:00.000Z'
+						}
+					];
+				}
+				sendJson(response, 200, { items, nextCursor: null });
+				return;
+			}
+
 			if (url === '/admin/locations' || url.startsWith('/admin/locations?')) {
+				const params = new URL(url, 'http://mock').searchParams;
+				// When scoped to a merchant, return its other address as a reassignment target.
+				if (params.get('merchant')) {
+					sendJson(response, 200, {
+						items: [
+							{
+								id: 'loc-alt',
+								merchantId: 'm-loc',
+								address: 'Avenida 1 #2-3',
+								city: 'Bogotá',
+								region: 'Bogotá D.C.',
+								latitude: 4.61,
+								longitude: -74.07,
+								verified: true,
+								createdAt: '2026-06-01T10:00:00.000Z',
+								merchant: { id: 'm-loc', name: 'Tienda asociada' }
+							}
+						],
+						nextCursor: null
+					});
+					return;
+				}
 				sendJson(response, 200, {
 					items: [
 						{
@@ -1161,6 +1279,92 @@ test('admin merchants tab lists pending items and verifies a merchant', async ({
 	// Verifying the merchant removes it from the queue.
 	await merchantRow.getByRole('button', { name: 'Verificar' }).click();
 	await expect(page.getByText('Comercio pendiente')).toBeHidden();
+});
+
+test('admin filters merchants and blocks then unblocks one', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await expect(merchantRow).toBeVisible();
+
+	// Blocking the pending merchant keeps it in place but flags it as blocked.
+	await merchantRow.getByRole('button', { name: 'Bloquear' }).click();
+	await expect(merchantRow.getByText('Bloqueado')).toBeVisible();
+	await expect(merchantRow.getByRole('button', { name: 'Desbloquear' })).toBeVisible();
+
+	// The "blocked" filter loads only blocked merchants.
+	await page.getByRole('button', { name: 'Bloqueados' }).click();
+	const blockedRow = page.getByRole('row', { name: /Comercio bloqueado/ });
+	await expect(blockedRow).toBeVisible();
+
+	// Unblocking from the blocked filter drops it from the queue.
+	await blockedRow.getByRole('button', { name: 'Desbloquear' }).click();
+	await expect(page.getByText('Comercio bloqueado')).toBeHidden();
+});
+
+test('admin renames a merchant from the edit dialog', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await merchantRow.getByRole('button', { name: 'Editar' }).click();
+
+	const dialog = page.getByRole('dialog');
+	await dialog.getByRole('textbox').fill('Comercio renombrado');
+	await dialog.getByRole('button', { name: 'Guardar' }).click();
+
+	await expect(page.getByText('Comercio renombrado')).toBeVisible();
+	await expect(page.getByText('Comercio pendiente')).toBeHidden();
+});
+
+test('admin edits then deletes a pending address', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const locationRow = page.getByRole('row', { name: /Carrera 5 #10-20/ });
+	await expect(locationRow).toBeVisible();
+
+	// Editing the address writes the new value back into the table.
+	await locationRow.getByRole('button', { name: 'Editar' }).click();
+	const editDialog = page.getByRole('dialog');
+	await editDialog.getByLabel('Dirección').fill('Calle Nueva 99');
+	await editDialog.getByRole('button', { name: 'Guardar' }).click();
+	await expect(page.getByText('Calle Nueva 99')).toBeVisible();
+
+	// Deleting the address (no attached offers) removes its row.
+	const updatedRow = page.getByRole('row', { name: /Calle Nueva 99/ });
+	await updatedRow.getByRole('button', { name: 'Eliminar' }).click();
+	const deleteDialog = page.getByRole('dialog');
+	await deleteDialog.getByRole('button', { name: 'Eliminar' }).click();
+	await expect(page.getByRole('row', { name: /Calle Nueva 99/ })).toBeHidden();
+});
+
+test("admin views and edits a merchant's addresses from its panel", async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await merchantRow.getByRole('button', { name: 'Direcciones' }).click();
+
+	// All the merchant's addresses (verified + pending) load in the expanded panel.
+	await expect(page.getByText('Avenida 1 #2-3')).toBeVisible();
+
+	// Editing an address from the panel updates it in place. The merchant row keeps
+	// its own "Editar" button (index 0); the panel address edit is the next one.
+	await page.getByRole('button', { name: 'Editar' }).nth(1).click();
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Dirección').fill('Avenida Reformada 5');
+	await dialog.getByRole('button', { name: 'Guardar' }).click();
+	await expect(page.getByText('Avenida Reformada 5')).toBeVisible();
+
+	// Collapsing the panel hides the addresses again.
+	await merchantRow.getByRole('button', { name: 'Ocultar direcciones' }).click();
+	await expect(page.getByText('Avenida Reformada 5')).toBeHidden();
 });
 
 test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {
