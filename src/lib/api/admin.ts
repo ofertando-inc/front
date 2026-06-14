@@ -28,7 +28,6 @@ function buildAdminOffersQuery(query?: AdminListOffersQuery): string {
 	if (query.sort !== undefined) params.set('sort', query.sort);
 	if (query.period !== undefined) params.set('period', query.period);
 	if (query.city !== undefined) params.set('city', query.city);
-	if (query.offerType !== undefined) params.set('offerType', query.offerType);
 	if (query.status !== undefined) params.set('status', query.status);
 
 	const serialized = params.toString();

@@ -1,4 +1,4 @@
-import type { OfferStore } from '$lib/types/store';
+import type { OfferLocation, OfferLocationInput, OfferMerchant } from '$lib/types/merchant';
 import type { VoteType } from '$lib/types/vote';
 
 export const OFFER_STATUSES = ['ACTIVE', 'REPORTED', 'DISABLED', 'DELETED', 'EXPIRED'] as const;
@@ -29,6 +29,21 @@ export const CATEGORY_SLUGS = [
 
 export type CategorySlug = (typeof CATEGORY_SLUGS)[number];
 
+// Promotion nature (what kind of deal) — distinct from `isOnline` (where it
+// applies). Free string ≤ 50 on the backend; the front offers a curated set and
+// owns the localized labels (i18n `offerNature` namespace, keyed by value).
+export const OFFER_NATURES = [
+	'discount',
+	'2x1',
+	'coupon',
+	'cashback',
+	'clearance',
+	'free_shipping',
+	'other'
+] as const;
+
+export type OfferNature = (typeof OFFER_NATURES)[number];
+
 export interface Category {
 	id: string;
 	slug: string;
@@ -48,9 +63,10 @@ export interface Offer {
 	title: string;
 	description: string;
 	offerType: string;
+	isOnline: boolean;
 	externalUrl: string | null;
-	storeName: string;
-	city: string;
+	// No offer-level city: the city lives on `location` (single source of truth).
+	// Read `location.city` for a physical offer; online offers have no location.
 	startDate: string;
 	endDate: string;
 	status: OfferStatus;
@@ -63,7 +79,8 @@ export interface Offer {
 	createdByUsername: string;
 	userVote: VoteType | null;
 	categories: OfferCategory[];
-	store: OfferStore | null;
+	merchant: OfferMerchant;
+	location: OfferLocation | null;
 }
 
 export interface PaginatedOffers {
@@ -77,13 +94,18 @@ export interface CreateOfferDto {
 	title: string;
 	description: string;
 	offerType: string;
+	isOnline?: boolean;
 	externalUrl?: string;
-	storeName: string;
-	city: string;
+	// Merchant: an existing id, or a name to find-or-create (one is required).
+	merchantId?: string;
+	merchantName?: string;
+	// Physical offers carry a location: an existing id, or a payload to
+	// find-or-create under the merchant. Omitted entirely for online offers.
+	locationId?: string;
+	location?: OfferLocationInput;
 	startDate: string;
 	endDate: string;
 	categoryIds: string[];
-	storeId?: string;
 }
 
 export type UpdateOfferDto = Partial<CreateOfferDto>;
@@ -95,9 +117,13 @@ export interface ListOffersQuery {
 	sort?: OfferSort;
 	period?: OfferPeriod;
 	city?: string;
-	store?: string;
+	merchant?: string;
 	category?: string;
-	offerType?: string;
+	online?: boolean;
+	// "Near me": comma-joined "lat,lng" plus a radius in km. Online offers are
+	// excluded server-side; an invalid pair yields `offer.invalid_near`.
+	near?: string;
+	radiusKm?: number;
 	includeExpired?: boolean;
 }
 
@@ -116,6 +142,5 @@ export interface CategoryFacet {
 
 export interface OfferFacets {
 	cities: FacetValue[];
-	stores: FacetValue[];
 	categories: CategoryFacet[];
 }
