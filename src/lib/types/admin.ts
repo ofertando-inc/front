@@ -29,7 +29,7 @@ export interface PaginatedReports {
 
 export type PublicUser = Pick<
 	User,
-	'id' | 'username' | 'role' | 'status' | 'createdAt' | 'updatedAt'
+	'id' | 'username' | 'role' | 'status' | 'reputation' | 'createdAt' | 'updatedAt'
 >;
 
 export interface ModerationListQuery {
