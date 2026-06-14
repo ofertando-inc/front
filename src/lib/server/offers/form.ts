@@ -1,10 +1,10 @@
 import { error, redirect } from '@sveltejs/kit';
 import { fail, type SuperValidated } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { NATIONAL_CITY } from '$lib/offers/cities';
+import { normalizeCity } from '$lib/offers/cities';
 import { createOfferSchema, type CreateOfferFormData } from '$lib/validation/offerSchema';
 import type { User } from '$lib/types/auth';
-import type { Category, Offer } from '$lib/types/offer';
+import type { Category, CreateOfferDto, Offer } from '$lib/types/offer';
 
 export const offerFormAdapter = zod4(createOfferSchema);
 
@@ -12,13 +12,51 @@ const offerFields = new Set<keyof CreateOfferFormData>([
 	'title',
 	'description',
 	'offerType',
+	'isOnline',
 	'externalUrl',
-	'storeName',
-	'city',
+	'merchantName',
+	'locationAddress',
 	'startDate',
 	'endDate',
 	'categoryIds'
 ]);
+
+// Reshape the flat form fields into the nested `CreateOfferDto` the backend
+// expects (merchantId | merchantName, locationId | location{}). Online offers
+// omit the location entirely; physical ones send a link or a geocoded payload.
+export function toCreateOfferPayload(data: CreateOfferFormData): CreateOfferDto {
+	const payload: CreateOfferDto = {
+		title: data.title,
+		description: data.description,
+		offerType: data.offerType,
+		isOnline: data.isOnline,
+		externalUrl: data.externalUrl || undefined,
+		startDate: data.startDate,
+		endDate: data.endDate,
+		categoryIds: data.categoryIds
+	};
+
+	if (data.merchantId) payload.merchantId = data.merchantId;
+	else payload.merchantName = data.merchantName;
+
+	if (!data.isOnline) {
+		if (data.locationId) {
+			payload.locationId = data.locationId;
+		} else if (data.locationAddress && data.locationCity) {
+			payload.location = {
+				address: data.locationAddress,
+				// Ship the canonical city name from the bundled list (e.g. "bogota" ->
+				// "Bogotá"); an unknown city is left as-is and rejected by the schema.
+				city: normalizeCity(data.locationCity) ?? data.locationCity,
+				region: data.locationRegion || undefined,
+				latitude: data.locationLatitude,
+				longitude: data.locationLongitude
+			};
+		}
+	}
+
+	return payload;
+}
 
 interface BackendErrorPayload {
 	key?: unknown;
@@ -46,14 +84,20 @@ export function getDefaultOfferData(): CreateOfferFormData {
 	return {
 		title: '',
 		description: '',
-		offerType: 'online',
+		offerType: '',
+		isOnline: false,
 		externalUrl: '',
-		storeName: '',
-		city: NATIONAL_CITY,
+		merchantId: undefined,
+		merchantName: '',
+		locationId: undefined,
+		locationAddress: '',
+		locationCity: '',
+		locationRegion: '',
+		locationLatitude: undefined,
+		locationLongitude: undefined,
 		startDate: toDatetimeLocal(startDate),
 		endDate: toDatetimeLocal(endDate),
-		categoryIds: [],
-		storeId: undefined
+		categoryIds: []
 	};
 }
 
@@ -62,13 +106,19 @@ export function offerToFormData(offer: Offer): CreateOfferFormData {
 		title: offer.title,
 		description: offer.description,
 		offerType: offer.offerType,
+		isOnline: offer.isOnline,
 		externalUrl: offer.externalUrl ?? '',
-		storeName: offer.storeName,
-		city: offer.city,
+		merchantId: offer.merchant.id,
+		merchantName: offer.merchant.name,
+		locationId: offer.location?.id,
+		locationAddress: offer.location?.address ?? '',
+		locationCity: offer.location?.city ?? '',
+		locationRegion: offer.location?.region ?? '',
+		locationLatitude: offer.location?.latitude ?? undefined,
+		locationLongitude: offer.location?.longitude ?? undefined,
 		startDate: toDatetimeLocal(new Date(offer.startDate)),
 		endDate: toDatetimeLocal(new Date(offer.endDate)),
-		categoryIds: offer.categories.map((category) => category.id),
-		storeId: offer.store?.id
+		categoryIds: offer.categories.map((category) => category.id)
 	};
 }
 

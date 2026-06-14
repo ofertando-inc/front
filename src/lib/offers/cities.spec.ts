@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isKnownCity, NATIONAL_CITY, normalizeCity, searchCities } from '$lib/offers/cities';
+import { isKnownCity, normalizeCity, searchCities } from '$lib/offers/cities';
 
 describe('cities', () => {
 	it('normalizes accents and case to the canonical city name', () => {
@@ -23,9 +23,5 @@ describe('cities', () => {
 
 	it('returns nothing for an empty query', () => {
 		expect(searchCities('')).toEqual([]);
-	});
-
-	it('exposes the national sentinel for online offers', () => {
-		expect(NATIONAL_CITY).toBe('Nacional');
 	});
 });

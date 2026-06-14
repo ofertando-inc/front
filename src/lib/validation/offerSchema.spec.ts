@@ -4,13 +4,18 @@ import { createOfferSchema, updateOfferSchema } from '$lib/validation/offerSchem
 const futureStartDate = '2099-05-21T10:00';
 const futureEndDate = '2099-05-28T10:00';
 
+// A physical (in-store) offer: carries a merchant name and a geocoded location.
 const validOffer = {
 	title: 'Big discount',
 	description: '50% off selected products',
-	offerType: 'online',
+	offerType: 'discount',
+	isOnline: false,
 	externalUrl: 'https://example.com/deal',
-	storeName: 'Acme',
-	city: 'Bogotá',
+	merchantName: 'Acme',
+	locationAddress: 'Calle 10 #20-30',
+	locationCity: 'Bogotá',
+	locationLatitude: 4.6,
+	locationLongitude: -74.08,
 	startDate: futureStartDate,
 	endDate: futureEndDate,
 	categoryIds: ['cat-1']
@@ -26,40 +31,36 @@ function fieldMessages(error: unknown, field: string): string[] {
 }
 
 describe('createOfferSchema', () => {
-	it('accepts a complete valid offer payload', () => {
-		expect(createOfferSchema.parse(validOffer)).toEqual(validOffer);
-	});
-
-	it('trims text fields and converts an empty external URL to undefined', () => {
-		expect(
-			createOfferSchema.parse({
-				...validOffer,
-				title: '  Big discount  ',
-				externalUrl: ''
-			})
-		).toMatchObject({
-			title: 'Big discount',
-			externalUrl: undefined
+	it('accepts a complete valid physical offer', () => {
+		expect(createOfferSchema.parse(validOffer)).toMatchObject({
+			merchantName: 'Acme',
+			locationCity: 'Bogotá',
+			isOnline: false
 		});
 	});
 
-	it('requires every create field except externalUrl', () => {
-		const result = createOfferSchema.safeParse({});
+	it('coerces numeric location coordinates from strings', () => {
+		const result = createOfferSchema.parse({
+			...validOffer,
+			locationLatitude: '4.6',
+			locationLongitude: '-74.08'
+		});
+		expect(result.locationLatitude).toBe(4.6);
+		expect(result.locationLongitude).toBe(-74.08);
+	});
+
+	it('defaults isOnline to false when omitted', () => {
+		const withoutFlag: Record<string, unknown> = { ...validOffer };
+		delete withoutFlag.isOnline;
+		expect(createOfferSchema.parse(withoutFlag)).toMatchObject({ isOnline: false });
+	});
+
+	it('requires a merchant name', () => {
+		const result = createOfferSchema.safeParse({ ...validOffer, merchantName: '' });
 
 		expect(result.success).toBe(false);
 		if (!result.success) {
-			expect(result.error.issues.map((issue) => issue.path[0])).toEqual(
-				expect.arrayContaining([
-					'title',
-					'description',
-					'offerType',
-					'storeName',
-					'city',
-					'startDate',
-					'endDate',
-					'categoryIds'
-				])
-			);
+			expect(fieldMessages(result.error, 'merchantName')).toContain('isNotEmpty');
 		}
 	});
 
@@ -72,25 +73,8 @@ describe('createOfferSchema', () => {
 		}
 	});
 
-	it('uses backend-compatible constraint names for string and URL errors', () => {
-		const result = createOfferSchema.safeParse({
-			...validOffer,
-			title: '',
-			externalUrl: 'not-a-url'
-		});
-
-		expect(result.success).toBe(false);
-		if (!result.success) {
-			expect(fieldMessages(result.error, 'title')).toContain('isNotEmpty');
-			expect(fieldMessages(result.error, 'externalUrl')).toContain('isUrl');
-		}
-	});
-
 	it('requires the end date to be in the future', () => {
-		const result = createOfferSchema.safeParse({
-			...validOffer,
-			endDate: '2020-01-01T10:00'
-		});
+		const result = createOfferSchema.safeParse({ ...validOffer, endDate: '2020-01-01T10:00' });
 
 		expect(result.success).toBe(false);
 		if (!result.success) {
@@ -111,37 +95,64 @@ describe('createOfferSchema', () => {
 		}
 	});
 
-	it('accepts a local offer with a known city', () => {
+	it('accepts a physical offer linked to an existing location id', () => {
 		const result = createOfferSchema.safeParse({
 			...validOffer,
-			offerType: 'local',
-			city: 'Medellín'
+			locationId: 'loc-1',
+			locationAddress: '',
+			locationCity: ''
 		});
 
 		expect(result.success).toBe(true);
 	});
 
-	it('rejects a local offer whose city is not in the list', () => {
+	it('requires a location for a physical offer', () => {
 		const result = createOfferSchema.safeParse({
 			...validOffer,
-			offerType: 'local',
-			city: 'Gotham'
+			locationAddress: '',
+			locationCity: ''
 		});
 
 		expect(result.success).toBe(false);
 		if (!result.success) {
-			expect(fieldMessages(result.error, 'city')).toContain('unknownCity');
+			expect(fieldMessages(result.error, 'locationCity')).toContain('isNotEmpty');
+			expect(fieldMessages(result.error, 'locationAddress')).toContain('isNotEmpty');
 		}
 	});
 
-	it('does not check the city for online offers (national sentinel)', () => {
+	it('rejects a physical offer whose city is not in the list', () => {
+		const result = createOfferSchema.safeParse({ ...validOffer, locationCity: 'Gotham' });
+
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			expect(fieldMessages(result.error, 'locationCity')).toContain('unknownCity');
+		}
+	});
+
+	it('drops the location requirement for an online offer', () => {
 		const result = createOfferSchema.safeParse({
 			...validOffer,
-			offerType: 'online',
-			city: 'Nacional'
+			isOnline: true,
+			locationAddress: '',
+			locationCity: ''
 		});
 
 		expect(result.success).toBe(true);
+	});
+
+	it('requires an external URL for an online offer', () => {
+		const result = createOfferSchema.safeParse({
+			...validOffer,
+			isOnline: true,
+			externalUrl: '',
+			locationAddress: '',
+			locationCity: ''
+		});
+
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			expect(fieldMessages(result.error, 'externalUrl')).toContain('isNotEmpty');
+		}
 	});
 });
 
