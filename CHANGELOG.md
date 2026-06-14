@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-06-15
 
 ### Added
 
+- Admin merchant & location management, extending the moderation panel (`/admin/merchants`) from a pending-only queue into a full management surface: merchants can now be **searched** (`q`) and **filtered** across pending / verified / blocked / all (the queue defaults to pending but the admin can browse every merchant), **renamed** (with a `merchant.name_taken` guard that points to merging instead), and **blocked / unblocked** (a blocked merchant's offers drop out of the public lists, derived server-side from `blockedAt`). Each merchant row also expands an inline **address panel** listing all of its addresses (verified + pending, via `GET /admin/locations?merchant=`), so addresses are managed in the context of their merchant rather than only through the global pending queue. Addresses can be **edited** (address / city / region — changing the city resyncs the offers' denormalized city) and **deleted**, with a reassignment flow: deleting an address that still has offers yields `location.in_use` (409) and the dialog requires picking another address of the same merchant to move the offers to first. New `editMerchant` / `blockMerchant` / `unblockMerchant` / `editLocation` / `deleteLocation` API clients with `EditMerchantDto` / `EditLocationDto` types and `blocked` / `q` / `merchant` list filters, `MerchantResponse.blockedAt` and `OfferMerchant.blocked`, new `merchant.name_taken` / `location.in_use` error keys and a batch of `admin` management keys (search, filters, status badges, edit / block / delete actions, reassignment, address panel) localized in the three languages. Unit-tested and covered end to end.
 - User reputation: the server-derived `reputation` score (now on `User` / `PublicUser`) is shown on the profile as a third, highlighted stat card next to offers and comments. New `profile.reputation` key in the three languages; e2e asserts the card.
 
 - Admin merchant & location moderation (`/admin/merchants`): a dedicated panel listing the **pending** (unverified) merchants and addresses with one-click verify, plus a merge tool that folds a duplicate merchant into another (its addresses and offers move over, the duplicate is deleted). Each pending address with coordinates expands an inline read-only map to locate it before verifying. New `verifyMerchant` / `verifyLocation` / `mergeMerchants` and `listAdminMerchants` / `listAdminLocations` API clients with `PaginatedMerchants` / `AdminLocation` / `MergeMerchantsDto` types, a "Comercios" sidebar tab, localized `admin` keys in the three languages, and e2e coverage. Depends on two new backend list endpoints (`GET /admin/merchants` and `GET /admin/locations`, both with a `verified` filter).
@@ -302,6 +303,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[1.1.0]: https://github.com/ofertando-inc/front/releases/tag/v1.1.0
 [1.0.0]: https://github.com/ofertando-inc/front/releases/tag/v1.0.0
 [0.7.0]: https://github.com/ofertando-inc/front/releases/tag/v0.7.0
 [0.6.0]: https://github.com/ofertando-inc/front/releases/tag/v0.6.0
