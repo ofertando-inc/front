@@ -4,6 +4,8 @@ export interface MerchantResponse {
 	id: string;
 	name: string;
 	verified: boolean;
+	// ISO 8601 when the merchant was blocked by moderation, null when active.
+	blockedAt: string | null;
 	createdAt: string;
 }
 
@@ -32,10 +34,12 @@ export interface GeocodeSuggestion {
 }
 
 // Lightweight merchant embedded in each offer (`OfferResponse.merchant`).
+// `blocked` is derived server-side from the merchant's `blockedAt`.
 export interface OfferMerchant {
 	id: string;
 	name: string;
 	verified: boolean;
+	blocked: boolean;
 }
 
 // Lightweight location embedded in a physical offer (`OfferResponse.location`).

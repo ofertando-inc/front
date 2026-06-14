@@ -29,8 +29,10 @@ export const ErrorKey = {
 	CommentInvalidStatusTransition: 'comment.invalid_status_transition',
 
 	MerchantNotFound: 'merchant.not_found',
+	MerchantNameTaken: 'merchant.name_taken',
 	MerchantMergeInvalid: 'merchant.merge_invalid',
 	LocationNotFound: 'location.not_found',
+	LocationInUse: 'location.in_use',
 	GeocodingUnavailable: 'geocoding.unavailable',
 
 	PaginationInvalidCursor: 'pagination.invalid_cursor',
