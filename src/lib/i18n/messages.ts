@@ -152,16 +152,16 @@ export const messages: Record<Locale, TranslationMessages> = {
 		deals: {
 			voteUp: 'Votar positivo',
 			voteDown: 'Votar negativo',
-			typeOnline: 'Online',
-			typeLocal: 'Local',
+			typeOnline: 'En línea',
+			typeLocal: 'Física',
+			verified: 'Verificado',
+			nearMe: 'Cerca de mí',
 			expiresOn: 'Expira',
 			filterCity: 'Ciudad',
-			filterType: 'Tipo',
-			filterStore: 'Tienda',
+			filterType: 'Canal',
 			filterCategory: 'Categoría',
 			allCities: 'Todas las ciudades',
-			allTypes: 'Todos los tipos',
-			allStores: 'Todas las tiendas',
+			allTypes: 'Todos los canales',
 			allCategories: 'Todas las categorías',
 			sortRecent: 'Más recientes',
 			sortPopular: 'Más populares',
@@ -204,19 +204,34 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe la oferta, condiciones importantes, disponibilidad y pasos para obtenerla.',
 			offerTypeLabel: 'Tipo de oferta',
+			offerTypePlaceholder: 'Selecciona un tipo',
+			offerNature: {
+				discount: 'Descuento',
+				'2x1': '2x1',
+				coupon: 'Cupón',
+				cashback: 'Cashback',
+				clearance: 'Liquidación',
+				free_shipping: 'Envío gratis',
+				other: 'Otro'
+			},
 			categoriesLabel: 'Categorías',
-			offerTypeOnline: 'Online',
-			offerTypeLocal: 'Local',
+			isOnlineLabel: 'Oferta en línea',
+			isOnlineHint: 'Sin tienda física: indica el enlace donde aprovecharla.',
 			externalUrlLabel: 'Enlace de la oferta',
 			externalUrlPlaceholder: 'https://tienda.com/oferta',
-			externalUrlHint: 'Opcional para ofertas locales.',
-			storeNameLabel: 'Tienda',
-			storeNamePlaceholder: 'Nombre de la tienda',
-			storeGeocodeGroup: 'Nueva dirección',
-			storeVerified: 'Verificada',
-			storeSearching: 'Buscando…',
+			externalUrlHint: 'Opcional para ofertas físicas.',
+			externalUrlHintOnline: 'Obligatorio para ofertas en línea.',
+			merchantLabel: 'Comercio',
+			merchantPlaceholder: 'Nombre del comercio',
+			merchantSearching: 'Buscando…',
+			merchantVerified: 'Verificado',
+			merchantCreateLabel: 'Añadir un comercio nuevo',
 			cityLabel: 'Ciudad',
 			cityPlaceholder: 'Ej. Bogotá',
+			addressLabel: 'Dirección',
+			addressPlaceholder: 'Ej. Calle 10 #20-30',
+			addressHint: 'Geolocalizamos la dirección para ubicar la oferta.',
+			mapHint: 'Arrastra el pin o toca el mapa para ajustar la ubicación exacta.',
 			startDateLabel: 'Fecha de inicio',
 			endDateLabel: 'Fecha de fin',
 			requiredHint: 'Todos los campos marcados son obligatorios.',
@@ -387,6 +402,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			share: 'Compartir',
 			shareCopied: 'Enlace copiado',
 			publishedBy: 'Publicado por',
+			locationTitle: 'Ubicación',
 			relatedTitle: 'Ofertas relacionadas',
 			relatedEmpty: 'No hay ofertas relacionadas por el momento.',
 			expiredBanner: 'Esta oferta ya expiró.',
@@ -409,6 +425,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 				'Las fechas no son válidas: la fecha de fin debe ser posterior al inicio y estar en el futuro.',
 			'offer.invalid_status_transition': 'Esta oferta ya no se puede modificar.',
 			'offer.invalid_category': 'Selecciona al menos una categoría válida.',
+			'offer.online_requires_url': 'Las ofertas en línea necesitan un enlace.',
+			'offer.location_required': 'Las ofertas físicas necesitan una dirección.',
+			'offer.invalid_near': 'No pudimos usar tu ubicación. Inténtalo de nuevo.',
 			'vote.offer_not_voteable': 'No puedes votar esta oferta porque ya no está activa.',
 			'report.offer_not_reportable': 'No puedes reportar esta oferta porque ya no está activa.',
 			'comment.not_found': 'No encontramos ese comentario. Puede haber sido eliminado.',
@@ -416,7 +435,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'No puedes comentar esta oferta en este momento.',
 			'comment.not_reportable': 'Este comentario ya no se puede reportar.',
 			'comment.invalid_status_transition': 'Esta acción ya no es posible sobre este comentario.',
-			'store.not_found': 'No encontramos esta tienda.',
+			'merchant.not_found': 'No encontramos este comercio.',
+			'merchant.merge_invalid': 'No se pueden fusionar estos comercios.',
+			'location.not_found': 'No encontramos esta dirección.',
 			'geocoding.unavailable':
 				'No pudimos buscar la dirección en este momento. Inténtalo más tarde.',
 			'pagination.invalid_cursor': 'La paginación ha expirado. Reiniciamos desde el principio.',
@@ -459,20 +480,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 					isNotEmpty: 'Selecciona un tipo de oferta.',
 					maxLength: 'El tipo de oferta es demasiado largo (máximo 50 caracteres).'
 				},
+				categoryIds: {
+					isNotEmpty: 'Selecciona al menos una categoría.'
+				},
 				externalUrl: {
 					isString: 'El enlace debe ser una cadena de texto.',
 					isUrl: 'Ingresa una URL válida.'
 				},
-				storeName: {
-					isString: 'El nombre de la tienda debe ser una cadena de texto.',
-					isNotEmpty: 'Ingresa el nombre de la tienda.',
-					maxLength: 'El nombre de la tienda es demasiado largo (máximo 100 caracteres).'
+				merchantName: {
+					isString: 'El nombre del comercio debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa el nombre del comercio.',
+					maxLength: 'El nombre del comercio es demasiado largo (máximo 100 caracteres).'
 				},
-				city: {
+				locationCity: {
 					isString: 'La ciudad debe ser una cadena de texto.',
 					isNotEmpty: 'Ingresa una ciudad.',
-					unknownCity: 'Selecciona una ciudad de la lista.',
-					maxLength: 'El nombre de la ciudad es demasiado largo (máximo 100 caracteres).'
+					unknownCity: 'Selecciona una ciudad de la lista.'
+				},
+				locationAddress: {
+					isString: 'La dirección debe ser una cadena de texto.',
+					isNotEmpty: 'Ingresa y selecciona una dirección.',
+					maxLength: 'La dirección es demasiado larga (máximo 200 caracteres).'
 				},
 				startDate: {
 					isDateString: 'Fecha de inicio inválida (formato ISO 8601 esperado).',
@@ -649,15 +677,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			voteUp: 'Vote up',
 			voteDown: 'Vote down',
 			typeOnline: 'Online',
-			typeLocal: 'Local',
+			typeLocal: 'In-store',
+			verified: 'Verified',
+			nearMe: 'Near me',
 			expiresOn: 'Expires',
 			filterCity: 'City',
-			filterType: 'Type',
-			filterStore: 'Store',
+			filterType: 'Channel',
 			filterCategory: 'Category',
 			allCities: 'All cities',
-			allTypes: 'All types',
-			allStores: 'All stores',
+			allTypes: 'All channels',
 			allCategories: 'All categories',
 			sortRecent: 'Most recent',
 			sortPopular: 'Most popular',
@@ -699,19 +727,34 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				'Describe the deal, important conditions, availability, and steps to use it.',
 			offerTypeLabel: 'Deal type',
+			offerTypePlaceholder: 'Select a type',
+			offerNature: {
+				discount: 'Discount',
+				'2x1': '2-for-1',
+				coupon: 'Coupon',
+				cashback: 'Cashback',
+				clearance: 'Clearance',
+				free_shipping: 'Free shipping',
+				other: 'Other'
+			},
 			categoriesLabel: 'Categories',
-			offerTypeOnline: 'Online',
-			offerTypeLocal: 'Local',
+			isOnlineLabel: 'Online deal',
+			isOnlineHint: 'No physical store: add the link where to redeem it.',
 			externalUrlLabel: 'Deal link',
 			externalUrlPlaceholder: 'https://store.com/deal',
-			externalUrlHint: 'Optional for local deals.',
-			storeNameLabel: 'Store',
-			storeNamePlaceholder: 'Store name',
-			storeGeocodeGroup: 'New address',
-			storeVerified: 'Verified',
-			storeSearching: 'Searching…',
+			externalUrlHint: 'Optional for in-store deals.',
+			externalUrlHintOnline: 'Required for online deals.',
+			merchantLabel: 'Merchant',
+			merchantPlaceholder: 'Merchant name',
+			merchantSearching: 'Searching…',
+			merchantVerified: 'Verified',
+			merchantCreateLabel: 'Add a new merchant',
 			cityLabel: 'City',
 			cityPlaceholder: 'E.g. Bogotá',
+			addressLabel: 'Address',
+			addressPlaceholder: 'E.g. 10 Downing St',
+			addressHint: 'We geolocate the address to place the deal.',
+			mapHint: 'Drag the pin or tap the map to set the exact location.',
 			startDateLabel: 'Start date',
 			endDateLabel: 'End date',
 			requiredHint: 'All marked fields are required.',
@@ -880,6 +923,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			share: 'Share',
 			shareCopied: 'Link copied',
 			publishedBy: 'Posted by',
+			locationTitle: 'Location',
 			relatedTitle: 'Related offers',
 			relatedEmpty: 'No related offers at the moment.',
 			expiredBanner: 'This offer has expired.',
@@ -902,6 +946,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 				'Invalid dates: the end date must be after the start date and in the future.',
 			'offer.invalid_status_transition': 'This offer can no longer be modified.',
 			'offer.invalid_category': 'Pick at least one valid category.',
+			'offer.online_requires_url': 'Online deals need a link.',
+			'offer.location_required': 'In-store deals need an address.',
+			'offer.invalid_near': 'We could not use your location. Please try again.',
 			'vote.offer_not_voteable': 'You cannot vote on this offer because it is no longer active.',
 			'report.offer_not_reportable': 'You cannot report this offer because it is no longer active.',
 			'comment.not_found': 'We could not find that comment. It may have been removed.',
@@ -909,7 +956,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'You cannot comment on this offer right now.',
 			'comment.not_reportable': 'This comment can no longer be reported.',
 			'comment.invalid_status_transition': 'This action is no longer possible on this comment.',
-			'store.not_found': 'We could not find this store.',
+			'merchant.not_found': 'We could not find this merchant.',
+			'merchant.merge_invalid': 'These merchants cannot be merged.',
+			'location.not_found': 'We could not find this address.',
 			'geocoding.unavailable': 'We could not look up the address right now. Try again later.',
 			'pagination.invalid_cursor': 'Pagination expired. We have reset to the first page.',
 			'validation.failed': 'Check the form fields and try again.',
@@ -950,20 +999,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 					isNotEmpty: 'Select an offer type.',
 					maxLength: 'The offer type is too long (max 50 characters).'
 				},
+				categoryIds: {
+					isNotEmpty: 'Select at least one category.'
+				},
 				externalUrl: {
 					isString: 'The link must be a string.',
 					isUrl: 'Enter a valid URL.'
 				},
-				storeName: {
-					isString: 'The store name must be a string.',
-					isNotEmpty: 'Enter the store name.',
-					maxLength: 'The store name is too long (max 100 characters).'
+				merchantName: {
+					isString: 'The merchant name must be a string.',
+					isNotEmpty: 'Enter the merchant name.',
+					maxLength: 'The merchant name is too long (max 100 characters).'
 				},
-				city: {
+				locationCity: {
 					isString: 'The city must be a string.',
 					isNotEmpty: 'Enter a city.',
-					unknownCity: 'Pick a city from the list.',
-					maxLength: 'The city name is too long (max 100 characters).'
+					unknownCity: 'Pick a city from the list.'
+				},
+				locationAddress: {
+					isString: 'The address must be a string.',
+					isNotEmpty: 'Enter and select an address.',
+					maxLength: 'The address is too long (max 200 characters).'
 				},
 				startDate: {
 					isDateString: 'Invalid start date (ISO 8601 format expected).',
@@ -1141,15 +1197,15 @@ export const messages: Record<Locale, TranslationMessages> = {
 			voteUp: 'Voter positif',
 			voteDown: 'Voter négatif',
 			typeOnline: 'En ligne',
-			typeLocal: 'Local',
+			typeLocal: 'Physique',
+			verified: 'Vérifié',
+			nearMe: 'Près de moi',
 			expiresOn: 'Expire',
 			filterCity: 'Ville',
-			filterType: 'Type',
-			filterStore: 'Magasin',
+			filterType: 'Canal',
 			filterCategory: 'Catégorie',
 			allCities: 'Toutes les villes',
-			allTypes: 'Tous les types',
-			allStores: 'Tous les magasins',
+			allTypes: 'Tous les canaux',
 			allCategories: 'Toutes les catégories',
 			sortRecent: 'Plus récentes',
 			sortPopular: 'Plus populaires',
@@ -1192,19 +1248,34 @@ export const messages: Record<Locale, TranslationMessages> = {
 			descriptionPlaceholder:
 				"Décrivez l'offre, les conditions importantes, la disponibilité et les étapes pour en profiter.",
 			offerTypeLabel: "Type d'offre",
+			offerTypePlaceholder: 'Choisis un type',
+			offerNature: {
+				discount: 'Réduction',
+				'2x1': '2 pour 1',
+				coupon: 'Coupon',
+				cashback: 'Cashback',
+				clearance: 'Déstockage',
+				free_shipping: 'Livraison gratuite',
+				other: 'Autre'
+			},
 			categoriesLabel: 'Catégories',
-			offerTypeOnline: 'En ligne',
-			offerTypeLocal: 'Local',
+			isOnlineLabel: 'Offre en ligne',
+			isOnlineHint: 'Sans magasin physique : indique le lien pour en profiter.',
 			externalUrlLabel: "Lien de l'offre",
 			externalUrlPlaceholder: 'https://magasin.com/offre',
-			externalUrlHint: 'Optionnel pour les offres locales.',
-			storeNameLabel: 'Magasin',
-			storeNamePlaceholder: 'Nom du magasin',
-			storeGeocodeGroup: 'Nouvelle adresse',
-			storeVerified: 'Vérifié',
-			storeSearching: 'Recherche…',
+			externalUrlHint: 'Optionnel pour les offres physiques.',
+			externalUrlHintOnline: 'Obligatoire pour les offres en ligne.',
+			merchantLabel: 'Commerce',
+			merchantPlaceholder: 'Nom du commerce',
+			merchantSearching: 'Recherche…',
+			merchantVerified: 'Vérifié',
+			merchantCreateLabel: 'Ajouter un nouveau commerce',
 			cityLabel: 'Ville',
 			cityPlaceholder: 'Ex. Bogotá',
+			addressLabel: 'Adresse',
+			addressPlaceholder: 'Ex. 12 rue de la Paix',
+			addressHint: "Nous géolocalisons l'adresse pour situer l'offre.",
+			mapHint: "Déplace l'épingle ou touche la carte pour ajuster l'emplacement exact.",
 			startDateLabel: 'Date de début',
 			endDateLabel: 'Date de fin',
 			requiredHint: 'Tous les champs marqués sont obligatoires.',
@@ -1376,6 +1447,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			share: 'Partager',
 			shareCopied: 'Lien copié',
 			publishedBy: 'Publié par',
+			locationTitle: 'Emplacement',
 			relatedTitle: 'Offres similaires',
 			relatedEmpty: "Pas d'offres similaires pour le moment.",
 			expiredBanner: 'Cette offre a expiré.',
@@ -1399,6 +1471,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 				'Dates invalides : la date de fin doit être après la date de début et dans le futur.',
 			'offer.invalid_status_transition': 'Cette offre ne peut plus être modifiée.',
 			'offer.invalid_category': 'Choisis au moins une catégorie valide.',
+			'offer.online_requires_url': 'Les offres en ligne nécessitent un lien.',
+			'offer.location_required': 'Les offres physiques nécessitent une adresse.',
+			'offer.invalid_near': "Nous n'avons pas pu utiliser ta position. Réessaie.",
 			'vote.offer_not_voteable':
 				"Vous ne pouvez pas voter sur cette offre car elle n'est plus active.",
 			'report.offer_not_reportable':
@@ -1408,7 +1483,9 @@ export const messages: Record<Locale, TranslationMessages> = {
 			'comment.offer_not_commentable': 'Vous ne pouvez pas commenter cette offre pour le moment.',
 			'comment.not_reportable': 'Ce commentaire ne peut plus être signalé.',
 			'comment.invalid_status_transition': "Cette action n'est plus possible sur ce commentaire.",
-			'store.not_found': "Nous n'avons pas trouvé ce magasin.",
+			'merchant.not_found': "Nous n'avons pas trouvé ce commerce.",
+			'merchant.merge_invalid': 'Ces commerces ne peuvent pas être fusionnés.',
+			'location.not_found': "Nous n'avons pas trouvé cette adresse.",
 			'geocoding.unavailable':
 				"Nous n'avons pas pu rechercher l'adresse pour le moment. Réessaie plus tard.",
 			'pagination.invalid_cursor':
@@ -1451,20 +1528,27 @@ export const messages: Record<Locale, TranslationMessages> = {
 					isNotEmpty: "Sélectionnez un type d'offre.",
 					maxLength: "Le type d'offre est trop long (50 caractères maximum)."
 				},
+				categoryIds: {
+					isNotEmpty: 'Choisis au moins une catégorie.'
+				},
 				externalUrl: {
 					isString: 'Le lien doit être une chaîne de caractères.',
 					isUrl: 'Saisissez une URL valide.'
 				},
-				storeName: {
-					isString: 'Le nom du magasin doit être une chaîne de caractères.',
-					isNotEmpty: 'Saisissez le nom du magasin.',
-					maxLength: 'Le nom du magasin est trop long (100 caractères maximum).'
+				merchantName: {
+					isString: 'Le nom du commerce doit être une chaîne de caractères.',
+					isNotEmpty: 'Saisissez le nom du commerce.',
+					maxLength: 'Le nom du commerce est trop long (100 caractères maximum).'
 				},
-				city: {
+				locationCity: {
 					isString: 'La ville doit être une chaîne de caractères.',
 					isNotEmpty: 'Saisissez une ville.',
-					unknownCity: 'Choisis une ville dans la liste.',
-					maxLength: 'Le nom de la ville est trop long (100 caractères maximum).'
+					unknownCity: 'Choisis une ville dans la liste.'
+				},
+				locationAddress: {
+					isString: "L'adresse doit être une chaîne de caractères.",
+					isNotEmpty: 'Saisissez et sélectionnez une adresse.',
+					maxLength: "L'adresse est trop longue (200 caractères maximum)."
 				},
 				startDate: {
 					isDateString: 'Date de début invalide (format ISO 8601 attendu).',
