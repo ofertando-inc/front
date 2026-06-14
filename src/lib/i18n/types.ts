@@ -177,6 +177,7 @@ export interface TranslationMessages {
 		offers: string;
 		comments: string;
 		votes: string;
+		reputation: string;
 		myOffers: string;
 		myComments: string;
 		myVotes: string;
