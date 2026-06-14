@@ -610,6 +610,79 @@ test.beforeAll(async () => {
 				return;
 			}
 
+			if (url === '/admin/merchants/merge' && request.method === 'POST') {
+				sendJson(response, 200, {
+					id: 'merchant-keep',
+					name: 'Comercio destino',
+					verified: true,
+					createdAt: '2026-05-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const merchantVerify = url.match(/^\/admin\/merchants\/([^/?]+)\/verify/);
+			if (merchantVerify) {
+				sendJson(response, 200, {
+					id: merchantVerify[1],
+					name: 'Comercio pendiente',
+					verified: true,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			const locationVerify = url.match(/^\/admin\/locations\/([^/?]+)\/verify/);
+			if (locationVerify) {
+				sendJson(response, 200, {
+					id: locationVerify[1],
+					merchantId: 'm-loc',
+					address: 'Carrera 5 #10-20',
+					city: 'Bogotá',
+					region: null,
+					latitude: null,
+					longitude: null,
+					verified: true,
+					createdAt: '2026-06-01T10:00:00.000Z'
+				});
+				return;
+			}
+
+			if (url === '/admin/merchants' || url.startsWith('/admin/merchants?')) {
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'merchant-pending',
+							name: 'Comercio pendiente',
+							verified: false,
+							createdAt: '2026-06-01T10:00:00.000Z'
+						}
+					],
+					nextCursor: null
+				});
+				return;
+			}
+
+			if (url === '/admin/locations' || url.startsWith('/admin/locations?')) {
+				sendJson(response, 200, {
+					items: [
+						{
+							id: 'loc-pending',
+							merchantId: 'm-loc',
+							address: 'Carrera 5 #10-20',
+							city: 'Bogotá',
+							region: 'Bogotá D.C.',
+							latitude: 4.6,
+							longitude: -74.08,
+							verified: false,
+							createdAt: '2026-06-01T10:00:00.000Z',
+							merchant: { id: 'm-loc', name: 'Tienda asociada' }
+						}
+					],
+					nextCursor: null
+				});
+				return;
+			}
+
 			if (url === '/admin/offers' || url.startsWith('/admin/offers?')) {
 				sendJson(response, 200, { items: [adminOffer], nextCursor: null, total: 1 });
 				return;
@@ -1061,6 +1134,30 @@ test('admin offers tab lists offers and disables one for an admin', async ({ pag
 
 	await page.getByRole('button', { name: 'Desactivar', exact: true }).click();
 	await expect(page.getByRole('button', { name: 'Restaurar' })).toBeVisible();
+});
+
+test('admin merchants tab lists pending items and verifies a merchant', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/merchants');
+
+	// Both queues render their pending items.
+	const merchantRow = page.getByRole('row', { name: /Comercio pendiente/ });
+	await expect(merchantRow).toBeVisible();
+	const locationRow = page.getByRole('row', { name: /Carrera 5 #10-20/ });
+	await expect(locationRow).toBeVisible();
+
+	// A pending address with coordinates can expand an inline map.
+	await expect(page.locator('.leaflet-container')).toHaveCount(0);
+	await locationRow.getByRole('button', { name: 'Ver mapa' }).click();
+	await expect(page.locator('.leaflet-container')).toHaveCount(1);
+
+	// Verifying the merchant removes it from the queue.
+	await merchantRow.getByRole('button', { name: 'Verificar' }).click();
+	await expect(page.getByText('Comercio pendiente')).toBeHidden();
 });
 
 test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {
