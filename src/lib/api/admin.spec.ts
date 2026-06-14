@@ -12,9 +12,12 @@ import {
 	listAdminOfferReports,
 	listAdminOffers,
 	listAdminReports,
+	mergeMerchants,
 	restoreComment,
 	restoreOffer,
-	restoreUser
+	restoreUser,
+	verifyLocation,
+	verifyMerchant
 } from '$lib/api/admin';
 
 const BASE_URL = 'http://test.local';
@@ -292,5 +295,74 @@ describe('getModerationSummary', () => {
 			expect.objectContaining({ method: 'GET', credentials: 'include' })
 		);
 		expect(res).toEqual({ pendingComments: 5, pendingOfferReports: 2 });
+	});
+});
+
+describe('verifyMerchant', () => {
+	it('PATCHes the verify endpoint with an optional reason/note body', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ id: 'm1', name: 'Acme', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await verifyMerchant('m/1', { note: 'looks legit' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/m%2F1/verify`,
+			expect.objectContaining({
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({ note: 'looks legit' })
+			})
+		);
+	});
+});
+
+describe('verifyLocation', () => {
+	it('PATCHes the location verify endpoint', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'l1', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await verifyLocation('l1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/locations/l1/verify`,
+			expect.objectContaining({ method: 'PATCH', credentials: 'include', body: '{}' })
+		);
+	});
+});
+
+describe('mergeMerchants', () => {
+	it('POSTs the source/target pair', async () => {
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(jsonResponse({ id: 'target', name: 'Acme', verified: true }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await mergeMerchants({ sourceId: 's1', targetId: 't1' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/merchants/merge`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify({ sourceId: 's1', targetId: 't1' })
+			})
+		);
+	});
+
+	it('propagates merchant.merge_invalid', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(jsonResponse({ key: 'merchant.merge_invalid', statusCode: 400 }, 400))
+		);
+
+		await expect(mergeMerchants({ sourceId: 'x', targetId: 'x' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'merchant.merge_invalid',
+			status: 400
+		});
 	});
 });

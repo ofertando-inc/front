@@ -1,10 +1,16 @@
 import { apiRequest } from '$lib/api/client';
 import type { Offer, PaginatedOffers } from '$lib/types/offer';
+import type { LocationResponse, MerchantResponse } from '$lib/types/merchant';
 import type {
 	AdminListOffersQuery,
+	AdminModerationListQuery,
 	CommentModerationSummary,
+	MergeMerchantsDto,
+	ModerationActionBody,
 	ModerationListQuery,
 	ModerationSummary,
+	PaginatedAdminLocations,
+	PaginatedMerchants,
 	PaginatedModerationComments,
 	PaginatedReportDetails,
 	PaginatedReports,
@@ -121,4 +127,54 @@ export function dismissOffer(id: string) {
 
 export function getModerationSummary() {
 	return apiRequest<ModerationSummary>('/admin/moderation/summary', { method: 'GET' });
+}
+
+function buildModerationListQuery(query?: AdminModerationListQuery): string {
+	const params = new URLSearchParams();
+	if (query?.verified !== undefined) params.set('verified', String(query.verified));
+	if (query?.q !== undefined) params.set('q', query.q);
+	if (query?.merchant !== undefined) params.set('merchant', query.merchant);
+	if (query?.cursor !== undefined) params.set('cursor', query.cursor);
+	if (query?.limit !== undefined) params.set('limit', String(query.limit));
+	const serialized = params.toString();
+	return serialized ? `?${serialized}` : '';
+}
+
+// Moderation queue of merchants (filter `verified=false` for the pending list).
+export function listAdminMerchants(query?: AdminModerationListQuery) {
+	return apiRequest<PaginatedMerchants>(`/admin/merchants${buildModerationListQuery(query)}`, {
+		method: 'GET'
+	});
+}
+
+// Moderation queue of locations (each item carries its owning merchant).
+export function listAdminLocations(query?: AdminModerationListQuery) {
+	return apiRequest<PaginatedAdminLocations>(`/admin/locations${buildModerationListQuery(query)}`, {
+		method: 'GET'
+	});
+}
+
+// Marks a merchant as verified. Optional reason/note are recorded by the backend.
+export function verifyMerchant(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<MerchantResponse>(`/admin/merchants/${encodeURIComponent(id)}/verify`, {
+		method: 'PATCH',
+		body: JSON.stringify(body)
+	});
+}
+
+// Marks a location as verified.
+export function verifyLocation(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<LocationResponse>(`/admin/locations/${encodeURIComponent(id)}/verify`, {
+		method: 'PATCH',
+		body: JSON.stringify(body)
+	});
+}
+
+// Merges a duplicate merchant (source) into the target: the backend moves the
+// source's locations and offers, then deletes it. Returns the kept merchant.
+export function mergeMerchants(payload: MergeMerchantsDto) {
+	return apiRequest<MerchantResponse>('/admin/merchants/merge', {
+		method: 'POST',
+		body: JSON.stringify(payload)
+	});
 }
