@@ -81,6 +81,11 @@ export interface Offer {
 	categories: OfferCategory[];
 	merchant: OfferMerchant;
 	location: OfferLocation | null;
+	// Derived server-side: the offer was published by the business owning the
+	// merchant. Never sent by the client.
+	official: boolean;
+	viewCount: number;
+	clickCount: number;
 }
 
 export interface PaginatedOffers {

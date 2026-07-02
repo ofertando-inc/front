@@ -249,6 +249,7 @@ export interface TranslationMessages {
 		typeOnline: string;
 		typeLocal: string;
 		verified: string;
+		official: string;
 		nearMe: string;
 		expiresOn: string;
 		filterCity: string;

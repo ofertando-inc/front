@@ -73,3 +73,18 @@ export function deleteOffer(id: string) {
 		method: 'DELETE'
 	});
 }
+
+// Engagement tracking, fire-and-forget: the backend always answers 204 (even
+// when the hit is not counted) and a failure must never surface in the UI.
+
+export function trackView(id: string) {
+	return apiRequest<void>(`/offers/${encodeURIComponent(id)}/view`, {
+		method: 'POST'
+	}).catch(() => undefined);
+}
+
+export function trackClick(id: string) {
+	return apiRequest<void>(`/offers/${encodeURIComponent(id)}/click`, {
+		method: 'POST'
+	}).catch(() => undefined);
+}

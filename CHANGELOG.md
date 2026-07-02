@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- "Official" offer badge: `Offer` now carries the server-derived `official` flag (the offer was published by the business owning the merchant — never sent by the client) plus the `viewCount` / `clickCount` counters. Official offers show a distinct solid badge (check-badge pill) on the deal card and the detail page. New `deals.official` key in the three languages.
+- Offer engagement tracking, fire-and-forget: new `trackView` / `trackClick` API clients (`POST /offers/:id/view|click`, always 204). The detail page fires one view hit per visit once the offer loads, and a click hit when following the "go to the store" link — both swallow failures and never block the UI. Unit-tested and covered end to end.
+
+### Security
+
+- Cleared the two `npm audit` findings by pinning transitive dependencies via `overrides`: `joi` ≥ 17.13.4 (Dependabot alert; an _optional_ dependency of `sveltekit-superforms` — we use the zod adapter) and `ts-deepmerge` ≥ 8.0.0 (prototype-override DoS, also pulled by superforms — verified compatible, all tests pass). `npm audit` reports 0 vulnerabilities; no runtime or API changes.
+
 ## [1.1.0] - 2026-06-15
 
 ### Added

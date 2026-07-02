@@ -558,6 +558,42 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		const trackMatch = url.match(/^\/offers\/([^/?]+)\/(view|click)$/);
+		if (trackMatch && request.method === 'POST') {
+			response.writeHead(204);
+			response.end();
+			return;
+		}
+
+		if (url === '/offers/e2e-official-offer' || url.startsWith('/offers/e2e-official-offer?')) {
+			sendJson(response, 200, {
+				id: 'e2e-official-offer',
+				title: 'Oferta oficial de la marca',
+				description: 'Oferta publicada por la empresa dueña de la enseña.',
+				offerType: 'discount',
+				isOnline: true,
+				externalUrl: 'https://example.com/oficial',
+				merchant: { id: 'merchant-owned', name: 'MarcaOficial', verified: true, blocked: false },
+				location: null,
+				startDate: '2026-05-01T00:00:00.000Z',
+				endDate: '2026-12-31T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 21,
+				reportCount: 0,
+				commentCount: 0,
+				createdAt: '2026-05-01T10:00:00.000Z',
+				updatedAt: '2026-05-01T10:00:00.000Z',
+				createdById: 'business-user',
+				createdByUsername: 'marcaoficial',
+				userVote: null,
+				categories: [],
+				official: true,
+				viewCount: 7,
+				clickCount: 3
+			});
+			return;
+		}
+
 		if (url.startsWith('/offers/')) {
 			sendJson(response, 404, {
 				key: 'offer.not_found',
@@ -1182,6 +1218,30 @@ test('offer detail lets an authenticated user toggle their up-vote', async ({ pa
 	await upButton.click();
 	await expect(page.getByText('15°')).toBeVisible();
 	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('offer detail shows the official badge and tracks the view and the click', async ({
+	page
+}) => {
+	// The view hit must fire once when the detail loads.
+	const viewRequest = page.waitForRequest(
+		(request) =>
+			request.url().includes('/api/offers/e2e-official-offer/view') && request.method() === 'POST'
+	);
+
+	await page.goto('/deals/e2e-official-offer');
+
+	await expect(page.getByRole('heading', { name: 'Oferta oficial de la marca' })).toBeVisible();
+	await expect(page.getByText('Oficial', { exact: true })).toBeVisible();
+	await viewRequest;
+
+	// The click hit fires when following the merchant link.
+	const clickRequest = page.waitForRequest(
+		(request) =>
+			request.url().includes('/api/offers/e2e-official-offer/click') && request.method() === 'POST'
+	);
+	await page.getByRole('link', { name: /Ir a la tienda/ }).click();
+	await clickRequest;
 });
 
 test('offer detail shows an auth error when an anonymous visitor tries to vote', async ({
