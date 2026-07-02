@@ -2,21 +2,29 @@ import { apiRequest } from '$lib/api/client';
 import type { Offer, PaginatedOffers } from '$lib/types/offer';
 import type { LocationResponse, MerchantResponse } from '$lib/types/merchant';
 import type {
+	AdminAccountsQuery,
+	AdminClaimsQuery,
 	AdminListOffersQuery,
 	AdminModerationListQuery,
+	ClaimResponse,
 	CommentModerationSummary,
+	CreateAccountDto,
+	CreateClaimDto,
 	EditLocationDto,
 	EditMerchantDto,
 	MergeMerchantsDto,
 	ModerationActionBody,
 	ModerationListQuery,
 	ModerationSummary,
+	PaginatedAccounts,
 	PaginatedAdminLocations,
+	PaginatedClaims,
 	PaginatedMerchants,
 	PaginatedModerationComments,
 	PaginatedReportDetails,
 	PaginatedReports,
-	PublicUser
+	PublicUser,
+	UpdateAccountDto
 } from '$lib/types/admin';
 
 function buildCursorQuery(query?: ModerationListQuery): string {
@@ -223,5 +231,79 @@ export function deleteLocation(id: string, reassignTo?: string) {
 	const query = reassignTo ? `?reassignTo=${encodeURIComponent(reassignTo)}` : '';
 	return apiRequest<void>(`/admin/locations/${encodeURIComponent(id)}${query}`, {
 		method: 'DELETE'
+	});
+}
+
+// --- ROOT-only endpoints (403 auth.forbidden_root for a plain ADMIN) ---
+
+function buildAccountsQuery(query?: AdminAccountsQuery): string {
+	const params = new URLSearchParams();
+	if (query?.q !== undefined) params.set('q', query.q);
+	if (query?.role !== undefined) params.set('role', query.role);
+	if (query?.accountType !== undefined) params.set('accountType', query.accountType);
+	if (query?.cursor !== undefined) params.set('cursor', query.cursor);
+	if (query?.limit !== undefined) params.set('limit', String(query.limit));
+	const serialized = params.toString();
+	return serialized ? `?${serialized}` : '';
+}
+
+// Newest accounts first. `q` matches email or username.
+export function listAccounts(query?: AdminAccountsQuery) {
+	return apiRequest<PaginatedAccounts>(`/admin/accounts${buildAccountsQuery(query)}`, {
+		method: 'GET'
+	});
+}
+
+// Business accounts are only born here — there is no self-signup for them.
+export function createAccount(payload: CreateAccountDto) {
+	return apiRequest<PublicUser>('/admin/accounts', {
+		method: 'POST',
+		body: JSON.stringify(payload)
+	});
+}
+
+export function updateAccount(id: string, payload: UpdateAccountDto) {
+	return apiRequest<PublicUser>(`/admin/accounts/${encodeURIComponent(id)}`, {
+		method: 'PATCH',
+		body: JSON.stringify(payload)
+	});
+}
+
+function buildClaimsQuery(query?: AdminClaimsQuery): string {
+	const params = new URLSearchParams();
+	if (query?.status !== undefined) params.set('status', query.status);
+	if (query?.cursor !== undefined) params.set('cursor', query.cursor);
+	if (query?.limit !== undefined) params.set('limit', String(query.limit));
+	const serialized = params.toString();
+	return serialized ? `?${serialized}` : '';
+}
+
+// `status: 'PENDING'` is the validation queue.
+export function listClaims(query?: AdminClaimsQuery) {
+	return apiRequest<PaginatedClaims>(`/admin/claims${buildClaimsQuery(query)}`, {
+		method: 'GET'
+	});
+}
+
+// ROOT-created claims are approved on the spot: the merchant gets its owner.
+export function createClaim(payload: CreateClaimDto) {
+	return apiRequest<ClaimResponse>('/admin/claims', {
+		method: 'POST',
+		body: JSON.stringify(payload)
+	});
+}
+
+export function approveClaim(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<ClaimResponse>(`/admin/claims/${encodeURIComponent(id)}/approve`, {
+		method: 'PATCH',
+		body: JSON.stringify(body)
+	});
+}
+
+// The note is stored on the rejected claim so the business can see the reason.
+export function rejectClaim(id: string, body: ModerationActionBody = {}) {
+	return apiRequest<ClaimResponse>(`/admin/claims/${encodeURIComponent(id)}/reject`, {
+		method: 'PATCH',
+		body: JSON.stringify(body)
 	});
 }
