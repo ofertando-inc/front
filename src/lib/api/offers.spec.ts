@@ -7,6 +7,8 @@ import {
 	getOfferById,
 	getOfferFacets,
 	listOffers,
+	trackClick,
+	trackView,
 	updateOffer
 } from '$lib/api/offers';
 import type { CreateOfferDto } from '$lib/types/offer';
@@ -253,5 +255,48 @@ describe('deleteOffer', () => {
 			key: 'offer.forbidden',
 			status: 403
 		});
+	});
+});
+
+describe('trackView', () => {
+	it('POSTs the view hit and tolerates the 204 No Content', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await expect(trackView('abc')).resolves.toBeNull();
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/view`,
+			expect.objectContaining({ method: 'POST', credentials: 'include' })
+		);
+	});
+
+	it('swallows failures instead of rejecting (fire-and-forget)', async () => {
+		vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('network down')));
+
+		await expect(trackView('abc')).resolves.toBeUndefined();
+	});
+});
+
+describe('trackClick', () => {
+	it('POSTs the click hit and tolerates the 204 No Content', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(new Response(null, { status: 204 }));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await expect(trackClick('abc')).resolves.toBeNull();
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/offers/abc/click`,
+			expect.objectContaining({ method: 'POST', credentials: 'include' })
+		);
+	});
+
+	it('swallows failures instead of rejecting (fire-and-forget)', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'offer.not_found', statusCode: 404 }, 404))
+		);
+
+		await expect(trackClick('abc')).resolves.toBeUndefined();
 	});
 });
