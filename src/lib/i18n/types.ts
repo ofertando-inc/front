@@ -74,6 +74,31 @@ export interface TranslationMessages {
 		logout: string;
 		loading: string;
 		admin: string;
+		businessSpace: string;
+	};
+	business: {
+		title: string;
+		pendingTitle: string;
+		pendingBody: string;
+		affiliatedTo: string;
+		affiliatedSince: string;
+		statActiveOffers: string;
+		statViews: string;
+		statClicks: string;
+		statScore: string;
+		statComments: string;
+		statReports: string;
+		publishOfficial: string;
+		requestLocation: string;
+		requestLocationTitle: string;
+		requestLocationHint: string;
+		requestLocationSubmit: string;
+		requestLocationSubmitting: string;
+		requestLocationSuccess: string;
+		myOffers: string;
+		myOffersEmpty: string;
+		officialHeading: string;
+		officialIntro: string;
 	};
 	admin: {
 		title: string;
@@ -356,6 +381,7 @@ export interface TranslationMessages {
 		externalUrlHintOnline: string;
 		merchantLabel: string;
 		merchantPlaceholder: string;
+		merchantLockedHint: string;
 		merchantSearching: string;
 		merchantVerified: string;
 		merchantCreateLabel: string;
