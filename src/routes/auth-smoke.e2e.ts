@@ -10,7 +10,11 @@ function sendJson(response: import('node:http').ServerResponse, statusCode: numb
 
 function isAuthenticated(request: import('node:http').IncomingMessage) {
 	const cookie = request.headers.cookie ?? '';
-	return cookie.includes('e2e_session=authenticated') || cookie.includes('e2e_session=admin');
+	return (
+		cookie.includes('e2e_session=authenticated') ||
+		cookie.includes('e2e_session=admin') ||
+		cookie.includes('e2e_session=root')
+	);
 }
 
 async function readJsonBody(request: import('node:http').IncomingMessage): Promise<unknown> {
@@ -24,8 +28,14 @@ async function readJsonBody(request: import('node:http').IncomingMessage): Promi
 	}
 }
 
+// ROOT is a superset of ADMIN for the moderation surfaces.
 function isAdmin(request: import('node:http').IncomingMessage) {
-	return (request.headers.cookie ?? '').includes('e2e_session=admin');
+	const cookie = request.headers.cookie ?? '';
+	return cookie.includes('e2e_session=admin') || cookie.includes('e2e_session=root');
+}
+
+function isRoot(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=root');
 }
 
 // Offer returned by POST /offers (and its GET) for the create happy-path test.
@@ -137,12 +147,14 @@ test.beforeAll(async () => {
 
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
+				const root = isRoot(request);
 				const admin = isAdmin(request);
 				sendJson(response, 200, {
-					id: admin ? 'e2e-admin-id' : 'e2e-user-id',
-					email: admin ? 'admin@example.com' : 'e2e@example.com',
-					username: admin ? 'e2eadmin' : 'e2euser',
-					role: admin ? 'ADMIN' : 'USER',
+					id: root ? 'e2e-root-id' : admin ? 'e2e-admin-id' : 'e2e-user-id',
+					email: root ? 'root@example.com' : admin ? 'admin@example.com' : 'e2e@example.com',
+					username: root ? 'e2eroot' : admin ? 'e2eadmin' : 'e2euser',
+					role: root ? 'ROOT' : admin ? 'ADMIN' : 'USER',
+					accountType: 'INDIVIDUAL',
 					status: 'ACTIVE',
 					reputation: 12,
 					createdAt: '2026-05-01T10:00:00.000Z',
@@ -609,6 +621,135 @@ test.beforeAll(async () => {
 			}
 			if (!isAdmin(request)) {
 				sendJson(response, 403, { key: 'auth.forbidden', statusCode: 403 });
+				return;
+			}
+
+			// ROOT-only surfaces: accounts and affiliation claims.
+			if (url.startsWith('/admin/accounts') || url.startsWith('/admin/claims')) {
+				if (!isRoot(request)) {
+					sendJson(response, 403, { key: 'auth.forbidden_root', statusCode: 403 });
+					return;
+				}
+
+				const rootAccount = {
+					id: 'acc-user',
+					email: 'cliente@example.com',
+					username: 'clienteuno',
+					role: 'USER',
+					accountType: 'INDIVIDUAL',
+					status: 'ACTIVE',
+					reputation: 3,
+					createdAt: '2026-06-01T10:00:00.000Z',
+					updatedAt: '2026-06-01T10:00:00.000Z'
+				};
+
+				if (url === '/admin/accounts' || url.startsWith('/admin/accounts?')) {
+					if (request.method === 'POST') {
+						void readJsonBody(request).then((body) => {
+							const dto = (body ?? {}) as {
+								email?: unknown;
+								username?: unknown;
+								accountType?: unknown;
+								role?: unknown;
+							};
+							sendJson(response, 201, {
+								id: 'acc-new',
+								email: typeof dto.email === 'string' ? dto.email : 'nueva@example.com',
+								username: typeof dto.username === 'string' ? dto.username : 'nuevacuenta',
+								role: typeof dto.role === 'string' ? dto.role : 'USER',
+								accountType: typeof dto.accountType === 'string' ? dto.accountType : 'INDIVIDUAL',
+								status: 'ACTIVE',
+								reputation: 0,
+								createdAt: '2026-06-20T10:00:00.000Z',
+								updatedAt: '2026-06-20T10:00:00.000Z'
+							});
+						});
+						return;
+					}
+					const params = new URL(url, 'http://mock').searchParams;
+					if (params.get('q') === 'empresa' || params.get('accountType') === 'BUSINESS') {
+						sendJson(response, 200, {
+							items: [
+								{
+									id: 'acc-biz',
+									email: 'empresa@example.com',
+									username: 'empresauno',
+									role: 'USER',
+									accountType: 'BUSINESS',
+									status: 'ACTIVE',
+									reputation: 0,
+									createdAt: '2026-06-10T10:00:00.000Z',
+									updatedAt: '2026-06-10T10:00:00.000Z'
+								}
+							],
+							nextCursor: null
+						});
+						return;
+					}
+					sendJson(response, 200, { items: [rootAccount], nextCursor: null });
+					return;
+				}
+
+				const accountPatch = url.match(/^\/admin\/accounts\/([^/?]+)$/);
+				if (accountPatch && request.method === 'PATCH') {
+					void readJsonBody(request).then((body) => {
+						const dto = (body ?? {}) as Record<string, unknown>;
+						sendJson(response, 200, {
+							...rootAccount,
+							id: accountPatch[1],
+							...(typeof dto.email === 'string' ? { email: dto.email } : {}),
+							...(typeof dto.username === 'string' ? { username: dto.username } : {}),
+							...(typeof dto.role === 'string' ? { role: dto.role } : {}),
+							...(typeof dto.accountType === 'string' ? { accountType: dto.accountType } : {}),
+							...(typeof dto.status === 'string' ? { status: dto.status } : {})
+						});
+					});
+					return;
+				}
+
+				const pendingClaim = {
+					id: 'claim-pending',
+					status: 'PENDING',
+					note: null,
+					createdAt: '2026-06-18T10:00:00.000Z',
+					resolvedAt: null,
+					user: { id: 'acc-biz', email: 'empresa@example.com', username: 'empresauno' },
+					merchant: { id: 'merchant-acme', name: 'Acme Store' },
+					reviewedBy: null
+				};
+
+				if (url === '/admin/claims' || url.startsWith('/admin/claims?')) {
+					if (request.method === 'POST') {
+						sendJson(response, 201, {
+							...pendingClaim,
+							id: 'claim-created',
+							status: 'APPROVED',
+							resolvedAt: '2026-06-20T10:00:00.000Z',
+							reviewedBy: { id: 'e2e-root-id', username: 'e2eroot' }
+						});
+						return;
+					}
+					sendJson(response, 200, { items: [pendingClaim], nextCursor: null });
+					return;
+				}
+
+				const claimAction = url.match(/^\/admin\/claims\/([^/?]+)\/(approve|reject)$/);
+				if (claimAction && request.method === 'PATCH') {
+					void readJsonBody(request).then((body) => {
+						const dto = (body ?? {}) as { note?: unknown };
+						sendJson(response, 200, {
+							...pendingClaim,
+							id: claimAction[1],
+							status: claimAction[2] === 'approve' ? 'APPROVED' : 'REJECTED',
+							note: typeof dto.note === 'string' ? dto.note : null,
+							resolvedAt: '2026-06-21T10:00:00.000Z',
+							reviewedBy: { id: 'e2e-root-id', username: 'e2eroot' }
+						});
+					});
+					return;
+				}
+
+				sendJson(response, 404, { key: 'error.not_found', statusCode: 404 });
 				return;
 			}
 
@@ -1425,6 +1566,88 @@ test("admin views and edits a merchant's addresses from its panel", async ({ pag
 	// Collapsing the panel hides the addresses again.
 	await merchantRow.getByRole('button', { name: 'Ocultar direcciones' }).click();
 	await expect(page.getByText('Avenida Reformada 5')).toBeHidden();
+});
+
+test('root sees the accounts tab, lists accounts and creates one', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/accounts');
+
+	// The ROOT-only tabs are in the sidebar and the listing renders.
+	await expect(page.getByRole('link', { name: 'Cuentas' }).first()).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Afiliaciones' }).first()).toBeVisible();
+	const accountRow = page.getByRole('row', { name: /clienteuno/ });
+	await expect(accountRow).toBeVisible();
+
+	// Creating an account posts the payload and closes the dialog.
+	await page.getByRole('button', { name: 'Crear cuenta' }).click();
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Correo electrónico').fill('nueva@example.com');
+	await dialog.getByLabel('Nombre de usuario').fill('nuevacuenta');
+	await dialog.getByLabel('Contraseña provisional').fill('provisional1');
+	const createRequest = page.waitForRequest(
+		(request) => request.url().includes('/api/admin/accounts') && request.method() === 'POST'
+	);
+	await dialog.getByRole('button', { name: 'Crear cuenta' }).click();
+	await createRequest;
+	await expect(dialog).toBeHidden();
+});
+
+test('root disables an account from the listing', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/accounts');
+
+	const accountRow = page.getByRole('row', { name: /clienteuno/ });
+	await accountRow.getByRole('button', { name: 'Desactivar' }).click();
+
+	// The PATCH flips the status and the row shows the disabled chip.
+	await expect(accountRow.getByText('Desactivada')).toBeVisible();
+	await expect(accountRow.getByRole('button', { name: 'Restaurar' })).toBeVisible();
+});
+
+test('root approves a pending affiliation claim', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/claims');
+
+	const claimRow = page.getByRole('row', { name: /empresauno/ });
+	await expect(claimRow).toBeVisible();
+	await expect(claimRow.getByText('Acme Store')).toBeVisible();
+
+	// Approving drops the claim from the pending queue.
+	await claimRow.getByRole('button', { name: 'Aprobar' }).click();
+	await expect(page.getByText('empresauno')).toBeHidden();
+});
+
+test('root rejects a claim with a note', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/claims');
+
+	const claimRow = page.getByRole('row', { name: /empresauno/ });
+	await claimRow.getByRole('button', { name: 'Rechazar' }).click();
+
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Motivo (opcional)').fill('No pudo demostrar la propiedad.');
+	await dialog.getByRole('button', { name: 'Rechazar' }).click();
+
+	await expect(page.getByRole('row', { name: /empresauno/ })).toBeHidden();
+});
+
+test('a plain admin neither sees the root tabs nor opens the root pages', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin');
+	await expect(page.getByRole('link', { name: 'Ofertas' }).first()).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Cuentas' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Afiliaciones' })).toHaveCount(0);
+
+	const response = await page.goto('/admin/accounts');
+	expect(response?.status()).toBe(403);
 });
 
 test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {
