@@ -22,6 +22,7 @@ const user: User = {
 	email: 'maria@example.com',
 	username: 'maria123',
 	role: 'USER',
+	accountType: 'INDIVIDUAL',
 	status: 'ACTIVE',
 	reputation: 8,
 	createdAt: '2026-04-28T12:18:37.315Z',

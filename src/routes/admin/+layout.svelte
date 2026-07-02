@@ -7,7 +7,9 @@
 		FlagOutline,
 		MessagesOutline,
 		StoreOutline,
-		TagOutline
+		TagOutline,
+		BriefcaseOutline,
+		UsersGroupOutline
 	} from 'flowbite-svelte-icons';
 	import { translationStore } from '$lib/i18n';
 	import { moderationSummary } from '$lib/stores/moderationSummary';
@@ -24,7 +26,9 @@
 		| '/admin/offers'
 		| '/admin/merchants'
 		| '/admin/reports'
-		| '/admin/comments';
+		| '/admin/comments'
+		| '/admin/accounts'
+		| '/admin/claims';
 
 	interface NavItem {
 		routeId: AdminRoute;
@@ -32,6 +36,10 @@
 		icon: Component;
 		badge: number;
 	}
+
+	// The accounts and affiliations surfaces are ROOT-only: a plain ADMIN never
+	// sees the tabs (and the pages 403 server-side anyway).
+	let isRoot = $derived(data.admin.role === 'ROOT');
 
 	let items = $derived<NavItem[]>([
 		{
@@ -63,7 +71,23 @@
 			label: $translationStore.admin.tabComments,
 			icon: MessagesOutline,
 			badge: $moderationSummary?.pendingComments ?? 0
-		}
+		},
+		...(isRoot
+			? [
+					{
+						routeId: '/admin/accounts' as AdminRoute,
+						label: $translationStore.admin.tabAccounts,
+						icon: UsersGroupOutline,
+						badge: 0
+					},
+					{
+						routeId: '/admin/claims' as AdminRoute,
+						label: $translationStore.admin.tabClaims,
+						icon: BriefcaseOutline,
+						badge: 0
+					}
+				]
+			: [])
 	]);
 
 	function isActive(routeId: AdminRoute): boolean {

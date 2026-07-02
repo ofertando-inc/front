@@ -5,6 +5,6 @@ export const load: LayoutServerLoad = async ({ fetch }) => {
 	const user = await requireAdmin(fetch);
 
 	return {
-		admin: { id: user.id, username: user.username }
+		admin: { id: user.id, username: user.username, role: user.role }
 	};
 };

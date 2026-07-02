@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ApiError } from '$lib/api/client';
 import {
+	approveClaim,
 	blockMerchant,
+	createAccount,
+	createClaim,
 	deleteLocation,
 	disableOffer,
 	disableUser,
@@ -11,6 +14,7 @@ import {
 	editMerchant,
 	getModerationSummary,
 	hideComment,
+	listAccounts,
 	listAdminCommentReports,
 	listAdminComments,
 	listAdminLocations,
@@ -18,11 +22,14 @@ import {
 	listAdminOfferReports,
 	listAdminOffers,
 	listAdminReports,
+	listClaims,
 	mergeMerchants,
+	rejectClaim,
 	restoreComment,
 	restoreOffer,
 	restoreUser,
 	unblockMerchant,
+	updateAccount,
 	verifyLocation,
 	verifyMerchant
 } from '$lib/api/admin';
@@ -516,5 +523,199 @@ describe('deleteLocation', () => {
 			key: 'location.in_use',
 			status: 409
 		});
+	});
+});
+
+describe('listAccounts', () => {
+	it('serializes q, role and accountType', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAccounts({ q: 'maria', role: 'ADMIN', accountType: 'BUSINESS', limit: 20 });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/accounts?q=maria&role=ADMIN&accountType=BUSINESS&limit=20`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+	});
+
+	it('calls /admin/accounts without a query string when empty', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listAccounts();
+
+		expect(fetchMock).toHaveBeenCalledWith(`${BASE_URL}/admin/accounts`, expect.anything());
+	});
+
+	it('propagates auth.forbidden_root for a plain admin', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'auth.forbidden_root', statusCode: 403 }, 403))
+		);
+
+		await expect(listAccounts()).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'auth.forbidden_root',
+			status: 403
+		});
+	});
+});
+
+describe('createAccount', () => {
+	it('POSTs the account payload', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'u1' }, 201));
+		vi.stubGlobal('fetch', fetchMock);
+
+		const payload = {
+			email: 'biz@example.com',
+			username: 'bizuser',
+			password: 'provisional1',
+			accountType: 'BUSINESS' as const
+		};
+		await createAccount(payload);
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/accounts`,
+			expect.objectContaining({
+				method: 'POST',
+				credentials: 'include',
+				body: JSON.stringify(payload)
+			})
+		);
+	});
+
+	it('propagates user.email_taken', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'user.email_taken', statusCode: 400 }, 400))
+		);
+
+		await expect(
+			createAccount({ email: 'dup@example.com', username: 'dup', password: 'provisional1' })
+		).rejects.toMatchObject({ name: 'ApiError', key: 'user.email_taken', status: 400 });
+	});
+});
+
+describe('updateAccount', () => {
+	it('PATCHes only the supplied fields', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'u1' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await updateAccount('u1', { status: 'DISABLED' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/accounts/u1`,
+			expect.objectContaining({
+				method: 'PATCH',
+				credentials: 'include',
+				body: JSON.stringify({ status: 'DISABLED' })
+			})
+		);
+	});
+
+	it('propagates account.not_found', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi.fn().mockResolvedValue(jsonResponse({ key: 'account.not_found', statusCode: 404 }, 404))
+		);
+
+		await expect(updateAccount('missing', { role: 'ADMIN' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'account.not_found',
+			status: 404
+		});
+	});
+});
+
+describe('listClaims', () => {
+	it('serializes the status filter', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ items: [], nextCursor: null }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await listClaims({ status: 'PENDING', limit: 20 });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/claims?status=PENDING&limit=20`,
+			expect.objectContaining({ method: 'GET', credentials: 'include' })
+		);
+	});
+});
+
+describe('createClaim', () => {
+	it('POSTs the claim payload', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'cl1' }, 201));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await createClaim({ userId: 'u1', merchantId: 'm1' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/claims`,
+			expect.objectContaining({
+				method: 'POST',
+				body: JSON.stringify({ userId: 'u1', merchantId: 'm1' })
+			})
+		);
+	});
+
+	it('propagates merchant.already_owned', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(jsonResponse({ key: 'merchant.already_owned', statusCode: 409 }, 409))
+		);
+
+		await expect(createClaim({ userId: 'u1', merchantId: 'm1' })).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'merchant.already_owned',
+			status: 409
+		});
+	});
+});
+
+describe('approveClaim', () => {
+	it('PATCHes the approve action', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'cl1' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await approveClaim('cl1');
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/claims/cl1/approve`,
+			expect.objectContaining({ method: 'PATCH', body: JSON.stringify({}) })
+		);
+	});
+
+	it('propagates claim.already_resolved', async () => {
+		vi.stubGlobal(
+			'fetch',
+			vi
+				.fn()
+				.mockResolvedValue(jsonResponse({ key: 'claim.already_resolved', statusCode: 409 }, 409))
+		);
+
+		await expect(approveClaim('cl1')).rejects.toMatchObject({
+			name: 'ApiError',
+			key: 'claim.already_resolved',
+			status: 409
+		});
+	});
+});
+
+describe('rejectClaim', () => {
+	it('PATCHes the reject action with the note', async () => {
+		const fetchMock = vi.fn().mockResolvedValue(jsonResponse({ id: 'cl1' }, 200));
+		vi.stubGlobal('fetch', fetchMock);
+
+		await rejectClaim('cl1', { note: 'No pudo demostrar la propiedad.' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			`${BASE_URL}/admin/claims/cl1/reject`,
+			expect.objectContaining({
+				method: 'PATCH',
+				body: JSON.stringify({ note: 'No pudo demostrar la propiedad.' })
+			})
+		);
 	});
 });

@@ -1,7 +1,7 @@
 import type { ListOffersQuery, OfferStatus } from '$lib/types/offer';
 import type { LocationResponse, MerchantResponse } from '$lib/types/merchant';
 import type { ReportReason } from '$lib/types/report';
-import type { User } from '$lib/types/auth';
+import type { AccountType, User, UserRole, UserStatus } from '$lib/types/auth';
 
 export interface AdminListOffersQuery extends ListOffersQuery {
 	status?: OfferStatus;
@@ -29,7 +29,15 @@ export interface PaginatedReports {
 
 export type PublicUser = Pick<
 	User,
-	'id' | 'username' | 'role' | 'status' | 'reputation' | 'createdAt' | 'updatedAt'
+	| 'id'
+	| 'email'
+	| 'username'
+	| 'role'
+	| 'accountType'
+	| 'status'
+	| 'reputation'
+	| 'createdAt'
+	| 'updatedAt'
 >;
 
 export interface ModerationListQuery {
@@ -119,5 +127,76 @@ export interface AdminLocation extends LocationResponse {
 
 export interface PaginatedAdminLocations {
 	items: AdminLocation[];
+	nextCursor: string | null;
+}
+
+// --- ROOT-only: account management ---
+
+export interface AdminAccountsQuery {
+	// Matches email or username.
+	q?: string;
+	role?: UserRole;
+	accountType?: AccountType;
+	cursor?: string;
+	limit?: number;
+}
+
+// The password is provisional: the account holder is expected to change it.
+export interface CreateAccountDto {
+	email: string;
+	username: string;
+	password: string;
+	accountType?: AccountType;
+	role?: UserRole;
+}
+
+// Only the supplied fields change; `password` resets it, `status: 'DISABLED'`
+// deactivates the account.
+export interface UpdateAccountDto {
+	email?: string;
+	username?: string;
+	password?: string;
+	role?: UserRole;
+	accountType?: AccountType;
+	status?: UserStatus;
+}
+
+export interface PaginatedAccounts {
+	items: PublicUser[];
+	nextCursor: string | null;
+}
+
+// --- ROOT-only: merchant affiliation claims ---
+
+export type ClaimStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+
+export interface ClaimResponse {
+	id: string;
+	status: ClaimStatus;
+	note: string | null;
+	createdAt: string;
+	resolvedAt: string | null;
+	// The business account asking for (or holding) the affiliation.
+	user: { id: string; email: string; username: string };
+	merchant: { id: string; name: string };
+	// The ROOT admin who resolved the claim, null while pending.
+	reviewedBy: { id: string; username: string } | null;
+}
+
+export interface AdminClaimsQuery {
+	status?: ClaimStatus;
+	cursor?: string;
+	limit?: number;
+}
+
+// ROOT-created claims are approved immediately (the merchant gets its owner).
+export interface CreateClaimDto {
+	userId: string;
+	merchantId: string;
+	note?: string;
+}
+
+export interface PaginatedClaims {
+	items: ClaimResponse[];
 	nextCursor: string | null;
 }
