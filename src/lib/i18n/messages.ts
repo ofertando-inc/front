@@ -17,7 +17,35 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profile: 'Mi perfil',
 			logout: 'Cerrar sesión',
 			loading: 'Cargando...',
-			admin: 'Administración'
+			admin: 'Administración',
+			businessSpace: 'Mi empresa'
+		},
+		business: {
+			title: 'Espacio empresa',
+			pendingTitle: 'Afiliación en curso',
+			pendingBody:
+				'Tu cuenta de empresa aún no tiene un comercio afiliado. Un administrador debe aprobar la afiliación; vuelve más tarde.',
+			affiliatedTo: 'Comercio afiliado',
+			affiliatedSince: 'Afiliado desde el',
+			statActiveOffers: 'Ofertas activas (de {total})',
+			statViews: 'Vistas',
+			statClicks: 'Clics',
+			statScore: 'Puntuación',
+			statComments: 'Comentarios',
+			statReports: 'Reportes',
+			publishOfficial: 'Publicar oferta oficial',
+			requestLocation: 'Solicitar dirección',
+			requestLocationTitle: 'Solicitar nueva dirección',
+			requestLocationHint:
+				'La dirección se añadirá a tu comercio y quedará pendiente de validación por un administrador.',
+			requestLocationSubmit: 'Enviar solicitud',
+			requestLocationSubmitting: 'Enviando...',
+			requestLocationSuccess: 'Dirección enviada; queda en espera de validación.',
+			myOffers: 'Mis ofertas',
+			myOffersEmpty: 'Aún no has publicado ofertas.',
+			officialHeading: 'Publicar una oferta oficial',
+			officialIntro:
+				'La oferta se publicará a nombre de tu comercio afiliado y llevará la insignia «Oficial».'
 		},
 		admin: {
 			title: 'Panel de administración',
@@ -306,6 +334,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			externalUrlHintOnline: 'Obligatorio para ofertas en línea.',
 			merchantLabel: 'Comercio',
 			merchantPlaceholder: 'Nombre del comercio',
+			merchantLockedHint: 'Las ofertas oficiales se publican con tu comercio afiliado.',
 			merchantSearching: 'Buscando…',
 			merchantVerified: 'Verificado',
 			merchantCreateLabel: 'Añadir un comercio nuevo',
@@ -634,7 +663,35 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profile: 'My profile',
 			logout: 'Log out',
 			loading: 'Loading...',
-			admin: 'Administration'
+			admin: 'Administration',
+			businessSpace: 'My business'
+		},
+		business: {
+			title: 'Business space',
+			pendingTitle: 'Affiliation in progress',
+			pendingBody:
+				'Your business account has no affiliated merchant yet. An administrator must approve the affiliation; check back later.',
+			affiliatedTo: 'Affiliated merchant',
+			affiliatedSince: 'Affiliated since',
+			statActiveOffers: 'Active offers (of {total})',
+			statViews: 'Views',
+			statClicks: 'Clicks',
+			statScore: 'Score',
+			statComments: 'Comments',
+			statReports: 'Reports',
+			publishOfficial: 'Publish official offer',
+			requestLocation: 'Request address',
+			requestLocationTitle: 'Request a new address',
+			requestLocationHint:
+				'The address is added to your merchant and waits for an administrator to verify it.',
+			requestLocationSubmit: 'Send request',
+			requestLocationSubmitting: 'Sending...',
+			requestLocationSuccess: 'Address sent; it is awaiting verification.',
+			myOffers: 'My offers',
+			myOffersEmpty: 'You have not published offers yet.',
+			officialHeading: 'Publish an official offer',
+			officialIntro:
+				'The offer is published under your affiliated merchant and carries the "Official" badge.'
 		},
 		admin: {
 			title: 'Administration panel',
@@ -923,6 +980,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			externalUrlHintOnline: 'Required for online deals.',
 			merchantLabel: 'Merchant',
 			merchantPlaceholder: 'Merchant name',
+			merchantLockedHint: 'Official offers are published under your affiliated merchant.',
 			merchantSearching: 'Searching…',
 			merchantVerified: 'Verified',
 			merchantCreateLabel: 'Add a new merchant',
@@ -1247,7 +1305,35 @@ export const messages: Record<Locale, TranslationMessages> = {
 			profile: 'Mon profil',
 			logout: 'Se déconnecter',
 			loading: 'Chargement...',
-			admin: 'Administration'
+			admin: 'Administration',
+			businessSpace: 'Mon entreprise'
+		},
+		business: {
+			title: 'Espace entreprise',
+			pendingTitle: 'Affiliation en cours',
+			pendingBody:
+				'Votre compte entreprise n’a pas encore de commerce affilié. Un administrateur doit approuver l’affiliation ; revenez plus tard.',
+			affiliatedTo: 'Commerce affilié',
+			affiliatedSince: 'Affilié depuis le',
+			statActiveOffers: 'Offres actives (sur {total})',
+			statViews: 'Vues',
+			statClicks: 'Clics',
+			statScore: 'Score',
+			statComments: 'Commentaires',
+			statReports: 'Signalements',
+			publishOfficial: 'Publier une offre officielle',
+			requestLocation: 'Demander une adresse',
+			requestLocationTitle: 'Demander une nouvelle adresse',
+			requestLocationHint:
+				'L’adresse sera ajoutée à votre commerce et restera en attente de validation par un administrateur.',
+			requestLocationSubmit: 'Envoyer la demande',
+			requestLocationSubmitting: 'Envoi...',
+			requestLocationSuccess: 'Adresse envoyée ; elle est en attente de validation.',
+			myOffers: 'Mes offres',
+			myOffersEmpty: 'Vous n’avez pas encore publié d’offre.',
+			officialHeading: 'Publier une offre officielle',
+			officialIntro:
+				'L’offre sera publiée au nom de votre commerce affilié et portera le badge « Officielle ».'
 		},
 		admin: {
 			title: "Panneau d'administration",
@@ -1538,6 +1624,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			externalUrlHintOnline: 'Obligatoire pour les offres en ligne.',
 			merchantLabel: 'Commerce',
 			merchantPlaceholder: 'Nom du commerce',
+			merchantLockedHint: 'Les offres officielles sont publiées avec votre commerce affilié.',
 			merchantSearching: 'Recherche…',
 			merchantVerified: 'Vérifié',
 			merchantCreateLabel: 'Ajouter un nouveau commerce',
