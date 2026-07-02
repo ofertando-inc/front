@@ -232,6 +232,8 @@
 </script>
 
 <div class="space-y-4">
+	<p class="text-sm text-gray-500">{$translationStore.admin.accountsSubtitle}</p>
+
 	{#if errorMessage}
 		<p
 			role="alert"
@@ -258,6 +260,7 @@
 			bind:value={roleFilter}
 			onchange={() => void reload()}
 			class="w-auto rounded-full border-gray-300 bg-white text-sm"
+			placeholder=""
 		>
 			<option value="">{$translationStore.admin.filterAllRoles}</option>
 			{#each USER_ROLES as role (role)}
@@ -268,6 +271,7 @@
 			bind:value={typeFilter}
 			onchange={() => void reload()}
 			class="w-auto rounded-full border-gray-300 bg-white text-sm"
+			placeholder=""
 		>
 			<option value="">{$translationStore.admin.filterAllTypes}</option>
 			{#each ACCOUNT_TYPES as type (type)}
@@ -422,7 +426,7 @@
 				<label for="createRole" class="text-sm font-medium text-gray-700">
 					{$translationStore.admin.thRole}
 				</label>
-				<Select id="createRole" bind:value={createRole}>
+				<Select id="createRole" bind:value={createRole} placeholder="">
 					{#each USER_ROLES as role (role)}
 						<option value={role}>{role}</option>
 					{/each}
@@ -432,7 +436,7 @@
 				<label for="createType" class="text-sm font-medium text-gray-700">
 					{$translationStore.admin.thType}
 				</label>
-				<Select id="createType" bind:value={createType}>
+				<Select id="createType" bind:value={createType} placeholder="">
 					{#each ACCOUNT_TYPES as type (type)}
 						<option value={type}>
 							{type === 'BUSINESS'
@@ -501,7 +505,7 @@
 				<label for="editRole" class="text-sm font-medium text-gray-700">
 					{$translationStore.admin.thRole}
 				</label>
-				<Select id="editRole" bind:value={editRole}>
+				<Select id="editRole" bind:value={editRole} placeholder="">
 					{#each USER_ROLES as role (role)}
 						<option value={role}>{role}</option>
 					{/each}
@@ -511,7 +515,7 @@
 				<label for="editType" class="text-sm font-medium text-gray-700">
 					{$translationStore.admin.thType}
 				</label>
-				<Select id="editType" bind:value={editType}>
+				<Select id="editType" bind:value={editType} placeholder="">
 					{#each ACCOUNT_TYPES as type (type)}
 						<option value={type}>
 							{type === 'BUSINESS'

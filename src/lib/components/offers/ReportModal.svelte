@@ -82,6 +82,7 @@
 				bind:value={reason}
 				required
 				disabled={submitting}
+				placeholder=""
 				class="rounded-lg border-gray-300 bg-white text-gray-900 focus:border-primary-500 focus:ring-primary-500"
 			>
 				<option value="" disabled>{$translationStore.report.reasonPlaceholder}</option>

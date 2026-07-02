@@ -212,6 +212,63 @@ test.beforeAll(async () => {
 				return;
 			}
 
+			// The business dashboard lists the merchant's own offers (one online,
+			// one physical) so the channel/address filter has something to chew on.
+			if (isBusiness(request)) {
+				const baseBizOffer = {
+					offerType: 'discount',
+					startDate: '2026-05-01T00:00:00.000Z',
+					endDate: '2026-12-31T00:00:00.000Z',
+					status: 'ACTIVE',
+					score: 5,
+					reportCount: 0,
+					commentCount: 0,
+					createdAt: '2026-05-10T10:00:00.000Z',
+					updatedAt: '2026-05-10T10:00:00.000Z',
+					createdById: 'e2e-biz-id',
+					createdByUsername: 'e2ebiz',
+					userVote: null,
+					categories: [],
+					merchant: { id: 'merchant-owned', name: 'MarcaOficial', verified: true, blocked: false },
+					official: true,
+					viewCount: 60,
+					clickCount: 20
+				};
+				sendJson(response, 200, {
+					items: [
+						{
+							...baseBizOffer,
+							id: 'biz-online-offer',
+							title: 'Oferta online oficial',
+							description: 'Oferta en línea de la marca.',
+							isOnline: true,
+							externalUrl: 'https://example.com/online',
+							location: null
+						},
+						{
+							...baseBizOffer,
+							id: 'biz-local-offer',
+							title: 'Oferta local oficial',
+							description: 'Oferta física de la marca.',
+							isOnline: false,
+							externalUrl: null,
+							location: {
+								id: 'loc-biz',
+								address: 'Carrera 7 #45-10',
+								city: 'Bogotá',
+								region: 'Bogotá D.C.',
+								latitude: 4.62,
+								longitude: -74.07,
+								verified: true
+							}
+						}
+					],
+					nextCursor: null,
+					total: 2
+				});
+				return;
+			}
+
 			sendJson(response, 200, { items: [], nextCursor: null, total: 0 });
 			return;
 		}
@@ -1458,11 +1515,27 @@ test('business account sees its space with the affiliation banner and stats', as
 
 	// Affiliation banner + the six stat cards.
 	await expect(page.getByText('Comercio afiliado')).toBeVisible();
-	await expect(page.getByText('MarcaOficial')).toBeVisible();
+	await expect(page.getByText('MarcaOficial').first()).toBeVisible();
 	await expect(page.getByText('120')).toBeVisible();
 	await expect(page.getByText('Vistas')).toBeVisible();
 	await expect(page.getByText('Clics')).toBeVisible();
 	await expect(page.getByText('Ofertas activas (de 4)')).toBeVisible();
+
+	// Each stat exposes an explanatory tooltip.
+	await page.locator('#stat-info-views').hover();
+	await expect(page.getByText(/Tus propias visitas no cuentan/)).toBeVisible();
+
+	// Both own offers render, then the address filter narrows to the local one.
+	await expect(page.getByText('Oferta online oficial')).toBeVisible();
+	await expect(page.getByText('Oferta local oficial')).toBeVisible();
+	await page.getByRole('button', { name: /Carrera 7 #45-10/ }).click();
+	await expect(page.getByText('Oferta online oficial')).toBeHidden();
+	await expect(page.getByText('Oferta local oficial')).toBeVisible();
+
+	// The online chip flips the selection.
+	await page.getByRole('button', { name: 'En línea' }).click();
+	await expect(page.getByText('Oferta online oficial')).toBeVisible();
+	await expect(page.getByText('Oferta local oficial')).toBeHidden();
 });
 
 test('business account with a pending affiliation sees the waiting banner', async ({
