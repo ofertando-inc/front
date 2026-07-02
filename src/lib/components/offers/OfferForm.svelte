@@ -24,9 +24,13 @@
 		formData: SuperValidated<CreateOfferFormData>;
 		categories: Category[];
 		labels: OfferFormLabels;
+		// Business official offers: the affiliated merchant is imposed, so the
+		// combobox is replaced by a read-only field (the server drops the value
+		// from the payload anyway).
+		lockedMerchantName?: string;
 	}
 
-	let { formData, categories, labels }: Props = $props();
+	let { formData, categories, labels, lockedMerchantName }: Props = $props();
 
 	const DATE_FIELDS = ['startDate', 'endDate'] as const;
 
@@ -305,18 +309,32 @@
 						<Label for="merchantName" class="text-sm font-medium text-gray-700"
 							>{$translationStore.createDeal.merchantLabel} *</Label
 						>
-						<MerchantCombobox
-							id="merchantName"
-							name="merchantName"
-							linkName="merchantId"
-							bind:merchantName={$form.merchantName}
-							bind:merchantId={$form.merchantId}
-							placeholder={$translationStore.createDeal.merchantPlaceholder}
-							required
-							invalid={Boolean(resolveFieldError('merchantName'))}
-						/>
-						{#if resolveFieldError('merchantName')}
-							<p class="text-sm text-red-600">{resolveFieldError('merchantName')}</p>
+						{#if lockedMerchantName}
+							<Input
+								id="merchantName"
+								type="text"
+								value={lockedMerchantName}
+								disabled
+								class="rounded-lg border-gray-300 bg-gray-100 text-gray-700"
+							/>
+							<input type="hidden" name="merchantName" value={lockedMerchantName} />
+							<p class="text-sm text-gray-500">
+								{$translationStore.createDeal.merchantLockedHint}
+							</p>
+						{:else}
+							<MerchantCombobox
+								id="merchantName"
+								name="merchantName"
+								linkName="merchantId"
+								bind:merchantName={$form.merchantName}
+								bind:merchantId={$form.merchantId}
+								placeholder={$translationStore.createDeal.merchantPlaceholder}
+								required
+								invalid={Boolean(resolveFieldError('merchantName'))}
+							/>
+							{#if resolveFieldError('merchantName')}
+								<p class="text-sm text-red-600">{resolveFieldError('merchantName')}</p>
+							{/if}
 						{/if}
 					</div>
 
