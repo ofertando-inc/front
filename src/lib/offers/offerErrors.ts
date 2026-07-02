@@ -4,13 +4,7 @@ import { getFieldErrorMap } from '$lib/errors/getErrorMessage';
 import type { TranslationMessages } from '$lib/i18n/types';
 
 export type OfferContext =
-	| 'browse'
-	| 'create'
-	| 'update'
-	| 'delete'
-	| 'vote'
-	| 'report'
-	| 'comment';
+	'browse' | 'create' | 'update' | 'delete' | 'vote' | 'report' | 'comment';
 
 export interface ResolvedOfferError {
 	bannerMessage: string | null;
