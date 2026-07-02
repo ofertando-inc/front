@@ -67,7 +67,7 @@
 		<!-- Right: locale + actions -->
 		<div class="flex items-center gap-2 md:order-3">
 			<div class="hidden min-w-28 sm:block">
-				<Select onchange={handleLocaleChange} value={$localeStore} size="sm">
+				<Select onchange={handleLocaleChange} value={$localeStore} size="sm" placeholder="">
 					{#each SUPPORTED_LOCALES as locale (locale)}
 						<option value={locale}>
 							{locale === 'es'
