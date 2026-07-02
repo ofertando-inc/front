@@ -1,12 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { resolve } from '$app/paths';
-	import { Button, Label, Modal, Spinner } from 'flowbite-svelte';
+	import { Button, Label, Modal, Spinner, Tooltip } from 'flowbite-svelte';
 	import {
+		ArrowUpRightFromSquareOutline,
 		BadgeCheckSolid,
 		CheckCircleOutline,
+		EyeOutline,
+		FlagOutline,
+		GlobeOutline,
+		InfoCircleOutline,
 		MapPinOutline,
-		PlusOutline
+		MessagesOutline,
+		PlusOutline,
+		TagOutline,
+		ThumbsUpOutline
 	} from 'flowbite-svelte-icons';
 	import { getBusinessMe, getBusinessStats, requestLocation } from '$lib/api/business';
 	import { getMyOffers } from '$lib/api/offers';
@@ -34,6 +42,92 @@
 		new Intl.DateTimeFormat($localeStore, { day: 'numeric', month: 'short', year: 'numeric' })
 	);
 
+	// The six metrics as data so each card carries its icon and an explanatory
+	// tooltip (what exactly is counted — e.g. own visits are excluded).
+	let statCards = $derived(
+		stats
+			? [
+					{
+						key: 'offers',
+						icon: TagOutline,
+						value: stats.offers.active,
+						label: $translationStore.business.statActiveOffers.replace(
+							'{total}',
+							String(stats.offers.total)
+						),
+						hint: $translationStore.business.statActiveOffersHint,
+						accent: true
+					},
+					{
+						key: 'views',
+						icon: EyeOutline,
+						value: stats.views,
+						label: $translationStore.business.statViews,
+						hint: $translationStore.business.statViewsHint,
+						accent: false
+					},
+					{
+						key: 'clicks',
+						icon: ArrowUpRightFromSquareOutline,
+						value: stats.clicks,
+						label: $translationStore.business.statClicks,
+						hint: $translationStore.business.statClicksHint,
+						accent: false
+					},
+					{
+						key: 'score',
+						icon: ThumbsUpOutline,
+						value: stats.score,
+						label: $translationStore.business.statScore,
+						hint: $translationStore.business.statScoreHint,
+						accent: false
+					},
+					{
+						key: 'comments',
+						icon: MessagesOutline,
+						value: stats.comments,
+						label: $translationStore.business.statComments,
+						hint: $translationStore.business.statCommentsHint,
+						accent: false
+					},
+					{
+						key: 'reports',
+						icon: FlagOutline,
+						value: stats.reports,
+						label: $translationStore.business.statReports,
+						hint: $translationStore.business.statReportsHint,
+						accent: false
+					}
+				]
+			: []
+	);
+
+	// Filter the loaded offers by channel/address ('all' | 'online' | location id).
+	let offerFilter = $state('all');
+
+	let offerFilters = $derived.by(() => {
+		const filters = [{ value: 'all', label: $translationStore.business.filterAllOffers }];
+		if (myOffers.some((offer) => offer.isOnline)) {
+			filters.push({ value: 'online', label: $translationStore.deals.typeOnline });
+		}
+		const seen: string[] = [];
+		for (const offer of myOffers) {
+			if (offer.location && !seen.includes(offer.location.id)) {
+				seen.push(offer.location.id);
+				filters.push({ value: offer.location.id, label: offer.location.address });
+			}
+		}
+		return filters;
+	});
+
+	let visibleOffers = $derived(
+		myOffers.filter((offer) => {
+			if (offerFilter === 'all') return true;
+			if (offerFilter === 'online') return offer.isOnline;
+			return offer.location?.id === offerFilter;
+		})
+	);
+
 	onMount(() => void load());
 
 	async function load() {
@@ -55,7 +149,7 @@
 		try {
 			const [fetchedStats, offers] = await Promise.all([
 				getBusinessStats(),
-				getMyOffers({ limit: 6, includeExpired: true })
+				getMyOffers({ limit: 24, includeExpired: true })
 			]);
 			stats = fetchedStats;
 			myOffers = offers.items;
@@ -184,38 +278,41 @@
 
 		<!-- Stats -->
 		{#if stats}
-			<section class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-				<div class="rounded-xl bg-orange-50 px-3 py-3 text-center ring-1 ring-orange-100">
-					<span class="block text-2xl font-bold text-primary-600 tabular-nums"
-						>{stats.offers.active}</span
+			<section class="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+				{#each statCards as card (card.key)}
+					<div
+						class="relative rounded-2xl border p-4 {card.accent
+							? 'border-orange-100 bg-orange-50'
+							: 'border-gray-100 bg-white shadow-sm'}"
 					>
-					<span class="text-sm text-gray-500">
-						{$translationStore.business.statActiveOffers.replace(
-							'{total}',
-							String(stats.offers.total)
-						)}
-					</span>
-				</div>
-				<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-					<span class="block text-2xl font-bold text-gray-900 tabular-nums">{stats.views}</span>
-					<span class="text-sm text-gray-500">{$translationStore.business.statViews}</span>
-				</div>
-				<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-					<span class="block text-2xl font-bold text-gray-900 tabular-nums">{stats.clicks}</span>
-					<span class="text-sm text-gray-500">{$translationStore.business.statClicks}</span>
-				</div>
-				<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-					<span class="block text-2xl font-bold text-gray-900 tabular-nums">{stats.score}</span>
-					<span class="text-sm text-gray-500">{$translationStore.business.statScore}</span>
-				</div>
-				<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-					<span class="block text-2xl font-bold text-gray-900 tabular-nums">{stats.comments}</span>
-					<span class="text-sm text-gray-500">{$translationStore.business.statComments}</span>
-				</div>
-				<div class="rounded-xl bg-gray-50 px-3 py-3 text-center">
-					<span class="block text-2xl font-bold text-gray-900 tabular-nums">{stats.reports}</span>
-					<span class="text-sm text-gray-500">{$translationStore.business.statReports}</span>
-				</div>
+						<button
+							type="button"
+							id="stat-info-{card.key}"
+							class="absolute top-3 right-3 text-gray-300 transition-colors hover:text-gray-500"
+							aria-label={card.label}
+						>
+							<InfoCircleOutline class="h-4 w-4" />
+						</button>
+						<Tooltip triggeredBy="#stat-info-{card.key}" class="max-w-56 text-center">
+							{card.hint}
+						</Tooltip>
+						<span
+							class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg {card.accent
+								? 'bg-primary-500 text-white'
+								: 'bg-gray-100 text-gray-500'}"
+						>
+							<card.icon class="h-4 w-4" />
+						</span>
+						<span
+							class="block text-2xl font-bold tabular-nums {card.accent
+								? 'text-primary-600'
+								: 'text-gray-900'}"
+						>
+							{card.value}
+						</span>
+						<span class="text-sm text-gray-500">{card.label}</span>
+					</div>
+				{/each}
 			</section>
 		{/if}
 
@@ -237,16 +334,49 @@
 
 		<!-- My offers -->
 		<section class="space-y-3">
-			<h2 class="font-bold text-gray-900">{$translationStore.business.myOffers}</h2>
+			<div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+				<h2 class="font-bold text-gray-900">{$translationStore.business.myOffers}</h2>
+				<p class="text-sm text-gray-500">{$translationStore.business.myOffersSubtitle}</p>
+			</div>
+
+			{#if offerFilters.length > 1}
+				<div class="flex flex-wrap gap-2">
+					{#each offerFilters as filter (filter.value)}
+						<button
+							type="button"
+							onclick={() => (offerFilter = filter.value)}
+							aria-pressed={offerFilter === filter.value}
+							class="inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors {offerFilter ===
+							filter.value
+								? 'border-primary-500 bg-primary-500 text-white'
+								: 'border-gray-300 bg-white text-gray-600 hover:border-primary-300'}"
+						>
+							{#if filter.value === 'online'}
+								<GlobeOutline class="h-3.5 w-3.5" />
+							{:else if filter.value !== 'all'}
+								<MapPinOutline class="h-3.5 w-3.5" />
+							{/if}
+							{filter.label}
+						</button>
+					{/each}
+				</div>
+			{/if}
+
 			{#if myOffers.length === 0}
 				<p
 					class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-8 text-center text-gray-500"
 				>
 					{$translationStore.business.myOffersEmpty}
 				</p>
+			{:else if visibleOffers.length === 0}
+				<p
+					class="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-8 text-center text-gray-500"
+				>
+					{$translationStore.business.myOffersFilterEmpty}
+				</p>
 			{:else}
 				<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-					{#each myOffers as offer (offer.id)}
+					{#each visibleOffers as offer (offer.id)}
 						<DealCard {offer} />
 					{/each}
 				</div>
