@@ -64,6 +64,26 @@
 	[role='button']:not(:disabled) {
 		cursor: pointer;
 	}
+
+	/* WCAG 2.3.3 / RGAA 13.8: honor the OS-level "reduce motion" preference by
+	   collapsing every animation and transition to (near) zero. */
+	@media (prefers-reduced-motion: reduce) {
+		*,
+		*::before,
+		*::after {
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+			transition-duration: 0.01ms !important;
+			scroll-behavior: auto !important;
+		}
+	}
+
+	/* RGAA 10.7: a keyboard user must always see where the focus is, including
+	   on custom (non-Flowbite) interactive elements. */
+	:focus-visible {
+		outline: 2px solid var(--color-primary-600);
+		outline-offset: 2px;
+	}
 }
 
 .page-shell {

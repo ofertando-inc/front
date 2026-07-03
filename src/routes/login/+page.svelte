@@ -77,13 +77,15 @@
 					name: 'email',
 					label: $translationStore.auth.email,
 					type: 'email',
-					placeholder: 'mail@example.com'
+					placeholder: 'mail@example.com',
+					autocomplete: 'email'
 				},
 				{
 					name: 'password',
 					label: $translationStore.auth.password,
 					type: 'password',
-					placeholder: '••••••••'
+					placeholder: '••••••••',
+					autocomplete: 'current-password'
 				}
 			]}
 			{values}
@@ -106,7 +108,7 @@
 				<span>{$translationStore.auth.noAccount}</span>
 				<a
 					href={resolveRoute('/register')}
-					class="ml-1 font-medium text-primary-600 hover:text-primary-500"
+					class="ml-1 font-medium text-primary-700 underline hover:text-primary-600"
 				>
 					{$translationStore.auth.registerHere}
 				</a>

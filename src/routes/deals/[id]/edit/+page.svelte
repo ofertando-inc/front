@@ -17,6 +17,7 @@
 
 <svelte:head>
 	<title>{data.offer.title} — {$translationStore.editDeal.pageTitle}</title>
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <OfferForm formData={data.form} categories={data.categories} {labels} />

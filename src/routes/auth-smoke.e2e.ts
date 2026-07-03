@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 import { createServer, type Server } from 'node:http';
 
@@ -2093,4 +2094,229 @@ test('never persists an auth token in localStorage (cookie-only session)', async
 	const localStorageKeys = await page.evaluate(() => Object.keys(localStorage));
 	expect(localStorageKeys).not.toContain('ofertando.accessToken');
 	expect(localStorageKeys.filter((key) => key.toLowerCase().includes('token'))).toEqual([]);
+});
+
+// --- Accessibility (axe-core) -------------------------------------------
+// RGAA/WCAG 2.1 AA automated pass: every key screen must be free of
+// critical and serious axe violations. This complements (not replaces) the
+// manual audit — axe only covers the machine-checkable criteria.
+
+const A11Y_SCREENS: Array<{
+	name: string;
+	path: string;
+	session?: string;
+	ready: (page: import('@playwright/test').Page) => Promise<void>;
+}> = [
+	{
+		name: 'home',
+		path: '/',
+		ready: async (page) => {
+			await page.getByRole('heading', { level: 1 }).first().waitFor();
+		}
+	},
+	{
+		name: 'deals list',
+		path: '/deals',
+		ready: async (page) => {
+			await page.getByRole('heading', { level: 1 }).first().waitFor();
+		}
+	},
+	{
+		name: 'offer detail',
+		path: '/deals/e2e-official-offer',
+		ready: async (page) => {
+			await page.getByRole('heading', { name: 'Oferta oficial de la marca' }).waitFor();
+		}
+	},
+	{
+		name: 'login',
+		path: '/login',
+		ready: async (page) => {
+			await page.getByRole('heading', { name: 'Inicia sesión' }).first().waitFor();
+		}
+	},
+	{
+		name: 'register',
+		path: '/register',
+		ready: async (page) => {
+			await page.getByRole('heading', { level: 1 }).first().waitFor();
+		}
+	},
+	{
+		name: 'create deal',
+		path: '/create-deal',
+		session: 'authenticated',
+		ready: async (page) => {
+			await page.getByText('Tecnología', { exact: true }).waitFor();
+		}
+	},
+	{
+		name: 'profile',
+		path: '/profile',
+		session: 'authenticated',
+		ready: async (page) => {
+			await page.getByRole('heading', { level: 1 }).first().waitFor();
+		}
+	},
+	{
+		name: 'business space',
+		path: '/business',
+		session: 'business',
+		ready: async (page) => {
+			await page.getByText('Comercio afiliado').waitFor();
+		}
+	},
+	{
+		name: 'business new offer',
+		path: '/business/new-offer',
+		session: 'business',
+		ready: async (page) => {
+			await page.getByText('Tecnología', { exact: true }).waitFor();
+		}
+	},
+	{
+		name: 'admin dashboard',
+		path: '/admin',
+		session: 'root',
+		ready: async (page) => {
+			await page.getByRole('heading', { level: 1 }).first().waitFor();
+		}
+	},
+	{
+		name: 'admin merchants',
+		path: '/admin/merchants',
+		session: 'admin',
+		ready: async (page) => {
+			await page.getByRole('row', { name: /Comercio pendiente/ }).waitFor();
+		}
+	},
+	{
+		name: 'root accounts',
+		path: '/admin/accounts',
+		session: 'root',
+		ready: async (page) => {
+			await page.getByRole('row', { name: /clienteuno/ }).waitFor();
+		}
+	},
+	{
+		name: 'root claims',
+		path: '/admin/claims',
+		session: 'root',
+		ready: async (page) => {
+			await page.getByRole('row', { name: /empresauno/ }).waitFor();
+		}
+	}
+];
+
+for (const screen of A11Y_SCREENS) {
+	test(`a11y: ${screen.name} has no serious axe violations`, async ({ page, context }) => {
+		if (screen.session) {
+			await context.addCookies([
+				{ name: 'e2e_session', value: screen.session, url: 'http://127.0.0.1:4173' }
+			]);
+		}
+
+		await page.goto(screen.path);
+		await screen.ready(page);
+
+		const results = await new AxeBuilder({ page }).analyze();
+		const serious = results.violations.filter(
+			(violation) => violation.impact === 'critical' || violation.impact === 'serious'
+		);
+
+		expect(
+			serious,
+			serious
+				.map(
+					(violation) =>
+						`${violation.id} (${violation.impact}): ${violation.help}\n` +
+						violation.nodes.map((node) => `  ${node.target.join(' ')}`).join('\n')
+				)
+				.join('\n\n')
+		).toEqual([]);
+	});
+}
+
+test('keyboard: the skip link is first in tab order and moves focus to main', async ({ page }) => {
+	await page.goto('/');
+
+	// First Tab lands on the (visually hidden until focused) skip link.
+	await page.keyboard.press('Tab');
+	const skipLink = page.getByRole('link', { name: 'Saltar al contenido principal' });
+	await expect(skipLink).toBeFocused();
+
+	// Activating it moves the focus to the main landmark.
+	await page.keyboard.press('Enter');
+	await expect(page.locator('#main-content')).toBeFocused();
+});
+
+test('keyboard: the user menu opens from the avatar button', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/');
+
+	// The avatar trigger is a real, labelled button — focus it and open the menu.
+	await page.getByRole('button', { name: 'Menú de usuario' }).focus();
+	await page.keyboard.press('Enter');
+	await expect(page.getByRole('link', { name: 'Mi perfil' })).toBeVisible();
+});
+
+test('theme: follows the OS preference and toggles from the header moon button', async ({
+	page
+}) => {
+	// Dark OS preference is picked up without any stored choice.
+	await page.emulateMedia({ colorScheme: 'dark' });
+	await page.goto('/');
+	await expect(page.locator('html')).toHaveClass(/dark/);
+
+	// The toggle switches to light and persists the explicit choice.
+	await page.getByRole('button', { name: 'Activar el modo claro' }).click();
+	await expect(page.locator('html')).not.toHaveClass(/dark/);
+	expect(await page.evaluate(() => localStorage.getItem('ofertando.theme'))).toBe('light');
+
+	// The stored choice wins over the OS preference after a reload.
+	await page.reload();
+	await expect(page.locator('html')).not.toHaveClass(/dark/);
+
+	// And back to dark from the moon button.
+	await page.getByRole('button', { name: 'Activar el modo oscuro' }).click();
+	await expect(page.locator('html')).toHaveClass(/dark/);
+	expect(await page.evaluate(() => localStorage.getItem('ofertando.theme'))).toBe('dark');
+});
+
+test('a11y: dark mode home has no serious axe violations', async ({ page }) => {
+	await page.emulateMedia({ colorScheme: 'dark' });
+	await page.goto('/');
+	await expect(page.locator('html')).toHaveClass(/dark/);
+	await page.getByRole('heading', { level: 1 }).first().waitFor();
+
+	const results = await new AxeBuilder({ page }).analyze();
+	const serious = results.violations.filter(
+		(violation) => violation.impact === 'critical' || violation.impact === 'serious'
+	);
+	expect(
+		serious,
+		serious
+			.map(
+				(violation) =>
+					`${violation.id} (${violation.impact}): ${violation.help}\n` +
+					violation.nodes.map((node) => `  ${node.target.join(' ')}`).join('\n')
+			)
+			.join('\n\n')
+	).toEqual([]);
+});
+
+test('i18n: switching the language lazy-loads the locale and updates the UI', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.getByRole('link', { name: 'Inicio', exact: true })).toBeVisible();
+
+	// French is code-split: picking it fetches the chunk then swaps the texts.
+	await page.getByLabel('Idioma').selectOption('fr');
+	await expect(page.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
+
+	// The choice persists across a reload (and the chunk comes from cache).
+	await page.reload();
+	await expect(page.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
 });

@@ -166,7 +166,7 @@
 				onclick={() => setFilter(value as ClaimFilter)}
 				aria-pressed={statusFilter === value}
 				class="rounded-full px-3 py-1 text-sm font-medium transition-colors {statusFilter === value
-					? 'bg-primary-500 text-white shadow-sm'
+					? 'bg-primary-700 text-white shadow-sm'
 					: 'text-gray-600 hover:text-primary-600'}"
 			>
 				{label}
@@ -197,7 +197,7 @@
 						<tr class="transition-colors hover:bg-gray-50">
 							<td class="px-4 py-3">
 								<span class="font-medium text-gray-900">{claim.user.username}</span>
-								<span class="block text-xs text-gray-400">{claim.user.email}</span>
+								<span class="block text-xs text-gray-500">{claim.user.email}</span>
 							</td>
 							<td class="px-4 py-3 text-gray-700">{claim.merchant.name}</td>
 							<td class="px-4 py-3">

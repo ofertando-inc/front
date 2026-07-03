@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError } from '$lib/api/client';
-import { messages } from '$lib/i18n/messages';
+import { es } from '$lib/i18n/locales/es';
 import { resolveOfferError } from '$lib/offers/offerErrors';
 
-const t = messages.es;
+const t = es;
 
 describe('resolveOfferError', () => {
 	it('maps offer.not_found to a banner message', () => {

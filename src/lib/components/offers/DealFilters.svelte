@@ -110,7 +110,7 @@
 		disabled={locating}
 		aria-pressed={Boolean(selectedNear)}
 		class="inline-flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors disabled:opacity-60 {selectedNear
-			? 'border-primary-500 bg-primary-500 text-white shadow-sm'
+			? 'border-primary-700 bg-primary-700 text-white shadow-sm'
 			: 'border-orange-100 bg-white text-gray-600 hover:text-primary-600'}"
 	>
 		<MapPinAltOutline class="h-4 w-4" />
@@ -125,7 +125,7 @@
 				aria-pressed={selectedSort === opt.value}
 				class="rounded-full px-4 py-1.5 text-sm font-semibold transition-colors {selectedSort ===
 				opt.value
-					? 'bg-primary-500 text-white shadow-sm'
+					? 'bg-primary-700 text-white shadow-sm'
 					: 'text-gray-600 hover:text-primary-600'}"
 			>
 				{opt.label}
@@ -152,7 +152,7 @@
 		onclick={() => (hideExpired = !hideExpired)}
 		aria-pressed={hideExpired}
 		class="rounded-full border px-4 py-1.5 text-sm font-semibold transition-colors {hideExpired
-			? 'border-primary-500 bg-primary-500 text-white shadow-sm'
+			? 'border-primary-700 bg-primary-700 text-white shadow-sm'
 			: 'border-orange-100 bg-white text-gray-600 hover:text-primary-600'}"
 	>
 		{$translationStore.deals.hideExpired}

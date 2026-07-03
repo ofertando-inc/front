@@ -47,7 +47,7 @@
 			year={currentYear}
 			copyrightMessage={$translationStore.footer.rights}
 			class="text-sm text-gray-500"
-			classes={{ link: 'text-gray-600 hover:text-primary-600' }}
+			classes={{ link: 'text-gray-600 underline hover:text-primary-700' }}
 		/>
 	</div>
 </Footer>

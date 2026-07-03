@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { messages } from '$lib/i18n/messages';
+import { es } from '$lib/i18n/locales/es';
 import { getErrorMessage, getFieldErrorMap } from '$lib/errors/getErrorMessage';
 
-const t = messages.es;
+const t = es;
 
 describe('getErrorMessage', () => {
 	it('returns the localized message for a known key', () => {

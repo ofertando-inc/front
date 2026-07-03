@@ -213,11 +213,12 @@
 
 <svelte:head>
 	<title>{$translationStore.business.title} — {$translationStore.common.appName}</title>
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-1 py-6 sm:py-10">
 	<header class="space-y-1">
-		<p class="text-sm font-semibold tracking-[0.2em] text-primary-600 uppercase">
+		<p class="text-sm font-semibold tracking-[0.2em] text-primary-700 uppercase">
 			{$translationStore.common.appName}
 		</p>
 		<h1 class="text-2xl font-extrabold text-gray-900 sm:text-3xl">
@@ -270,6 +271,7 @@
 
 		{#if locationSuccess}
 			<p
+				role="status"
 				class="rounded-2xl border border-savings-100 bg-savings-50 px-4 py-3 text-sm text-savings-700"
 			>
 				{$translationStore.business.requestLocationSuccess}
@@ -298,7 +300,7 @@
 						</Tooltip>
 						<span
 							class="mb-2 flex h-8 w-8 items-center justify-center rounded-lg {card.accent
-								? 'bg-primary-500 text-white'
+								? 'bg-primary-700 text-white'
 								: 'bg-gray-100 text-gray-500'}"
 						>
 							<card.icon class="h-4 w-4" />
@@ -348,7 +350,7 @@
 							aria-pressed={offerFilter === filter.value}
 							class="inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors {offerFilter ===
 							filter.value
-								? 'border-primary-500 bg-primary-500 text-white'
+								? 'border-primary-700 bg-primary-700 text-white'
 								: 'border-gray-300 bg-white text-gray-600 hover:border-primary-300'}"
 						>
 							{#if filter.value === 'online'}

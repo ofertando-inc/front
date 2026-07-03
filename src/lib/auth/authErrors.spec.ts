@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { ApiError } from '$lib/api/client';
-import { messages } from '$lib/i18n/messages';
+import { es } from '$lib/i18n/locales/es';
 import { formatRateLimitedMessage, resolveAuthError } from '$lib/auth/authErrors';
 
-const t = messages.es;
+const t = es;
 
 describe('resolveAuthError', () => {
 	it('maps invalid credentials to a banner message', () => {

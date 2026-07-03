@@ -38,7 +38,7 @@
 					{$translationStore.admin.statPendingComments}
 				</p>
 				<p
-					class="mt-1 text-sm font-semibold text-primary-600 transition-colors group-hover:text-primary-700"
+					class="mt-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-800"
 				>
 					{$translationStore.admin.viewQueue} →
 				</p>
@@ -64,7 +64,7 @@
 					{$translationStore.admin.statPendingReports}
 				</p>
 				<p
-					class="mt-1 text-sm font-semibold text-primary-600 transition-colors group-hover:text-primary-700"
+					class="mt-1 text-sm font-semibold text-primary-700 transition-colors group-hover:text-primary-800"
 				>
 					{$translationStore.admin.viewQueue} →
 				</p>

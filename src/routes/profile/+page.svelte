@@ -341,6 +341,7 @@
 
 <svelte:head>
 	<title>{$translationStore.auth.profileTitle}</title>
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 {#if loading}
@@ -374,6 +375,7 @@
 				<Avatar
 					size="xl"
 					cornerStyle="circular"
+					role="presentation"
 					class="shrink-0 bg-primary-100 text-primary-600 ring-4 ring-primary-50"
 				/>
 
@@ -447,7 +449,11 @@
 				tabStyle="underline"
 				divider={false}
 				class="overflow-x-auto"
-				classes={{ content: 'pt-6' }}
+				classes={{
+					content: 'pt-6',
+					// AA contrast: the default underline-active tab is primary-600 (3.66:1).
+					active: 'p-4 text-primary-700 border-b-2 border-primary-700 bg-transparent'
+				}}
 			>
 				<TabItem key="offers" open>
 					{#snippet titleSlot()}
@@ -665,7 +671,7 @@
 										<p class="line-clamp-1 text-sm font-semibold text-gray-900">
 											{vote.offer.title}
 										</p>
-										<p class="text-xs text-gray-400">{formatActivityDate(vote.createdAt)}</p>
+										<p class="text-xs text-gray-500">{formatActivityDate(vote.createdAt)}</p>
 									</div>
 									<span class="shrink-0 text-sm font-bold text-gray-700 tabular-nums">
 										{vote.offer.score}°

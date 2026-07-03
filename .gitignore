@@ -27,3 +27,5 @@ test-results
 /.vscode
 .codex
 /ux_model/
+.lighthouseci
+
