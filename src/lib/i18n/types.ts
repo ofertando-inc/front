@@ -75,6 +75,11 @@ export interface TranslationMessages {
 		loading: string;
 		admin: string;
 		businessSpace: string;
+		skipToContent: string;
+		languageLabel: string;
+		userMenu: string;
+		darkMode: string;
+		lightMode: string;
 	};
 	business: {
 		title: string;
@@ -345,6 +350,7 @@ export interface TranslationMessages {
 		periodYear: string;
 		listingTitle: string;
 		resultsCount: string;
+		resultsHeading: string;
 		searchResultsFor: string;
 		clearSearch: string;
 		loadMore: string;
