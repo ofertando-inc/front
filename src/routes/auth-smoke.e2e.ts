@@ -2307,3 +2307,16 @@ test('a11y: dark mode home has no serious axe violations', async ({ page }) => {
 			.join('\n\n')
 	).toEqual([]);
 });
+
+test('i18n: switching the language lazy-loads the locale and updates the UI', async ({ page }) => {
+	await page.goto('/');
+	await expect(page.getByRole('link', { name: 'Inicio', exact: true })).toBeVisible();
+
+	// French is code-split: picking it fetches the chunk then swaps the texts.
+	await page.getByLabel('Idioma').selectOption('fr');
+	await expect(page.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
+
+	// The choice persists across a reload (and the chunk comes from cache).
+	await page.reload();
+	await expect(page.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
+});
