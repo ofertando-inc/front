@@ -9,6 +9,10 @@
 	import { authStore } from '$lib/stores/auth';
 	import { themeStore } from '$lib/stores/theme';
 	import favicon from '$lib/assets/favicon.svg';
+	// Preloading the two latin variable fonts removes a request-chain round
+	// trip before the hero text can render with its final face (mobile LCP).
+	import bricolageWoff2 from '@fontsource-variable/bricolage-grotesque/files/bricolage-grotesque-latin-wght-normal.woff2?url';
+	import hankenWoff2 from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
 	import { localeStore, translationStore } from '$lib/i18n';
 
 	let { children } = $props();
@@ -31,7 +35,11 @@
 	});
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+	<link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href={bricolageWoff2} />
+	<link rel="preload" as="font" type="font/woff2" crossorigin="anonymous" href={hankenWoff2} />
+</svelte:head>
 
 <div class="flex min-h-screen flex-col">
 	<!-- Skip link: first focusable element, only visible while focused. -->
