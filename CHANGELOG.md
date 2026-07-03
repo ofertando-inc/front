@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.3.0] - 2026-07-04
 
+### Performance
+
+- Mobile Lighthouse pass: the three locales were all bundled on the critical path — now only the default (es) ships in the initial bundle and en/fr are **code-split**, fetched on demand when the user switches language (~45 KB kept off the first load; the switch flow is covered end to end). The two latin variable fonts (display + body) are **preloaded** so the hero text reaches its final face without an extra request-chain round trip (mobile LCP). **`precompress: true`** on the node adapter: the build now emits `.br`/`.gz` assets that the server serves itself — without a compressing reverse proxy the main chunk previously left the server uncompressed (582 KB raw vs 151 KB gzipped), which alone dwarfed every other mobile cost.
+
 ### Added
 
 - Dark mode: the app follows the OS `prefers-color-scheme` by default and a moon/sun toggle in the header (localized `aria-label`, `aria-pressed`) lets the user pick explicitly — the choice is persisted (`ofertando.theme`) and wins over the OS until cleared; an inline script applies the theme before first paint (no flash). Implementation: a `themeStore` toggling the `.dark` class on `<html>` plus a curated warm-dark stylesheet (`dark.css`) that remaps the recurring light utilities (surfaces, text, borders, chip tints) and the home hero gradients — outranking both the light classes and Flowbite's own `dark:` styles so the whole UI keeps one coherent palette. Every dark text/surface pair holds WCAG AA (Flowbite's dark primary buttons are pinned back to `primary-700`, 5.4:1); `color-scheme: dark` for native controls; axe scans the dark home in e2e and the toggle/persistence/OS-preference flow is covered end to end.
