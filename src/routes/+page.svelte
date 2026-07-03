@@ -131,7 +131,7 @@
 				</div>
 
 				<div
-					class="hero-float-slow absolute top-3 right-2 -rotate-12 rounded-2xl bg-savings-500 px-4 py-3 text-white shadow-lg shadow-savings-600/30"
+					class="hero-float-slow absolute top-3 right-2 -rotate-12 rounded-2xl bg-savings-600 px-4 py-3 text-white shadow-lg shadow-savings-600/30"
 				>
 					<span class="block font-display text-xl font-extrabold tracking-tight">2x1</span>
 				</div>
@@ -167,7 +167,7 @@
 			</div>
 			<a
 				href={resolve('/deals')}
-				class="group inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary-600 hover:text-primary-700"
+				class="group inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary-700 hover:text-primary-800"
 			>
 				{$translationStore.home.viewAll}
 				<ArrowRightOutline class="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
@@ -220,11 +220,22 @@
 			radial-gradient(95% 95% at 55% 130%, rgba(226, 62, 44, 0.1) 0%, transparent 60%), #fffaf3;
 	}
 
+	:global(.dark) .hero {
+		background:
+			radial-gradient(120% 120% at 88% 0%, rgba(251, 146, 60, 0.12) 0%, transparent 55%),
+			radial-gradient(110% 110% at 0% 100%, rgba(16, 185, 129, 0.08) 0%, transparent 52%),
+			radial-gradient(95% 95% at 55% 130%, rgba(226, 62, 44, 0.08) 0%, transparent 60%), #221d19;
+	}
+
 	.hero-grain {
 		background-image: radial-gradient(rgba(28, 25, 23, 0.05) 1px, transparent 1px);
 		background-size: 22px 22px;
 		opacity: 0.5;
 		mask-image: radial-gradient(120% 120% at 50% 0%, #000 30%, transparent 75%);
+	}
+
+	:global(.dark) .hero-grain {
+		background-image: radial-gradient(rgba(255, 251, 245, 0.05) 1px, transparent 1px);
 	}
 
 	.hero-float {

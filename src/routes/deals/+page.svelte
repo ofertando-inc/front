@@ -153,7 +153,7 @@
 
 	{#if !initialLoading && !bannerError}
 		<div class="flex flex-wrap items-center gap-3 text-sm text-gray-500">
-			<span class="tabular-nums">
+			<span aria-live="polite" class="tabular-nums">
 				{$translationStore.deals.resultsCount.replace('{count}', String(total))}
 			</span>
 			{#if searchQuery}
@@ -184,6 +184,8 @@
 		</p>
 	{/if}
 
+	<!-- Keeps the heading hierarchy h1 → h2 → h3 (the cards carry h3 titles). -->
+	<h2 class="sr-only">{$translationStore.deals.resultsHeading}</h2>
 	<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 		{#if initialLoading}
 			{#each [0, 1, 2, 3, 4, 5] as i (i)}

@@ -348,7 +348,11 @@
 						class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-gray-100 pt-6"
 					>
 						<div class="flex items-center gap-3">
-							<Avatar cornerStyle="circular" class="bg-primary-100 text-primary-600">
+							<Avatar
+								cornerStyle="circular"
+								role="presentation"
+								class="bg-primary-100 text-primary-600"
+							>
 								{offer.createdByUsername.slice(0, 1).toUpperCase()}
 							</Avatar>
 							<div>

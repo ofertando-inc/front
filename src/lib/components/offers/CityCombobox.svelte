@@ -103,7 +103,7 @@
 							: 'hover:bg-gray-50'}"
 					>
 						<span class="font-medium text-gray-900">{city.name}</span>
-						<span class="shrink-0 text-xs text-gray-400">{city.department}</span>
+						<span class="shrink-0 text-xs text-gray-500">{city.department}</span>
 					</button>
 				</li>
 			{/each}

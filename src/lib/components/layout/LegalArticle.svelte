@@ -17,7 +17,7 @@
 	<h1 class="font-display text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
 		{content.title}
 	</h1>
-	<p class="mt-2 text-sm text-gray-400">{$translationStore.legal.lastUpdated}</p>
+	<p class="mt-2 text-sm text-gray-500">{$translationStore.legal.lastUpdated}</p>
 	<p class="mt-6 text-lg leading-relaxed text-gray-600">{content.intro}</p>
 
 	<div class="mt-8 space-y-8">

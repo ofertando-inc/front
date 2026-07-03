@@ -110,7 +110,7 @@
 			{#if isHot}
 				<FireSolid class={flameClass} />
 			{/if}
-			<span class="min-w-[2ch] text-center tabular-nums">{score}°</span>
+			<span aria-live="polite" class="min-w-[2ch] text-center tabular-nums">{score}°</span>
 		</span>
 
 		<button

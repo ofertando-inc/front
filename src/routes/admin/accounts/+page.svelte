@@ -261,6 +261,7 @@
 			onchange={() => void reload()}
 			class="w-auto rounded-full border-gray-300 bg-white text-sm"
 			placeholder=""
+			aria-label={$translationStore.admin.thRole}
 		>
 			<option value="">{$translationStore.admin.filterAllRoles}</option>
 			{#each USER_ROLES as role (role)}
@@ -272,6 +273,7 @@
 			onchange={() => void reload()}
 			class="w-auto rounded-full border-gray-300 bg-white text-sm"
 			placeholder=""
+			aria-label={$translationStore.admin.thType}
 		>
 			<option value="">{$translationStore.admin.filterAllTypes}</option>
 			{#each ACCOUNT_TYPES as type (type)}
@@ -322,7 +324,7 @@
 										</span>
 									{/if}
 								</span>
-								<span class="block text-xs text-gray-400">{account.email}</span>
+								<span class="block text-xs text-gray-500">{account.email}</span>
 							</td>
 							<td class="px-4 py-3">
 								<span

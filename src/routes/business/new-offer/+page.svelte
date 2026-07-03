@@ -7,6 +7,7 @@
 
 <svelte:head>
 	<title>{$translationStore.business.officialHeading} — {$translationStore.common.appName}</title>
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <OfferForm

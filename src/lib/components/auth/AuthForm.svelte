@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import type { HTMLInputAttributes } from 'svelte/elements';
 	import { Button, Input, Label, Spinner } from 'flowbite-svelte';
 
 	interface Field {
@@ -7,6 +8,9 @@
 		label: string;
 		type: string;
 		placeholder: string;
+		// WCAG 1.3.5 / OPQUAST: identify the purpose so browsers/AT can assist
+		// (e.g. "email", "current-password", "new-password").
+		autocomplete?: HTMLInputAttributes['autocomplete'];
 	}
 
 	interface Props {
@@ -70,6 +74,7 @@
 				id={field.name}
 				type={field.type}
 				placeholder={field.placeholder}
+				autocomplete={field.autocomplete}
 				bind:value={values[field.name]}
 				color={fieldError ? 'red' : undefined}
 				aria-invalid={fieldError ? 'true' : undefined}

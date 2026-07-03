@@ -138,7 +138,7 @@
 
 <section class="mx-auto flex w-full max-w-5xl flex-col gap-6 py-6 sm:py-10">
 	<div class="max-w-3xl space-y-3 px-1">
-		<p class="text-sm font-semibold tracking-[0.2em] text-primary-600 uppercase">
+		<p class="text-sm font-semibold tracking-[0.2em] text-primary-700 uppercase">
 			{$translationStore.common.appName}
 		</p>
 		<h1 class="text-3xl font-extrabold text-gray-900 sm:text-4xl">
@@ -267,7 +267,7 @@
 										class="inline-block rounded-full border px-3 py-1.5 text-sm font-medium transition-colors {$form.categoryIds.includes(
 											category.id
 										)
-											? 'border-primary-500 bg-primary-500 text-white'
+											? 'border-primary-700 bg-primary-700 text-white'
 											: 'border-gray-300 bg-white text-gray-600 hover:border-primary-300'}"
 									>
 										{categoryLabel($translationStore, category.slug, category.name)}
