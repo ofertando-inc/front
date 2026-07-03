@@ -136,13 +136,15 @@
 </script>
 
 <div class="flex gap-3">
-	<Avatar cornerStyle="circular" class="bg-blue-100 text-blue-600">{initial}</Avatar>
+	<Avatar cornerStyle="circular" role="presentation" class="bg-blue-100 text-blue-600"
+		>{initial}</Avatar
+	>
 	<div class="grow">
 		<div class="mb-1 flex flex-wrap items-baseline gap-x-2">
 			<span class="font-bold text-gray-900">{comment.user.username}</span>
 			<span class="text-xs text-gray-500">{dateLabel}</span>
 			{#if comment.editedAt && !removed}
-				<span class="text-xs text-gray-400">{$translationStore.comments.edited}</span>
+				<span class="text-xs text-gray-500">{$translationStore.comments.edited}</span>
 			{/if}
 		</div>
 
@@ -258,7 +260,7 @@
 					{/if}
 					{#if canReport}
 						{#if reported}
-							<span class="text-gray-400">{$translationStore.comments.reported}</span>
+							<span class="text-gray-500">{$translationStore.comments.reported}</span>
 						{:else}
 							<button type="button" class="hover:text-red-600" onclick={openReport}>
 								{$translationStore.comments.report}

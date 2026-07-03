@@ -18,7 +18,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			logout: 'Cerrar sesión',
 			loading: 'Cargando...',
 			admin: 'Administración',
-			businessSpace: 'Mi empresa'
+			businessSpace: 'Mi empresa',
+			skipToContent: 'Saltar al contenido principal',
+			languageLabel: 'Idioma',
+			userMenu: 'Menú de usuario',
+			darkMode: 'Activar el modo oscuro',
+			lightMode: 'Activar el modo claro'
 		},
 		business: {
 			title: 'Espacio empresa',
@@ -299,6 +304,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodYear: 'Este año',
 			listingTitle: 'Todas las ofertas',
 			resultsCount: '{count} resultados',
+			resultsHeading: 'Resultados',
 			searchResultsFor: 'Resultados para',
 			clearSearch: 'Quitar búsqueda',
 			loadMore: 'Cargar más',
@@ -678,7 +684,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			logout: 'Log out',
 			loading: 'Loading...',
 			admin: 'Administration',
-			businessSpace: 'My business'
+			businessSpace: 'My business',
+			skipToContent: 'Skip to main content',
+			languageLabel: 'Language',
+			userMenu: 'User menu',
+			darkMode: 'Switch to dark mode',
+			lightMode: 'Switch to light mode'
 		},
 		business: {
 			title: 'Business space',
@@ -960,6 +971,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodYear: 'This year',
 			listingTitle: 'All offers',
 			resultsCount: '{count} results',
+			resultsHeading: 'Results',
 			searchResultsFor: 'Results for',
 			clearSearch: 'Clear search',
 			loadMore: 'Load more',
@@ -1334,7 +1346,12 @@ export const messages: Record<Locale, TranslationMessages> = {
 			logout: 'Se déconnecter',
 			loading: 'Chargement...',
 			admin: 'Administration',
-			businessSpace: 'Mon entreprise'
+			businessSpace: 'Mon entreprise',
+			skipToContent: 'Aller au contenu principal',
+			languageLabel: 'Langue',
+			userMenu: 'Menu utilisateur',
+			darkMode: 'Activer le mode sombre',
+			lightMode: 'Activer le mode clair'
 		},
 		business: {
 			title: 'Espace entreprise',
@@ -1618,6 +1635,7 @@ export const messages: Record<Locale, TranslationMessages> = {
 			periodYear: 'Cette année',
 			listingTitle: 'Toutes les offres',
 			resultsCount: '{count} résultats',
+			resultsHeading: 'Résultats',
 			searchResultsFor: 'Résultats pour',
 			clearSearch: 'Effacer la recherche',
 			loadMore: 'Charger plus',

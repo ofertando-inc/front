@@ -18,7 +18,8 @@
 		Navbar,
 		Select
 	} from 'flowbite-svelte';
-	import { SearchOutline, TagSolid } from 'flowbite-svelte-icons';
+	import { MoonOutline, SearchOutline, SunOutline, TagSolid } from 'flowbite-svelte-icons';
+	import { themeStore } from '$lib/stores/theme';
 
 	let searchTerm = $state('');
 
@@ -39,10 +40,14 @@
 		const target = event.currentTarget as HTMLSelectElement;
 		localeStore.set(target.value as Locale);
 	}
+
+	function toggleTheme() {
+		themeStore.set($themeStore === 'dark' ? 'light' : 'dark');
+	}
 </script>
 
 <Navbar
-	class="sticky top-0 z-50 border-b border-orange-100 bg-[#fffbf5]/85 px-2 py-2.5 backdrop-blur-md sm:px-4"
+	class="sticky top-0 z-50 border-b border-orange-100 bg-[#fffbf5]/85 px-2 py-2.5 backdrop-blur-md sm:px-4 dark:bg-[#171310]/85"
 >
 	{#snippet children({ hidden, toggle })}
 		<!-- Left: brand + primary nav -->
@@ -67,7 +72,13 @@
 		<!-- Right: locale + actions -->
 		<div class="flex items-center gap-2 md:order-3">
 			<div class="hidden min-w-28 sm:block">
-				<Select onchange={handleLocaleChange} value={$localeStore} size="sm" placeholder="">
+				<Select
+					onchange={handleLocaleChange}
+					value={$localeStore}
+					size="sm"
+					placeholder=""
+					aria-label={$translationStore.common.languageLabel}
+				>
 					{#each SUPPORTED_LOCALES as locale (locale)}
 						<option value={locale}>
 							{locale === 'es'
@@ -80,12 +91,37 @@
 				</Select>
 			</div>
 
+			<button
+				type="button"
+				onclick={toggleTheme}
+				aria-pressed={$themeStore === 'dark'}
+				aria-label={$themeStore === 'dark'
+					? $translationStore.common.lightMode
+					: $translationStore.common.darkMode}
+				class="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-900"
+			>
+				{#if $themeStore === 'dark'}
+					<SunOutline class="h-5 w-5" />
+				{:else}
+					<MoonOutline class="h-5 w-5" />
+				{/if}
+			</button>
+
 			{#if $authStore.isAuthenticated && $authStore.user}
 				<Button href={resolve('/create-deal')} class="hidden rounded-full px-4 md:inline-flex">
 					<TagSolid class="mr-2 h-4 w-4 -rotate-90" />
 					{$translationStore.profile.publishOffer}
 				</Button>
-				<Avatar id="user-menu" class="cursor-pointer" cornerStyle="rounded" />
+				<!-- A real button so the menu is reachable and announced by keyboard/AT. -->
+				<button
+					id="user-menu"
+					type="button"
+					aria-label={$translationStore.common.userMenu}
+					aria-haspopup="menu"
+					class="rounded-lg"
+				>
+					<Avatar cornerStyle="rounded" role="presentation" />
+				</button>
 				<Dropdown triggeredBy="#user-menu">
 					<div class="px-4 py-3 text-sm">
 						<p class="font-medium text-slate-900">{$authStore.user.username}</p>
@@ -128,13 +164,13 @@
 					type="search"
 					bind:value={searchTerm}
 					placeholder={$translationStore.common.searchPlaceholder}
-					class="rounded-full border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
+					class="rounded-full border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500 dark:bg-[#221d19] dark:text-gray-100"
 				>
 					{#snippet left()}
 						<button
 							type="submit"
 							aria-label={$translationStore.common.search}
-							class="pointer-events-auto flex items-center text-primary-400 transition-colors hover:text-primary-600"
+							class="pointer-events-auto -m-2 flex items-center rounded-full p-2 text-primary-400 transition-colors hover:text-primary-600"
 						>
 							<SearchOutline class="h-5 w-5" />
 						</button>
@@ -151,13 +187,13 @@
 						type="search"
 						bind:value={searchTerm}
 						placeholder={$translationStore.common.searchPlaceholder}
-						class="rounded-lg border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500"
+						class="rounded-lg border-orange-100 bg-[#fffaf3] pl-10 placeholder:text-gray-400 focus:border-primary-500 focus:ring-primary-500 dark:bg-[#221d19] dark:text-gray-100"
 					>
 						{#snippet left()}
 							<button
 								type="submit"
 								aria-label={$translationStore.common.search}
-								class="pointer-events-auto flex items-center text-primary-400 transition-colors hover:text-primary-600"
+								class="pointer-events-auto -m-2 flex items-center rounded-full p-2 text-primary-400 transition-colors hover:text-primary-600"
 							>
 								<SearchOutline class="h-5 w-5" />
 							</button>

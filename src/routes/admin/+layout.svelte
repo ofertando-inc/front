@@ -99,7 +99,12 @@
 </script>
 
 <svelte:head>
-	<title>{$translationStore.admin.title} — {$translationStore.common.appName}</title>
+	<!-- RGAA 8.5: one distinct title per page — the active tab disambiguates. -->
+	<title
+		>{activeLabel ? `${activeLabel} — ` : ''}{$translationStore.admin.title} — {$translationStore
+			.common.appName}</title
+	>
+	<meta name="robots" content="noindex" />
 </svelte:head>
 
 <div class="mx-auto flex w-full max-w-7xl gap-8 px-1 py-6 sm:py-10">
@@ -147,8 +152,8 @@
 		</div>
 	</aside>
 
-	<!-- Main -->
-	<main class="min-w-0 flex-1">
+	<!-- Content column (the root layout already provides the <main> landmark). -->
+	<div class="min-w-0 flex-1">
 		<!-- Mobile nav -->
 		<nav
 			class="mb-6 -mx-1 flex gap-1 overflow-x-auto px-1 pb-1 lg:hidden"
@@ -160,7 +165,7 @@
 					href={resolve(item.routeId)}
 					aria-current={active ? 'page' : undefined}
 					class="flex shrink-0 items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors {active
-						? 'bg-primary-500 text-white'
+						? 'bg-primary-700 text-white'
 						: 'bg-white text-gray-600 hover:bg-gray-100'}"
 				>
 					<item.icon class="h-4 w-4" />
@@ -183,5 +188,5 @@
 		</header>
 
 		{@render children()}
-	</main>
+	</div>
 </div>

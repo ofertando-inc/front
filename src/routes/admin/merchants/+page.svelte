@@ -432,7 +432,7 @@
 							aria-pressed={merchantFilter === value}
 							class="rounded-full px-3 py-1 text-sm font-medium transition-colors {merchantFilter ===
 							value
-								? 'bg-primary-500 text-white shadow-sm'
+								? 'bg-primary-700 text-white shadow-sm'
 								: 'text-gray-600 hover:text-primary-600'}"
 						>
 							{label}
@@ -563,7 +563,7 @@
 															<div class="flex flex-wrap items-center justify-between gap-2">
 																<div class="flex flex-wrap items-center gap-2">
 																	<span class="font-medium text-gray-900">{loc.address}</span>
-																	<span class="text-xs text-gray-400">{loc.city}</span>
+																	<span class="text-xs text-gray-500">{loc.city}</span>
 																	{#if loc.verified}
 																		<span
 																			class="rounded-full bg-savings-50 px-2 py-0.5 text-xs font-medium text-savings-700"
@@ -668,7 +668,7 @@
 								<tr class="transition-colors hover:bg-gray-50">
 									<td class="px-4 py-3 text-gray-700">
 										<span class="font-medium text-gray-900">{location.address}</span>
-										<span class="block text-xs text-gray-400">{location.city}</span>
+										<span class="block text-xs text-gray-500">{location.city}</span>
 									</td>
 									<td class="px-4 py-3 text-gray-600">{location.merchant.name}</td>
 									<td class="px-4 py-3 text-gray-500">

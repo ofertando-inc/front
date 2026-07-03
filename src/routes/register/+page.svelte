@@ -90,25 +90,29 @@
 					name: 'email',
 					label: $translationStore.auth.email,
 					type: 'email',
-					placeholder: 'mail@example.com'
+					placeholder: 'mail@example.com',
+					autocomplete: 'email'
 				},
 				{
 					name: 'username',
 					label: $translationStore.auth.username,
 					type: 'text',
-					placeholder: 'user'
+					placeholder: 'user',
+					autocomplete: 'username'
 				},
 				{
 					name: 'password',
 					label: $translationStore.auth.password,
 					type: 'password',
-					placeholder: '••••••••'
+					placeholder: '••••••••',
+					autocomplete: 'new-password'
 				},
 				{
 					name: 'confirmPassword',
 					label: $translationStore.auth.confirmPassword,
 					type: 'password',
-					placeholder: '••••••••'
+					placeholder: '••••••••',
+					autocomplete: 'new-password'
 				}
 			]}
 			{values}
@@ -131,7 +135,7 @@
 				<span>{$translationStore.auth.alreadyHaveAccount}</span>
 				<a
 					href={resolveRoute('/login')}
-					class="ml-1 font-medium text-primary-600 hover:text-primary-500"
+					class="ml-1 font-medium text-primary-700 underline hover:text-primary-600"
 				>
 					{$translationStore.auth.loginHere}
 				</a>

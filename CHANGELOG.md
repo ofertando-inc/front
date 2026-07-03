@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-07-04
+
+### Added
+
+- Dark mode: the app follows the OS `prefers-color-scheme` by default and a moon/sun toggle in the header (localized `aria-label`, `aria-pressed`) lets the user pick explicitly — the choice is persisted (`ofertando.theme`) and wins over the OS until cleared; an inline script applies the theme before first paint (no flash). Implementation: a `themeStore` toggling the `.dark` class on `<html>` plus a curated warm-dark stylesheet (`dark.css`) that remaps the recurring light utilities (surfaces, text, borders, chip tints) and the home hero gradients — outranking both the light classes and Flowbite's own `dark:` styles so the whole UI keeps one coherent palette. Every dark text/surface pair holds WCAG AA (Flowbite's dark primary buttons are pinned back to `primary-700`, 5.4:1); `color-scheme: dark` for native controls; axe scans the dark home in e2e and the toggle/persistence/OS-preference flow is covered end to end.
+
+### Accessibility
+
+- Full RGAA / WCAG 2.1 AA pass over every screen, verified by automation: **axe-core in the e2e suite** (13 key screens — home, list, detail, auth, create, profile, business space and back-office — must stay free of critical/serious violations), **`svelte/valid-compile` as an eslint error** (zero compiler a11y warnings), and **Lighthouse CI** (`npm run lh` + a CI job with per-category assertions: accessibility **= 1.0** enforced, best-practices ≥ 0.95, SEO ≥ 0.9 on public pages, performance ≥ 0.9 as warning — map pages tolerated). All targets green; reports uploaded as CI artifacts.
+- Structure & navigation: skip link to the main content (first focusable element, localized), `<html lang>` synchronized with the es/en/fr locale, unique page titles everywhere (admin pages are prefixed by the active tab), a single `<main>` landmark (the admin layout's nested one removed), global visible `:focus-visible` outline, `prefers-reduced-motion` honored, and a real labelled `<button>` for the user menu (the Flowbite avatar rendered an unnamed `div[role=button]`, unreachable by keyboard); decorative avatars are now presentational. Keyboard e2e coverage for the skip link and the user menu.
+- Forms & dynamic content: `autocomplete` on the auth forms (email, username, current-/new-password), accessible names on the language switcher and the account filters, `aria-live` announcements for the vote score and the search result count, `role="status"` on the address-request confirmation.
+- Contrast (AA): active filter chips and selected category pills moved from `primary-500` to `primary-700` backgrounds (5.4:1), eyebrows/quiet links from `primary-600` to `primary-700`, secondary table text from `gray-400` to `gray-500` (4.6:1), the hero savings sticker to `savings-600`, the profile active tab to `primary-700`, and always-underlined in-text links (footer copyright, auth switch links). Search button hit target enlarged to ≥ 24px; a visually hidden `h2` restores the heading order on the deals list; private surfaces (`/business`, `/admin`, profile, create/edit) carry `noindex`.
+
+### Security
+
+- Pinned `tmp` ≥ 0.2.6 and `uuid` ≥ 11.1.1 via `overrides` (transitive dependencies of the new dev-only `@lhci/cli`) — `npm audit` stays at 0 vulnerabilities.
+
 ## [1.2.0] - 2026-07-03
 
 ### Added
@@ -322,6 +339,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[1.3.0]: https://github.com/ofertando-inc/front/releases/tag/v1.3.0
 [1.2.0]: https://github.com/ofertando-inc/front/releases/tag/v1.2.0
 [1.1.0]: https://github.com/ofertando-inc/front/releases/tag/v1.1.0
 [1.0.0]: https://github.com/ofertando-inc/front/releases/tag/v1.0.0
