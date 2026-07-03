@@ -37,8 +37,11 @@ export default defineConfig(
 		}
 	},
 	{
-		// Override or add rule settings here, such as:
-		// 'svelte/button-has-type': 'error'
-		rules: {}
+		files: ['**/*.svelte'],
+		rules: {
+			// Surface every Svelte compiler warning (accessibility a11y_* included)
+			// as a lint error: the build must stay at zero a11y warnings.
+			'svelte/valid-compile': 'error'
+		}
 	}
 );

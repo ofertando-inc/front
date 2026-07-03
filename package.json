@@ -22,11 +22,14 @@
 		"test:unit": "vitest",
 		"test": "npm run test:unit -- --run && npm run test:e2e",
 		"test:e2e": "playwright test",
-		"test:e2e:install": "playwright install chromium"
+		"test:e2e:install": "playwright install chromium",
+		"lh": "npm run build && lhci autorun"
 	},
 	"devDependencies": {
+		"@axe-core/playwright": "^4.12.1",
 		"@eslint/compat": "^2.1.0",
 		"@eslint/js": "^10.0.1",
+		"@lhci/cli": "^0.15.1",
 		"@playwright/test": "^1.61.1",
 		"@sveltejs/adapter-node": "^5.5.7",
 		"@sveltejs/kit": "^2.69.0",
@@ -66,6 +69,8 @@
 	"overrides": {
 		"cookie": "^0.7.0",
 		"joi": "^17.13.4",
-		"ts-deepmerge": "^8.0.0"
+		"ts-deepmerge": "^8.0.0",
+		"tmp": "^0.2.6",
+		"uuid": "^11.1.1"
 	}
 }
