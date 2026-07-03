@@ -3,6 +3,7 @@
 	import type { Snippet } from 'svelte';
 	import { Card } from 'flowbite-svelte';
 	import {
+		BadgeCheckSolid,
 		CalendarMonthOutline,
 		CheckCircleOutline,
 		GlobeOutline,
@@ -67,6 +68,14 @@
 						{@render actions()}
 					{/if}
 				</div>
+				{#if offer.official}
+					<span
+						class="inline-flex items-center gap-1 rounded-full bg-savings-600 px-2.5 py-1 text-xs font-semibold text-white"
+					>
+						<BadgeCheckSolid class="h-3 w-3" />
+						{$translationStore.deals.official}
+					</span>
+				{/if}
 				{#if isOnline}
 					<span
 						class="inline-flex items-center gap-1 rounded-full bg-sky-50 px-2.5 py-1 text-xs font-semibold text-sky-700"

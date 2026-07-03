@@ -138,6 +138,7 @@
 			bind:value={statusFilter}
 			onchange={handleFilterChange}
 			class="w-48"
+			placeholder=""
 		>
 			<option value="">{$translationStore.admin.filterStatusAll}</option>
 			{#each OFFER_STATUSES as status (status)}

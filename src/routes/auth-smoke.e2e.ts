@@ -10,7 +10,23 @@ function sendJson(response: import('node:http').ServerResponse, statusCode: numb
 
 function isAuthenticated(request: import('node:http').IncomingMessage) {
 	const cookie = request.headers.cookie ?? '';
-	return cookie.includes('e2e_session=authenticated') || cookie.includes('e2e_session=admin');
+	return (
+		cookie.includes('e2e_session=authenticated') ||
+		cookie.includes('e2e_session=admin') ||
+		cookie.includes('e2e_session=root') ||
+		cookie.includes('e2e_session=business') ||
+		cookie.includes('e2e_session=bizpending')
+	);
+}
+
+// Affiliated business account (approved claim on MarcaOficial).
+function isBusiness(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=business');
+}
+
+// Business account still waiting for its affiliation to be approved.
+function isBizPending(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=bizpending');
 }
 
 async function readJsonBody(request: import('node:http').IncomingMessage): Promise<unknown> {
@@ -24,8 +40,14 @@ async function readJsonBody(request: import('node:http').IncomingMessage): Promi
 	}
 }
 
+// ROOT is a superset of ADMIN for the moderation surfaces.
 function isAdmin(request: import('node:http').IncomingMessage) {
-	return (request.headers.cookie ?? '').includes('e2e_session=admin');
+	const cookie = request.headers.cookie ?? '';
+	return cookie.includes('e2e_session=admin') || cookie.includes('e2e_session=root');
+}
+
+function isRoot(request: import('node:http').IncomingMessage) {
+	return (request.headers.cookie ?? '').includes('e2e_session=root');
 }
 
 // Offer returned by POST /offers (and its GET) for the create happy-path test.
@@ -137,12 +159,27 @@ test.beforeAll(async () => {
 
 		if (url.startsWith('/users/me')) {
 			if (isAuthenticated(request)) {
+				const root = isRoot(request);
 				const admin = isAdmin(request);
+				const business = isBusiness(request) || isBizPending(request);
 				sendJson(response, 200, {
-					id: admin ? 'e2e-admin-id' : 'e2e-user-id',
-					email: admin ? 'admin@example.com' : 'e2e@example.com',
-					username: admin ? 'e2eadmin' : 'e2euser',
-					role: admin ? 'ADMIN' : 'USER',
+					id: root
+						? 'e2e-root-id'
+						: admin
+							? 'e2e-admin-id'
+							: business
+								? 'e2e-biz-id'
+								: 'e2e-user-id',
+					email: root
+						? 'root@example.com'
+						: admin
+							? 'admin@example.com'
+							: business
+								? 'biz@example.com'
+								: 'e2e@example.com',
+					username: root ? 'e2eroot' : admin ? 'e2eadmin' : business ? 'e2ebiz' : 'e2euser',
+					role: root ? 'ROOT' : admin ? 'ADMIN' : 'USER',
+					accountType: business ? 'BUSINESS' : 'INDIVIDUAL',
 					status: 'ACTIVE',
 					reputation: 12,
 					createdAt: '2026-05-01T10:00:00.000Z',
@@ -171,6 +208,63 @@ test.beforeAll(async () => {
 				sendJson(response, 401, {
 					key: 'auth.unauthorized',
 					statusCode: 401
+				});
+				return;
+			}
+
+			// The business dashboard lists the merchant's own offers (one online,
+			// one physical) so the channel/address filter has something to chew on.
+			if (isBusiness(request)) {
+				const baseBizOffer = {
+					offerType: 'discount',
+					startDate: '2026-05-01T00:00:00.000Z',
+					endDate: '2026-12-31T00:00:00.000Z',
+					status: 'ACTIVE',
+					score: 5,
+					reportCount: 0,
+					commentCount: 0,
+					createdAt: '2026-05-10T10:00:00.000Z',
+					updatedAt: '2026-05-10T10:00:00.000Z',
+					createdById: 'e2e-biz-id',
+					createdByUsername: 'e2ebiz',
+					userVote: null,
+					categories: [],
+					merchant: { id: 'merchant-owned', name: 'MarcaOficial', verified: true, blocked: false },
+					official: true,
+					viewCount: 60,
+					clickCount: 20
+				};
+				sendJson(response, 200, {
+					items: [
+						{
+							...baseBizOffer,
+							id: 'biz-online-offer',
+							title: 'Oferta online oficial',
+							description: 'Oferta en línea de la marca.',
+							isOnline: true,
+							externalUrl: 'https://example.com/online',
+							location: null
+						},
+						{
+							...baseBizOffer,
+							id: 'biz-local-offer',
+							title: 'Oferta local oficial',
+							description: 'Oferta física de la marca.',
+							isOnline: false,
+							externalUrl: null,
+							location: {
+								id: 'loc-biz',
+								address: 'Carrera 7 #45-10',
+								city: 'Bogotá',
+								region: 'Bogotá D.C.',
+								latitude: 4.62,
+								longitude: -74.07,
+								verified: true
+							}
+						}
+					],
+					nextCursor: null,
+					total: 2
 				});
 				return;
 			}
@@ -558,11 +652,138 @@ test.beforeAll(async () => {
 			return;
 		}
 
+		const trackMatch = url.match(/^\/offers\/([^/?]+)\/(view|click)$/);
+		if (trackMatch && request.method === 'POST') {
+			response.writeHead(204);
+			response.end();
+			return;
+		}
+
+		if (url === '/offers/e2e-official-offer' || url.startsWith('/offers/e2e-official-offer?')) {
+			sendJson(response, 200, {
+				id: 'e2e-official-offer',
+				title: 'Oferta oficial de la marca',
+				description: 'Oferta publicada por la empresa dueña de la enseña.',
+				offerType: 'discount',
+				isOnline: true,
+				externalUrl: 'https://example.com/oficial',
+				merchant: { id: 'merchant-owned', name: 'MarcaOficial', verified: true, blocked: false },
+				location: null,
+				startDate: '2026-05-01T00:00:00.000Z',
+				endDate: '2026-12-31T00:00:00.000Z',
+				status: 'ACTIVE',
+				score: 21,
+				reportCount: 0,
+				commentCount: 0,
+				createdAt: '2026-05-01T10:00:00.000Z',
+				updatedAt: '2026-05-01T10:00:00.000Z',
+				createdById: 'business-user',
+				createdByUsername: 'marcaoficial',
+				userVote: null,
+				categories: [],
+				official: true,
+				viewCount: 7,
+				clickCount: 3
+			});
+			return;
+		}
+
 		if (url.startsWith('/offers/')) {
 			sendJson(response, 404, {
 				key: 'offer.not_found',
 				statusCode: 404
 			});
+			return;
+		}
+
+		if (url.startsWith('/business/')) {
+			if (!isAuthenticated(request)) {
+				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
+				return;
+			}
+			if (!isBusiness(request) && !isBizPending(request)) {
+				sendJson(response, 403, { key: 'account.not_business', statusCode: 403 });
+				return;
+			}
+			// Business account whose claim is still pending: every /business surface
+			// answers 403 account.no_affiliation.
+			if (isBizPending(request)) {
+				sendJson(response, 403, { key: 'account.no_affiliation', statusCode: 403 });
+				return;
+			}
+
+			if (url === '/business/me') {
+				sendJson(response, 200, {
+					user: {
+						id: 'e2e-biz-id',
+						email: 'biz@example.com',
+						username: 'e2ebiz',
+						role: 'USER',
+						accountType: 'BUSINESS',
+						status: 'ACTIVE',
+						reputation: 12,
+						createdAt: '2026-05-01T10:00:00.000Z',
+						updatedAt: '2026-05-01T10:00:00.000Z'
+					},
+					merchant: {
+						id: 'merchant-owned',
+						name: 'MarcaOficial',
+						verified: true,
+						blockedAt: null,
+						createdAt: '2026-05-01T10:00:00.000Z'
+					},
+					claim: {
+						id: 'claim-approved',
+						status: 'APPROVED',
+						createdAt: '2026-05-02T10:00:00.000Z',
+						resolvedAt: '2026-05-03T10:00:00.000Z'
+					}
+				});
+				return;
+			}
+
+			if (url === '/business/stats') {
+				sendJson(response, 200, {
+					offers: { total: 4, active: 3 },
+					views: 120,
+					clicks: 45,
+					score: 31,
+					comments: 12,
+					reports: 1
+				});
+				return;
+			}
+
+			if (url === '/business/offers' && request.method === 'POST') {
+				sendJson(response, 201, {
+					...createdOffer,
+					merchant: { id: 'merchant-owned', name: 'MarcaOficial', verified: true, blocked: false },
+					official: true,
+					viewCount: 0,
+					clickCount: 0
+				});
+				return;
+			}
+
+			if (url === '/business/locations' && request.method === 'POST') {
+				void readJsonBody(request).then((body) => {
+					const dto = (body ?? {}) as { address?: unknown; city?: unknown };
+					sendJson(response, 201, {
+						id: 'loc-requested',
+						merchantId: 'merchant-owned',
+						address: typeof dto.address === 'string' ? dto.address : 'Calle 10',
+						city: typeof dto.city === 'string' ? dto.city : 'Bogotá',
+						region: null,
+						latitude: null,
+						longitude: null,
+						verified: false,
+						createdAt: '2026-06-25T10:00:00.000Z'
+					});
+				});
+				return;
+			}
+
+			sendJson(response, 404, { key: 'error.not_found', statusCode: 404 });
 			return;
 		}
 
@@ -573,6 +794,135 @@ test.beforeAll(async () => {
 			}
 			if (!isAdmin(request)) {
 				sendJson(response, 403, { key: 'auth.forbidden', statusCode: 403 });
+				return;
+			}
+
+			// ROOT-only surfaces: accounts and affiliation claims.
+			if (url.startsWith('/admin/accounts') || url.startsWith('/admin/claims')) {
+				if (!isRoot(request)) {
+					sendJson(response, 403, { key: 'auth.forbidden_root', statusCode: 403 });
+					return;
+				}
+
+				const rootAccount = {
+					id: 'acc-user',
+					email: 'cliente@example.com',
+					username: 'clienteuno',
+					role: 'USER',
+					accountType: 'INDIVIDUAL',
+					status: 'ACTIVE',
+					reputation: 3,
+					createdAt: '2026-06-01T10:00:00.000Z',
+					updatedAt: '2026-06-01T10:00:00.000Z'
+				};
+
+				if (url === '/admin/accounts' || url.startsWith('/admin/accounts?')) {
+					if (request.method === 'POST') {
+						void readJsonBody(request).then((body) => {
+							const dto = (body ?? {}) as {
+								email?: unknown;
+								username?: unknown;
+								accountType?: unknown;
+								role?: unknown;
+							};
+							sendJson(response, 201, {
+								id: 'acc-new',
+								email: typeof dto.email === 'string' ? dto.email : 'nueva@example.com',
+								username: typeof dto.username === 'string' ? dto.username : 'nuevacuenta',
+								role: typeof dto.role === 'string' ? dto.role : 'USER',
+								accountType: typeof dto.accountType === 'string' ? dto.accountType : 'INDIVIDUAL',
+								status: 'ACTIVE',
+								reputation: 0,
+								createdAt: '2026-06-20T10:00:00.000Z',
+								updatedAt: '2026-06-20T10:00:00.000Z'
+							});
+						});
+						return;
+					}
+					const params = new URL(url, 'http://mock').searchParams;
+					if (params.get('q') === 'empresa' || params.get('accountType') === 'BUSINESS') {
+						sendJson(response, 200, {
+							items: [
+								{
+									id: 'acc-biz',
+									email: 'empresa@example.com',
+									username: 'empresauno',
+									role: 'USER',
+									accountType: 'BUSINESS',
+									status: 'ACTIVE',
+									reputation: 0,
+									createdAt: '2026-06-10T10:00:00.000Z',
+									updatedAt: '2026-06-10T10:00:00.000Z'
+								}
+							],
+							nextCursor: null
+						});
+						return;
+					}
+					sendJson(response, 200, { items: [rootAccount], nextCursor: null });
+					return;
+				}
+
+				const accountPatch = url.match(/^\/admin\/accounts\/([^/?]+)$/);
+				if (accountPatch && request.method === 'PATCH') {
+					void readJsonBody(request).then((body) => {
+						const dto = (body ?? {}) as Record<string, unknown>;
+						sendJson(response, 200, {
+							...rootAccount,
+							id: accountPatch[1],
+							...(typeof dto.email === 'string' ? { email: dto.email } : {}),
+							...(typeof dto.username === 'string' ? { username: dto.username } : {}),
+							...(typeof dto.role === 'string' ? { role: dto.role } : {}),
+							...(typeof dto.accountType === 'string' ? { accountType: dto.accountType } : {}),
+							...(typeof dto.status === 'string' ? { status: dto.status } : {})
+						});
+					});
+					return;
+				}
+
+				const pendingClaim = {
+					id: 'claim-pending',
+					status: 'PENDING',
+					note: null,
+					createdAt: '2026-06-18T10:00:00.000Z',
+					resolvedAt: null,
+					user: { id: 'acc-biz', email: 'empresa@example.com', username: 'empresauno' },
+					merchant: { id: 'merchant-acme', name: 'Acme Store' },
+					reviewedBy: null
+				};
+
+				if (url === '/admin/claims' || url.startsWith('/admin/claims?')) {
+					if (request.method === 'POST') {
+						sendJson(response, 201, {
+							...pendingClaim,
+							id: 'claim-created',
+							status: 'APPROVED',
+							resolvedAt: '2026-06-20T10:00:00.000Z',
+							reviewedBy: { id: 'e2e-root-id', username: 'e2eroot' }
+						});
+						return;
+					}
+					sendJson(response, 200, { items: [pendingClaim], nextCursor: null });
+					return;
+				}
+
+				const claimAction = url.match(/^\/admin\/claims\/([^/?]+)\/(approve|reject)$/);
+				if (claimAction && request.method === 'PATCH') {
+					void readJsonBody(request).then((body) => {
+						const dto = (body ?? {}) as { note?: unknown };
+						sendJson(response, 200, {
+							...pendingClaim,
+							id: claimAction[1],
+							status: claimAction[2] === 'approve' ? 'APPROVED' : 'REJECTED',
+							note: typeof dto.note === 'string' ? dto.note : null,
+							resolvedAt: '2026-06-21T10:00:00.000Z',
+							reviewedBy: { id: 'e2e-root-id', username: 'e2eroot' }
+						});
+					});
+					return;
+				}
+
+				sendJson(response, 404, { key: 'error.not_found', statusCode: 404 });
 				return;
 			}
 
@@ -1153,6 +1503,118 @@ test('create deal publishes a local offer end to end', async ({ page, context })
 	await expect(page).toHaveURL(/\/deals\/new-offer$/);
 });
 
+test('business account sees its space with the affiliation banner and stats', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'business', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/business');
+
+	// Affiliation banner + the six stat cards.
+	await expect(page.getByText('Comercio afiliado')).toBeVisible();
+	await expect(page.getByText('MarcaOficial').first()).toBeVisible();
+	await expect(page.getByText('120')).toBeVisible();
+	await expect(page.getByText('Vistas')).toBeVisible();
+	await expect(page.getByText('Clics')).toBeVisible();
+	await expect(page.getByText('Ofertas activas (de 4)')).toBeVisible();
+
+	// Each stat exposes an explanatory tooltip.
+	await page.locator('#stat-info-views').hover();
+	await expect(page.getByText(/Tus propias visitas no cuentan/)).toBeVisible();
+
+	// Both own offers render, then the address filter narrows to the local one.
+	await expect(page.getByText('Oferta online oficial')).toBeVisible();
+	await expect(page.getByText('Oferta local oficial')).toBeVisible();
+	await page.getByRole('button', { name: /Carrera 7 #45-10/ }).click();
+	await expect(page.getByText('Oferta online oficial')).toBeHidden();
+	await expect(page.getByText('Oferta local oficial')).toBeVisible();
+
+	// The online chip flips the selection.
+	await page.getByRole('button', { name: 'En línea' }).click();
+	await expect(page.getByText('Oferta online oficial')).toBeVisible();
+	await expect(page.getByText('Oferta local oficial')).toBeHidden();
+});
+
+test('business account with a pending affiliation sees the waiting banner', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'bizpending', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/business');
+
+	await expect(page.getByText('Afiliación en curso')).toBeVisible();
+	// No stats or actions while waiting.
+	await expect(page.getByText('Publicar oferta oficial')).toBeHidden();
+});
+
+test('business publishes an official offer with the imposed merchant', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'business', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/business/new-offer');
+	await page.getByText('Tecnología', { exact: true }).waitFor();
+
+	// The affiliated merchant is imposed: read-only field, no combobox.
+	const merchantInput = page.locator('input#merchantName');
+	await expect(merchantInput).toBeDisabled();
+	await expect(merchantInput).toHaveValue('MarcaOficial');
+
+	await page.selectOption('select#offerType', 'discount');
+	await page.fill('input#title', 'Oferta oficial de prueba');
+	await page.fill('textarea#description', 'Una descripción oficial suficientemente larga.');
+	await page.getByText('Tecnología', { exact: true }).click();
+
+	// Online offer: external link instead of a location.
+	await page.getByText('Oferta en línea').click();
+	await page.fill('input#externalUrl', 'https://example.com/oficial');
+
+	// The action POSTs to /business/offers server-side (the mock only answers
+	// 201 on that business endpoint) and redirects to the detail page.
+	await page.getByRole('button', { name: 'Publicar oferta' }).click();
+	await expect(page).toHaveURL(/\/deals\/new-offer$/);
+});
+
+test('business requests a new address for its merchant', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'business', url: 'http://127.0.0.1:4173' }
+	]);
+
+	await page.goto('/business');
+	await page.getByRole('button', { name: 'Solicitar dirección' }).click();
+
+	const dialog = page.getByRole('dialog');
+	await dialog.locator('input#bizLocationCity').fill('Bogotá');
+	await dialog.locator('input#bizLocationAddress').fill('Calle 10');
+	await page.getByRole('option', { name: /Calle 10/ }).click();
+
+	const locationRequest = page.waitForRequest(
+		(request) => request.url().includes('/api/business/locations') && request.method() === 'POST'
+	);
+	await dialog.getByRole('button', { name: 'Enviar solicitud' }).click();
+	await locationRequest;
+
+	await expect(page.getByText('Dirección enviada; queda en espera de validación.')).toBeVisible();
+});
+
+test('an individual account gets a 403 on the business space', async ({ page, context }) => {
+	await context.addCookies([
+		{ name: 'e2e_session', value: 'authenticated', url: 'http://127.0.0.1:4173' }
+	]);
+
+	const response = await page.goto('/business');
+	expect(response?.status()).toBe(403);
+});
+
 test('edit deal redirects unauthenticated users to login', async ({ page }) => {
 	await page.goto('/deals/non-existent-id/edit');
 
@@ -1182,6 +1644,30 @@ test('offer detail lets an authenticated user toggle their up-vote', async ({ pa
 	await upButton.click();
 	await expect(page.getByText('15°')).toBeVisible();
 	await expect(upButton).toHaveAttribute('aria-pressed', 'false');
+});
+
+test('offer detail shows the official badge and tracks the view and the click', async ({
+	page
+}) => {
+	// The view hit must fire once when the detail loads.
+	const viewRequest = page.waitForRequest(
+		(request) =>
+			request.url().includes('/api/offers/e2e-official-offer/view') && request.method() === 'POST'
+	);
+
+	await page.goto('/deals/e2e-official-offer');
+
+	await expect(page.getByRole('heading', { name: 'Oferta oficial de la marca' })).toBeVisible();
+	await expect(page.getByText('Oficial', { exact: true })).toBeVisible();
+	await viewRequest;
+
+	// The click hit fires when following the merchant link.
+	const clickRequest = page.waitForRequest(
+		(request) =>
+			request.url().includes('/api/offers/e2e-official-offer/click') && request.method() === 'POST'
+	);
+	await page.getByRole('link', { name: /Ir a la tienda/ }).click();
+	await clickRequest;
 });
 
 test('offer detail shows an auth error when an anonymous visitor tries to vote', async ({
@@ -1365,6 +1851,88 @@ test("admin views and edits a merchant's addresses from its panel", async ({ pag
 	// Collapsing the panel hides the addresses again.
 	await merchantRow.getByRole('button', { name: 'Ocultar direcciones' }).click();
 	await expect(page.getByText('Avenida Reformada 5')).toBeHidden();
+});
+
+test('root sees the accounts tab, lists accounts and creates one', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/accounts');
+
+	// The ROOT-only tabs are in the sidebar and the listing renders.
+	await expect(page.getByRole('link', { name: 'Cuentas' }).first()).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Afiliaciones' }).first()).toBeVisible();
+	const accountRow = page.getByRole('row', { name: /clienteuno/ });
+	await expect(accountRow).toBeVisible();
+
+	// Creating an account posts the payload and closes the dialog.
+	await page.getByRole('button', { name: 'Crear cuenta' }).click();
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Correo electrónico').fill('nueva@example.com');
+	await dialog.getByLabel('Nombre de usuario').fill('nuevacuenta');
+	await dialog.getByLabel('Contraseña provisional').fill('provisional1');
+	const createRequest = page.waitForRequest(
+		(request) => request.url().includes('/api/admin/accounts') && request.method() === 'POST'
+	);
+	await dialog.getByRole('button', { name: 'Crear cuenta' }).click();
+	await createRequest;
+	await expect(dialog).toBeHidden();
+});
+
+test('root disables an account from the listing', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/accounts');
+
+	const accountRow = page.getByRole('row', { name: /clienteuno/ });
+	await accountRow.getByRole('button', { name: 'Desactivar' }).click();
+
+	// The PATCH flips the status and the row shows the disabled chip.
+	await expect(accountRow.getByText('Desactivada')).toBeVisible();
+	await expect(accountRow.getByRole('button', { name: 'Restaurar' })).toBeVisible();
+});
+
+test('root approves a pending affiliation claim', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/claims');
+
+	const claimRow = page.getByRole('row', { name: /empresauno/ });
+	await expect(claimRow).toBeVisible();
+	await expect(claimRow.getByText('Acme Store')).toBeVisible();
+
+	// Approving drops the claim from the pending queue.
+	await claimRow.getByRole('button', { name: 'Aprobar' }).click();
+	await expect(page.getByText('empresauno')).toBeHidden();
+});
+
+test('root rejects a claim with a note', async ({ page, context }) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'root', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin/claims');
+
+	const claimRow = page.getByRole('row', { name: /empresauno/ });
+	await claimRow.getByRole('button', { name: 'Rechazar' }).click();
+
+	const dialog = page.getByRole('dialog');
+	await dialog.getByLabel('Motivo (opcional)').fill('No pudo demostrar la propiedad.');
+	await dialog.getByRole('button', { name: 'Rechazar' }).click();
+
+	await expect(page.getByRole('row', { name: /empresauno/ })).toBeHidden();
+});
+
+test('a plain admin neither sees the root tabs nor opens the root pages', async ({
+	page,
+	context
+}) => {
+	await context.addCookies([{ name: 'e2e_session', value: 'admin', url: 'http://127.0.0.1:4173' }]);
+
+	await page.goto('/admin');
+	await expect(page.getByRole('link', { name: 'Ofertas' }).first()).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Cuentas' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Afiliaciones' })).toHaveCount(0);
+
+	const response = await page.goto('/admin/accounts');
+	expect(response?.status()).toBe(403);
 });
 
 test('admin reports tab lists pending reports for an admin', async ({ page, context }) => {

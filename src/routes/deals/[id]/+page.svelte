@@ -5,6 +5,7 @@
 	import { resolve } from '$app/paths';
 	import { Avatar, Button, Card, Modal } from 'flowbite-svelte';
 	import {
+		BadgeCheckSolid,
 		CalendarMonthOutline,
 		ArrowUpRightFromSquareOutline,
 		CheckCircleOutline,
@@ -17,7 +18,7 @@
 		TrashBinOutline
 	} from 'flowbite-svelte-icons';
 	import { ApiError } from '$lib/api/client';
-	import { getOfferById, listOffers } from '$lib/api/offers';
+	import { getOfferById, listOffers, trackClick, trackView } from '$lib/api/offers';
 	import { getMyReport } from '$lib/api/reports';
 	import CommentThread from '$lib/components/comments/CommentThread.svelte';
 	import DealStatusBadge from '$lib/components/offers/DealStatusBadge.svelte';
@@ -138,6 +139,14 @@
 		await loadOffer(page.params.id);
 	});
 
+	// One view per detail visit, fire-and-forget (trackView never throws).
+	let viewTrackedId: string | null = null;
+	function trackViewOnce(id: string) {
+		if (viewTrackedId === id) return;
+		viewTrackedId = id;
+		void trackView(id);
+	}
+
 	async function loadOffer(id: string | undefined) {
 		if (!id) {
 			notFound = true;
@@ -157,6 +166,7 @@
 			]);
 			alreadyReported = fetchedReport !== null;
 			offer = fetchedOffer;
+			trackViewOnce(fetchedOffer.id);
 			void loadRelated(fetchedOffer);
 		} catch (err) {
 			if (err instanceof ApiError && err.key === ErrorKey.OfferNotFound) {
@@ -269,6 +279,14 @@
 				<Card class="max-w-full! p-6! sm:p-8!">
 					<div class="mb-4 flex flex-wrap items-center gap-3">
 						<DealStatusBadge status={offer.status} />
+						{#if offer.official}
+							<span
+								class="inline-flex items-center gap-1 rounded-full bg-savings-600 px-2.5 py-1 text-xs font-semibold text-white"
+							>
+								<BadgeCheckSolid class="h-3.5 w-3.5" />
+								{$translationStore.deals.official}
+							</span>
+						{/if}
 						<span class="flex items-center gap-1 text-sm text-gray-500">
 							<StoreOutline class="h-4 w-4" />
 							{offer.merchant.name}
@@ -312,6 +330,7 @@
 								target="_blank"
 								rel="noopener noreferrer"
 								class="rounded-xl px-8 py-3 font-bold"
+								onclick={() => void trackClick(offer!.id)}
 							>
 								<span class="flex items-center gap-2">
 									{$translationStore.deal.goToStore}

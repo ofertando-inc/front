@@ -1,13 +1,7 @@
 import { error, redirect } from '@sveltejs/kit';
 import type { User } from '$lib/types/auth';
 
-/**
- * Server-side admin guard for the /admin section. Probes the current session
- * through the BFF, transparently refreshing the access cookie once on 401.
- * Anonymous visitors are redirected to /login; authenticated non-admins get a
- * 403 so the layout never renders admin content for them.
- */
-export async function requireAdmin(eventFetch: typeof fetch): Promise<User> {
+async function loadSessionUser(eventFetch: typeof fetch): Promise<User> {
 	let response = await eventFetch('/api/users/me');
 
 	if (response.status === 401) {
@@ -25,10 +19,35 @@ export async function requireAdmin(eventFetch: typeof fetch): Promise<User> {
 		throw error(502, 'Unable to verify the current session.');
 	}
 
-	const user = (await response.json()) as User;
+	return (await response.json()) as User;
+}
 
-	if (user.role !== 'ADMIN') {
+/**
+ * Server-side admin guard for the /admin section. Probes the current session
+ * through the BFF, transparently refreshing the access cookie once on 401.
+ * Anonymous visitors are redirected to /login; authenticated non-admins get a
+ * 403 so the layout never renders admin content for them. ROOT is a superset
+ * of ADMIN for every moderation surface.
+ */
+export async function requireAdmin(eventFetch: typeof fetch): Promise<User> {
+	const user = await loadSessionUser(eventFetch);
+
+	if (user.role !== 'ADMIN' && user.role !== 'ROOT') {
 		throw error(403, 'auth.forbidden');
+	}
+
+	return user;
+}
+
+/**
+ * Guard for the ROOT-only surfaces (accounts, affiliation claims): a plain
+ * ADMIN gets a 403 here, mirroring the backend's `auth.forbidden_root`.
+ */
+export async function requireRoot(eventFetch: typeof fetch): Promise<User> {
+	const user = await loadSessionUser(eventFetch);
+
+	if (user.role !== 'ROOT') {
+		throw error(403, 'auth.forbidden_root');
 	}
 
 	return user;

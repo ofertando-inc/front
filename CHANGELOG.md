@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-07-03
+
+### Added
+
+- Business dashboard polish: every stat card now carries a metric icon (the click card reuses the "go to the store" icon that produces the metric, the score card the vote icon) and an **info tooltip** explaining exactly what is counted — including that the owner's own visits are excluded. The "my offers" list loads up to 24 offers and gains a **channel/address filter** (all / online / one chip per address of the merchant, derived from the offers themselves) with a dedicated filtered-empty state. New `business.stat*Hint` / `filterAllOffers` / `myOffersSubtitle` / `myOffersFilterEmpty` keys and `admin.accountsSubtitle` / `claimsSubtitle` descriptions under the ROOT tabs, in the three languages.
+
+- Business space (`/business`) for `BUSINESS` accounts, guarded server-side by a new `requireBusiness` (403 `account.not_business` for individual accounts; a business whose affiliation is still pending sees a waiting banner instead — `account.no_affiliation`). Once affiliated: an **affiliation banner** (merchant, verified check, approval date), a **stats dashboard** (active/total offers, views, clicks, score, comments, reports — profile-style stat cards over `GET /business/stats`), the last **own offers** as deal cards, and two actions — **publish an official offer** (`/business/new-offer`, reusing `OfferForm` with a new `lockedMerchantName` mode: the affiliated merchant is imposed and read-only, and the server action strips the merchant from the payload before `POST /business/offers`, which returns `official: true`) and **request a new address** (dialog reusing `CityCombobox` + `AddressCombobox` + `LocationMapPicker` over `POST /business/locations`; the address lands unverified in the existing admin queue, with an "awaiting verification" confirmation). New `business` API client (`getBusinessMe` / `getBusinessStats` / `createBusinessOffer` / `requestLocation`) with `BusinessMe` / `BusinessStats` / `BusinessOfferDto` / `RequestLocationDto` types, a "Mi empresa" header link for business accounts (the admin link now also shows for `ROOT`), and a `business` i18n namespace in the three languages. Unit-tested and covered end to end (new `business` / `bizpending` e2e sessions).
+- ROOT back-office for accounts and affiliations, extending the admin panel with a new `ROOT` role (a superset of `ADMIN` for every existing moderation surface) and an `accountType` (`INDIVIDUAL` | `BUSINESS`) on `User` / `PublicUser`. Two ROOT-only tabs (hidden for plain admins, 403 `auth.forbidden_root` server-side via a new `requireRoot` guard): **Cuentas** (`/admin/accounts`) — search by email/username, role and account-type filters, account creation (email, username, provisional password, role, type — business accounts are only born here, optionally affiliated to a merchant on the spot through an auto-approved claim), edition (including password reset) and disable/restore; and **Afiliaciones** (`/admin/claims`) — the `MerchantClaim` queue filtered by status (pending by default) with approve / reject-with-note actions showing the reviewer and the stored note. New `listAccounts` / `createAccount` / `updateAccount` / `listClaims` / `createClaim` / `approveClaim` / `rejectClaim` API clients with `ClaimResponse` / `CreateAccountDto` / `UpdateAccountDto` and query types, new `auth.forbidden_root` / `account.*` / `claim.*` / `merchant.already_owned` error keys and the account/claim management labels localized in the three languages. Unit-tested and covered end to end (new `root` e2e session).
+- "Official" offer badge: `Offer` now carries the server-derived `official` flag (the offer was published by the business owning the merchant — never sent by the client) plus the `viewCount` / `clickCount` counters. Official offers show a distinct solid badge (check-badge pill) on the deal card and the detail page. New `deals.official` key in the three languages.
+- Offer engagement tracking, fire-and-forget: new `trackView` / `trackClick` API clients (`POST /offers/:id/view|click`, always 204). The detail page fires one view hit per visit once the offer loads, and a click hit when following the "go to the store" link — both swallow failures and never block the UI. Unit-tested and covered end to end.
+
+### Fixed
+
+- Untranslated "Choose option ..." placeholder leaking from the Flowbite `Select` default into the admin account filters and dialogs, the admin offer-status filter, the reassign-address select, the report-reason select and the header language switcher — every select now suppresses the built-in placeholder (`placeholder=""`), showing only the localized options.
+
+### Security
+
+- Cleared the two `npm audit` findings by pinning transitive dependencies via `overrides`: `joi` ≥ 17.13.4 (Dependabot alert; an _optional_ dependency of `sveltekit-superforms` — we use the zod adapter) and `ts-deepmerge` ≥ 8.0.0 (prototype-override DoS, also pulled by superforms — verified compatible, all tests pass). `npm audit` reports 0 vulnerabilities; no runtime or API changes.
+
 ## [1.1.0] - 2026-06-15
 
 ### Added
@@ -303,6 +322,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[1.2.0]: https://github.com/ofertando-inc/front/releases/tag/v1.2.0
 [1.1.0]: https://github.com/ofertando-inc/front/releases/tag/v1.1.0
 [1.0.0]: https://github.com/ofertando-inc/front/releases/tag/v1.0.0
 [0.7.0]: https://github.com/ofertando-inc/front/releases/tag/v0.7.0

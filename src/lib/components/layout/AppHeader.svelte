@@ -67,7 +67,7 @@
 		<!-- Right: locale + actions -->
 		<div class="flex items-center gap-2 md:order-3">
 			<div class="hidden min-w-28 sm:block">
-				<Select onchange={handleLocaleChange} value={$localeStore} size="sm">
+				<Select onchange={handleLocaleChange} value={$localeStore} size="sm" placeholder="">
 					{#each SUPPORTED_LOCALES as locale (locale)}
 						<option value={locale}>
 							{locale === 'es'
@@ -94,7 +94,12 @@
 					<DropdownItem href={resolve('/profile')} classes={{ li: 'list-none' }}
 						>{$translationStore.common.profile}</DropdownItem
 					>
-					{#if $authStore.user.role === 'ADMIN'}
+					{#if $authStore.user.accountType === 'BUSINESS'}
+						<DropdownItem href={resolve('/business')} classes={{ li: 'list-none' }}
+							>{$translationStore.common.businessSpace}</DropdownItem
+						>
+					{/if}
+					{#if $authStore.user.role === 'ADMIN' || $authStore.user.role === 'ROOT'}
 						<DropdownItem href={resolve('/admin')} classes={{ li: 'list-none' }}
 							>{$translationStore.common.admin}</DropdownItem
 						>
@@ -166,7 +171,10 @@
 
 			{#if $authStore.isAuthenticated}
 				<NavLi href={resolve('/profile')}>{$translationStore.common.profile}</NavLi>
-				{#if $authStore.user?.role === 'ADMIN'}
+				{#if $authStore.user?.accountType === 'BUSINESS'}
+					<NavLi href={resolve('/business')}>{$translationStore.common.businessSpace}</NavLi>
+				{/if}
+				{#if $authStore.user?.role === 'ADMIN' || $authStore.user?.role === 'ROOT'}
 					<NavLi href={resolve('/admin')}>{$translationStore.common.admin}</NavLi>
 				{/if}
 				<li class="mt-2 list-none border-t border-orange-100 px-3 pt-3">
