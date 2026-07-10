@@ -1,3 +1,3 @@
-# allow crawling everything by default
+# allow crawling everything by default, except the supervision endpoint
 User-agent: *
-Disallow:
+Disallow: /healthz
