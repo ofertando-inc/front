@@ -87,6 +87,11 @@ test.beforeAll(async () => {
 	mockBackend = createServer((request, response) => {
 		const url = request.url ?? '/';
 
+		if (url === '/health/live') {
+			sendJson(response, 200, { status: 'ok' });
+			return;
+		}
+
 		if (url === '/users/me/stats') {
 			if (!isAuthenticated(request)) {
 				sendJson(response, 401, { key: 'auth.unauthorized', statusCode: 401 });
@@ -2319,4 +2324,14 @@ test('i18n: switching the language lazy-loads the locale and updates the UI', as
 	// The choice persists across a reload (and the chunk comes from cache).
 	await page.reload();
 	await expect(page.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
+});
+
+test('healthz: answers ok for supervision probes, deep mode included', async ({ request }) => {
+	const shallow = await request.get('/healthz');
+	expect(shallow.status()).toBe(200);
+	expect(await shallow.json()).toMatchObject({ status: 'ok' });
+
+	const deep = await request.get('/healthz?deep=1');
+	expect(deep.status()).toBe(200);
+	expect(await deep.json()).toMatchObject({ status: 'ok', api: 'ok' });
 });
