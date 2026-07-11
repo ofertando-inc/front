@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-07-11
+
+### Added
+
+- `GET /healthz` supervision endpoint for external monitoring (Uptime Kuma) and the Docker healthcheck: responds `200 { status, version }` with `Cache-Control: no-store` (version read from `package.json`). With `?deep=1` the SvelteKit server additionally probes `BACK_URL/health/live` directly (server-side fetch, 2 s timeout, not through the public `/api` proxy) and answers `503 { status: "degraded", api: "down" }` when the API is unreachable — an external probe can thus verify BFF → API connectivity. The Docker `HEALTHCHECK` now targets `/healthz` (start period raised to 20 s) and the route is excluded from `robots.txt`. Covered by unit tests (shallow, deep up/down/error, no backend call without `deep`) and an e2e smoke.
+
 ## [1.3.0] - 2026-07-04
 
 ### Performance
@@ -343,6 +349,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Build pipeline reliability for the SvelteKit + Flowbite combination.
 - Frontend access to the dev backend by aligning the deployed URL with the backend `CORS_ORIGINS`.
 
+[1.4.0]: https://github.com/ofertando-inc/front/releases/tag/v1.4.0
 [1.3.0]: https://github.com/ofertando-inc/front/releases/tag/v1.3.0
 [1.2.0]: https://github.com/ofertando-inc/front/releases/tag/v1.2.0
 [1.1.0]: https://github.com/ofertando-inc/front/releases/tag/v1.1.0
