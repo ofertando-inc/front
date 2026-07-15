@@ -1,172 +1,173 @@
 # Ofertando Frontend
 
-SvelteKit + TypeScript frontend for the Ofertando deals platform.
+SvelteKit frontend for **Ofertando**, a community-driven deals platform for Colombia: users publish and vote on offers, brands manage their official presence, admins moderate the whole thing.
+
+- BFF architecture: the browser only ever talks to the SvelteKit server, which proxies the API — no token ever reaches client-side storage
+- Three languages (Spanish default, English and French lazy-loaded), light and dark mode
+- WCAG 2.1 AA / RGAA accessibility enforced in CI (axe-core in e2e, Lighthouse accessibility = 1.0)
+- Shipped as a Docker image (GHCR) deployed on Dokploy
 
 ## Stack
 
-- SvelteKit 2 (`adapter-node`) + Svelte 5 (runes)
-- TypeScript
-- Tailwind CSS v4 + Flowbite Svelte + Flowbite Svelte Icons
-- Vitest (unit + component) + Playwright (e2e)
-- Docker image deployed via Dokploy
+| Layer        | Tech                                           |
+| ------------ | ---------------------------------------------- |
+| Runtime      | Node.js 24, TypeScript 5                       |
+| Framework    | SvelteKit 2 (`adapter-node`), Svelte 5 (runes) |
+| UI           | Tailwind CSS v4, Flowbite Svelte + Icons       |
+| Forms & maps | Superforms + Zod (server-validated), Leaflet   |
+| Testing      | Vitest, Playwright + axe-core, Lighthouse CI   |
+| CI/CD        | GitHub Actions → GHCR → Dokploy                |
 
-## Local setup
+## Requirements
 
-Prerequisites: Node.js 24+, npm 10+.
+- **Node.js 24+** and **npm 10+** (with nvm: `nvm install 24`)
+- The **Ofertando backend** reachable (default `http://localhost:3000`) for real data — the app starts without it, but pages that fetch data show their error state. Tests and Lighthouse do **not** need it: they run against an embedded mock backend
+- **Docker** (or Podman) only for the containerized workflow
+- For the e2e suite: the Playwright Chromium binary (`npm run test:e2e:install`, one-time)
 
-```sh
-git clone https://github.com/ofertando-inc/front.git
+## Getting Started
+
+```bash
+git clone git@github.com:ofertando-inc/front.git
 cd front
-cp .env.example .env
-# adjust BACK_URL in .env if your backend runs on a different host or port
-npm install
+npm ci
+cp .env.example .env # then adjust BACK_URL if your backend runs elsewhere
+```
+
+Then pick one of the two workflows:
+
+### Option A — dev server locally
+
+```bash
 npm run dev
 ```
 
-The dev server listens on http://localhost:5173 and reloads on file changes.
+Vite dev server with hot reload on `http://localhost:5173`. API calls are proxied server-side to `BACK_URL`.
 
-## Environment variables
+### Option B — production image in Docker
 
-| Variable        | Purpose                                                                                | Default                 |
-| --------------- | -------------------------------------------------------------------------------------- | ----------------------- |
-| `NODE_ENV`      | Node runtime mode (`development`, `production`)                                        | `development`           |
-| `PORT`          | Port the node server listens on inside the container                                   | `3000`                  |
-| `FRONTEND_PORT` | Host port the docker-compose service exposes                                           | `5173`                  |
-| `BACK_URL`      | Backend base URL, read server-side by the SvelteKit BFF. Never exposed to the browser. | `http://localhost:3000` |
-
-Auth and API calls flow through a SvelteKit BFF at `/api/*`: the browser only talks to the SvelteKit server, which forwards requests to `BACK_URL` and pipes cookies in both directions. There is no client-side token storage and no `PUBLIC_*` URL injected at build time — the production image is environment-agnostic and configured at boot via `BACK_URL`.
-
-When running the front in Docker on Linux, set `BACK_URL=http://host.docker.internal:3000` so the BFF inside the container can reach a backend exposed on the Docker host (the `docker-compose.yml` already maps `host.docker.internal` to the host gateway).
-
-## Scripts
-
-| Script              | Action                                                        |
-| ------------------- | ------------------------------------------------------------- |
-| `npm run dev`       | Start the Vite dev server                                     |
-| `npm run build`     | Build the production bundle                                   |
-| `npm run preview`   | Preview the production build locally                          |
-| `npm run start`     | Run the built node server (after `build`)                     |
-| `npm run check`     | Type-check via `svelte-check`                                 |
-| `npm run lint`      | Prettier check + ESLint                                       |
-| `npm run format`    | Prettier write                                                |
-| `npm run test:unit` | Vitest unit + component tests                                 |
-| `npm run test:e2e`  | Playwright e2e tests (builds and serves a production preview) |
-| `npm test`          | All tests (unit then e2e)                                     |
-
-## Routes
-
-| Path               | Description                                                                                                                                                               | Auth required                                |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| `/`                | Home — hero, hot deals, recent deals, and popular stores. Login and register CTAs are hidden when authenticated.                                                          | No                                           |
-| `/login`           | Sign-in form. Calls `POST /api/auth/login` through the BFF; the backend sets the session cookies and the page redirects to `/profile`.                                    | No                                           |
-| `/register`        | Account creation form with client-side password confirmation. Calls `POST /api/auth/register` through the BFF.                                                            | No                                           |
-| `/profile`         | Current user info from `GET /api/users/me`. The "My offers" tab is backed by `GET /api/offers/mine` with edit / delete actions; comments and votes tabs are placeholders. | Yes (redirects to `/login` otherwise)        |
-| `/deals`           | Cursor-paginated offer listing with city, offer type, sort, and period filters.                                                                                           | No                                           |
-| `/deals/[id]`      | Offer detail page with status banners, vote panel, related offers, mocked comments. Author-only edit and delete buttons (delete via confirm modal).                       | No                                           |
-| `/deals/[id]/edit` | Edit form pre-filled with the existing offer. SvelteKit server action `PATCH /api/offers/[id]` with Superforms + Zod validation.                                          | Yes (must be the author)                     |
-| `/create-deal`     | Create form. SvelteKit server action `POST /api/offers` with Superforms + Zod validation.                                                                                 | Yes (redirects to `/login` otherwise)        |
-| `/api/*`           | BFF catch-all proxy: forwards every browser request to `BACK_URL`, rewriting the refresh cookie path so it stays scoped under `/api/auth`.                                | Whatever the targeted backend route requires |
-| _Anything else_    | Localized 404 / generic error page rendered by `src/routes/+error.svelte`.                                                                                                | —                                            |
-
-## Deployment Workflow
-
-This repository uses two long-lived branches:
-
-- `dev`: integration branch for tested feature branches. Pushes to `dev` run CI first; the dev image is deployed only after CI succeeds.
-- `main`: stable branch used as the source of truth for releases.
-
-Temporary work should happen on `feature/*`, `fix/*`, or `hotfix/*` branches.
-
-### Docker Image Tags
-
-- Dev uses `ghcr.io/ofertando-inc/front:dev`.
-- Staging uses the stable Dokploy tag `ghcr.io/ofertando-inc/front:staging`.
-- Production uses the stable Dokploy tag `ghcr.io/ofertando-inc/front:prod`.
-- Releases use immutable semantic version tags such as `ghcr.io/ofertando-inc/front:v0.1.1`.
-
-The `staging` and `prod` tags are never built directly and are never created from `dev`. They are only updated from an immutable versioned image. This keeps Dokploy simple while guaranteeing production uses the exact image validated in staging, without rebuilding.
-
-### Dev Deployment
-
-Merging a PR into `dev` runs `.github/workflows/ci.yml`. When that CI workflow completes successfully on `dev`, `.github/workflows/deploy-dev.yml` starts automatically.
-
-The workflow builds and pushes:
-
-- `ghcr.io/ofertando-inc/front:dev`
-- `ghcr.io/ofertando-inc/front:dev-<commit-sha>`
-
-It checks out the exact commit validated by CI, builds the dev image, then triggers the dev Dokploy webhook.
-
-### Staging Release
-
-When `dev` is ready for release, merge `dev` into `main` by PR, then create a semantic version tag from `main`.
-
-Pushing a tag like `v0.1.1` triggers `.github/workflows/deploy-staging.yml` after the CI workflow on the tag has succeeded.
-
-The workflow validates the tag, builds `ghcr.io/ofertando-inc/front:v0.1.1`, updates `ghcr.io/ofertando-inc/front:staging` from that versioned image, and triggers Dokploy staging.
-
-### Production Release
-
-Production is manual and does not rebuild from source.
-
-Run `.github/workflows/deploy-prod.yml` manually with the `tag` input, for example `v0.1.1`. The workflow runs under the `production` GitHub Environment, so it is gated by the configured reviewer approval and branch/tag protection rules.
-
-The workflow validates the tag, verifies that `ghcr.io/ofertando-inc/front:v0.1.1` already exists, updates `ghcr.io/ofertando-inc/front:prod` from that same image, and triggers Dokploy production.
-
-### Normal Release Commands
-
-```sh
-git checkout dev
-git pull origin dev
-
-# Open a PR from dev to main, wait for CI, then merge it.
-
-git checkout main
-git pull origin main
-git tag v0.1.1
-git push origin v0.1.1
+```bash
+docker compose up -d --build
 ```
 
-After staging validates `v0.1.1`, run the production workflow manually with:
+Builds the multi-stage production image (non-root `node` user, precompressed `.br`/`.gz` assets) and exposes it on `FRONTEND_PORT` (default `5173`).
 
-```txt
-tag = v0.1.1
+> With this option on Linux, set `BACK_URL=http://host.docker.internal:3000` in `.env` so the BFF inside the container can reach a backend exposed on the Docker host (the compose file already maps `host.docker.internal` to the host gateway).
+
+### Sanity check
+
+```bash
+curl http://localhost:5173/healthz
 ```
 
-### Hotfix Commands
+should answer `status: "ok"` with the app version — add `?deep=1` to also verify the BFF → API connectivity.
 
-Create hotfixes from `main` or the latest production tag, not from `dev`.
+## Environment
 
-```sh
-git checkout main
-git pull origin main
-git checkout -b hotfix/short-description
+`cp .env.example .env` and adjust. All variables are read **at boot, server-side** — no `PUBLIC_*` URL is baked at build time, so the same image runs in every environment:
 
-# Fix, test, commit, then open a PR into main.
+| Variable        | Default                 | Purpose                                                                                |
+| --------------- | ----------------------- | -------------------------------------------------------------------------------------- |
+| `NODE_ENV`      | `development`           | Node runtime mode                                                                      |
+| `PORT`          | `3000`                  | Port the node server listens on inside the container                                   |
+| `FRONTEND_PORT` | `5173`                  | Host port the docker-compose service exposes                                           |
+| `BACK_URL`      | `http://localhost:3000` | Backend base URL, read server-side by the SvelteKit BFF. Never exposed to the browser. |
+
+## Project Structure
+
+```text
+src/
+  lib/
+    api/          apiRequest<T> client + one module per domain
+                  (auth, offers, admin, business, ...)
+    types/        backend DTOs, one file per domain
+    components/   UI (layout, offers, comments, ...)
+    i18n/         typed message catalog — es (default, bundled),
+                  en/fr (code-split, lazy-loaded)
+    stores/       auth, locale, theme (dark mode)
+    validation/   Zod schemas shared by Superforms actions
+  routes/         pages + server actions; api/[...path] is the BFF proxy,
+                  healthz the supervision endpoint, dark.css the dark theme
+  app.html        anti-FOUC theme script
+
+scripts/          lh-server.mjs (mock backend + preview for Lighthouse CI)
+static/           robots.txt, favicons
 ```
 
-After the hotfix PR is merged into `main`:
+The BFF proxy (`src/routes/api/[...path]/+server.ts`) forwards every browser request to `BACK_URL` and pipes the auth cookies in both directions; all client code goes through `apiRequest<T>` (`src/lib/api/client.ts`), never straight to the backend.
 
-```sh
-git checkout main
-git pull origin main
-git tag v0.1.2
-git push origin v0.1.2
+## Pages Overview
+
+| Routes                             | Description                                                                                           | Access                                  |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| `/`                                | Home — hero, hot deals, recent deals, popular stores                                                  | Public                                  |
+| `/deals`, `/deals/[id]`            | Cursor-paginated listing (city/type/sort/period filters), offer detail with votes, comments, tracking | Public                                  |
+| `/create-deal`, `/deals/[id]/edit` | Offer creation / edition (Superforms + Zod server actions)                                            | JWT (edit: author only)                 |
+| `/login`, `/register`              | Auth forms; the backend sets the session cookies through the BFF                                      | Public                                  |
+| `/profile`                         | Own account, offers / comments / votes tabs                                                           | JWT                                     |
+| `/business`, `/business/new-offer` | Business space: stats dashboard, own offers, official offer publishing, address requests              | BUSINESS                                |
+| `/admin`                           | Moderation back-office: offers, comments, reports, merchants & addresses, accounts, claims            | ADMIN or ROOT (accounts & claims: ROOT) |
+| `/privacy`, `/terms`               | Legal pages                                                                                           | Public                                  |
+| `/healthz`                         | Supervision (see below)                                                                               | Public                                  |
+| `/api/*`                           | BFF catch-all proxy towards `BACK_URL`                                                                | Whatever the backend route requires     |
+| _anything else_                    | Localized 404 / error page                                                                            | —                                       |
+
+**Error contract**: the API answers `{ "key": "<stable.key>", "statusCode": <n> }`; the front maps each key to a translated message (`src/lib/i18n`) — messages are never parsed.
+
+## Internationalization
+
+Spanish ships in the initial bundle; English and French are code-split and lazy-loaded when selected (choice persisted). The catalog is fully typed (`src/lib/i18n/types.ts`): adding a key without translating it in all three locales is a compile error. No user-facing string is hardcoded in components.
+
+## Accessibility & Dark Mode
+
+- WCAG 2.1 AA / RGAA: axe-core scans 13 key screens in the e2e suite (zero critical/serious violations allowed), Svelte compiler a11y warnings are ESLint **errors**, and Lighthouse CI asserts **accessibility = 1.0** on every audited page.
+- Dark mode follows the OS `prefers-color-scheme` and can be forced with the moon/sun toggle in the header (persisted, applied before first paint).
+
+## Tests
+
+Unit and component tests are self-contained:
+
+```bash
+npm run test:unit -- --run
 ```
 
-After staging validates `v0.1.2`, run the production workflow manually with:
+The e2e suite is also self-contained — it builds the app, serves a production preview on `127.0.0.1:4173` and spins up an inline mock backend on `127.0.0.1:4174`, so no real backend or database is needed:
 
-```txt
-tag = v0.1.2
+```bash
+npm run test:e2e:install   # download Chromium, first time only
+npm run test:e2e           # Playwright + axe accessibility scans
 ```
 
-Then bring the hotfix back into `dev`:
+## Quality Checks
 
-```sh
-git checkout dev
-git pull origin dev
-git merge main
-git push origin dev
+Run the same core checks as CI before opening a PR:
+
+```bash
+npm run lint               # prettier --check + eslint (a11y warnings are errors)
+npm run check              # svelte-check typecheck
+npm run test:unit -- --run
+npm run test:e2e
+npm run build
+npm run lh                 # optional: Lighthouse CI with the same assertions as CI
 ```
 
-If `dev` has unreleased work that conflicts with `main`, cherry-pick only the hotfix commit instead of merging all of `main`.
+## Supervision
+
+- `GET /healthz` — liveness: answers `200 { "status": "ok", "version": "<package.json version>" }` (`Cache-Control: no-store`) as soon as the node server serves requests (Docker healthcheck target).
+- `GET /healthz?deep=1` — readiness: the SvelteKit server additionally probes `BACK_URL/health/live` directly (2 s timeout, server-side, not through the public proxy) and answers `503 { "status": "degraded", "api": "down" }` when the API is unreachable. Point Uptime Kuma at this one to monitor the BFF → API connectivity.
+
+The route is public (external probes need it), returns no metrics or user data, and is excluded from `robots.txt`.
+
+## Deployment
+
+The production image (multi-stage `Dockerfile`, target `production`) contains only the compiled `build/` output and production dependencies, runs as the non-root `node` user, and embeds a Docker `HEALTHCHECK` probing `/healthz`. It is configured at boot via `BACK_URL` — the exact same image runs in dev, staging and production.
+
+Flow: feature branches → PR to `dev` (CI then auto-deploys the dev environment) → PR from `dev` to `main` → version tag `v*` (builds the immutable versioned image and promotes it to staging) → manual production workflow promotes that same image behind an approval gate. The `staging` and `prod` tags are never rebuilt from source, only updated from an already-validated versioned image. Hotfixes branch from `main`, ship through the same tag flow, then merge back into `dev`.
+
+## CI
+
+GitHub Actions runs validation on pushes and pull requests targeting `dev` and `main`: lint, typecheck, unit tests, e2e tests (cached Chromium), build, Lighthouse CI (accessibility = 1.0 enforced, reports uploaded as artifacts) and the Docker image build. A scheduled `npm audit` workflow fails on high/critical advisories — the project holds 0 vulnerabilities, pinning vulnerable transitive dependencies via `overrides` when needed.
+
+## Changelog
+
+Notable changes are tracked per release in [CHANGELOG.md](CHANGELOG.md) (Keep a Changelog format, semantic versioning).
